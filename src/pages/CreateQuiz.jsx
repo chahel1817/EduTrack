@@ -7,7 +7,7 @@ const CreateQuiz = () => {
     title: '',
     subject: '',
     description: '',
-    questions: [{ questionText: '', options: ['', '', '', ''], correctAnswer: 0 }]
+    questions: [{ question: '', options: ['', '', '', ''], correctAnswer: 0 }]
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -28,7 +28,7 @@ const CreateQuiz = () => {
     }
     for (let i = 0; i < formData.questions.length; i++) {
       const q = formData.questions[i];
-      if (!q.questionText.trim()) {
+      if (!q.question.trim()) {
         setError(`Question ${i + 1} text is required`);
         return false;
       }
@@ -49,10 +49,28 @@ const CreateQuiz = () => {
     e.preventDefault();
     setError('');
     if (!validateForm()) return;
-    
+
     setLoading(true);
     try {
-      await api.post('/quiz', formData);
+      // Filter out empty options and adjust correctAnswer indices
+      const processedQuestions = formData.questions.map(q => {
+        const validOptions = q.options.filter(opt => opt.trim() !== '');
+        const correctAnswerIndex = q.correctAnswer;
+        // Find the new index of the correct answer in the filtered options
+        const newCorrectAnswer = validOptions.findIndex((opt, idx) => idx === correctAnswerIndex);
+        return {
+          ...q,
+          options: validOptions,
+          correctAnswer: newCorrectAnswer
+        };
+      });
+
+      const processedFormData = {
+        ...formData,
+        questions: processedQuestions
+      };
+
+      await api.post('/quiz', processedFormData);
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create quiz');
@@ -78,7 +96,7 @@ const CreateQuiz = () => {
   const addQuestion = () => {
     setFormData({
       ...formData,
-      questions: [...formData.questions, { questionText: '', options: ['', '', '', ''], correctAnswer: 0 }]
+      questions: [...formData.questions, { question: '', options: ['', '', '', ''], correctAnswer: 0 }]
     });
   };
 
@@ -195,8 +213,8 @@ const CreateQuiz = () => {
                         required
                         className="auth-input"
                         rows="3"
-                        value={question.questionText}
-                        onChange={(e) => handleQuestionChange(index, 'questionText', e.target.value)}
+                        value={question.question}
+                        onChange={(e) => handleQuestionChange(index, 'question', e.target.value)}
                         placeholder="Enter your question here..."
                       />
                     </div>

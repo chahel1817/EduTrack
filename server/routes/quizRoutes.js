@@ -7,14 +7,14 @@ const router = express.Router();
 
 // Create quiz (authenticated users)
 router.post("/", authenticate, async (req, res) => {
-  const { title, subject, questions } = req.body;
+  const { title, subject, description, questions } = req.body;
 
   if (!title || !subject || !questions || questions.length === 0) {
     return res.status(400).json({ message: "Title, subject, and questions are required" });
   }
 
   try {
-    const quiz = await Quiz.create({ title, subject, questions, createdBy: req.user.id });
+    const quiz = await Quiz.create({ title, subject, description, questions, createdBy: req.user.id });
     res.status(201).json(quiz);
   } catch (err) {
     res.status(500).json({ message: err.message });

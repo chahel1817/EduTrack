@@ -12,6 +12,10 @@ router.post("/", authenticate, async (req, res) => {
     return res.status(400).json({ message: "Quiz, score, and total are required" });
   }
 
+  if (total === 0) {
+    return res.status(400).json({ message: "Total questions cannot be 0" });
+  }
+
   try {
     // Check if student already submitted this quiz
     const existingResult = await Result.findOne({ student: req.user.id, quiz });
@@ -19,19 +23,33 @@ router.post("/", authenticate, async (req, res) => {
       return res.status(400).json({ message: "You have already submitted this quiz" });
     }
 
-    const result = await Result.create({ 
-      student: req.user.id, 
-      quiz, 
-      score, 
-      total, 
-      answers: answers || [],
-      timeSpent: timeSpent || 0
+    const percentage = Math.round((score / total) * 100);
+
+    console.log('Creating result:', {
+      student: req.user.id,
+      quiz,
+      score,
+      total,
+      percentage,
+      answersCount: answers?.length || 0,
+      timeSpent: Math.floor((timeSpent || 0) / 60)
     });
-    
+
+    const result = await Result.create({
+      student: req.user.id,
+      quiz,
+      score,
+      total,
+      answers: answers || [],
+      timeSpent: Math.floor((timeSpent || 0) / 60), // convert seconds to minutes
+      percentage
+    });
+
     await result.populate('quiz', 'title subject');
     res.status(201).json(result);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('Error submitting quiz result:', err);
+    res.status(500).json({ message: "Failed to submit quiz result. Please try again." });
   }
 });
 

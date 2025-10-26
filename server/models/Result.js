@@ -13,14 +13,18 @@ const resultSchema = new mongoose.Schema({
   }],
   submittedAt: { type: Date, default: Date.now },
   timeSpent: { type: Number, default: 0 }, // in minutes
-  percentage: { type: Number, required: true }
+  percentage: { type: Number, default: 0 }
 }, {
   timestamps: true
 });
 
 // Calculate percentage before saving
 resultSchema.pre('save', function(next) {
-  this.percentage = Math.round((this.score / this.total) * 100);
+  if (this.total > 0) {
+    this.percentage = Math.round((this.score / this.total) * 100);
+  } else {
+    this.percentage = 0;
+  }
   next();
 });
 
