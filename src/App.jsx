@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import CreateQuiz from './pages/CreateQuiz';
 import TakeQuiz from './pages/TakeQuiz';
 import QuizResults from './pages/QuizResults';
+import StudentResults from './pages/StudentResults';
 import './App.css';
 
 function App() {
@@ -20,6 +21,8 @@ function App() {
             <Route path="/create-quiz" element={<ProtectedRoute roles={['teacher']}><CreateQuiz /></ProtectedRoute>} />
             <Route path="/quiz/:id" element={<ProtectedRoute><TakeQuiz /></ProtectedRoute>} />
             <Route path="/results/:id" element={<ProtectedRoute roles={['teacher']}><QuizResults /></ProtectedRoute>} />
+            <Route path="/results" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/my-results/:id" element={<ProtectedRoute roles={['student']}><StudentResults /></ProtectedRoute>} />
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </div>

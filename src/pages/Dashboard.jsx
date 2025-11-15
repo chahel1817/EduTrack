@@ -419,18 +419,32 @@ const Dashboard = () => {
                             flexWrap: 'wrap'
                           }}>
                             {user?.role === 'student' ? (
-                              <button
-                                className="btn btn-success action-btn"
-                                onClick={() => navigate(`/quiz/${quiz._id}`)}
-                                style={{
-                                  fontSize: '12px',
-                                  padding: '8px 12px',
-                                  minWidth: 'auto'
-                                }}
-                              >
-                                <span className="btn-icon">🎯</span>
-                                Take Quiz
-                              </button>
+                              <>
+                                <button
+                                  className="btn btn-success action-btn"
+                                  onClick={() => navigate(`/quiz/${quiz._id}`)}
+                                  style={{
+                                    fontSize: '12px',
+                                    padding: '8px 12px',
+                                    minWidth: 'auto'
+                                  }}
+                                >
+                                  <span className="btn-icon">🎯</span>
+                                  Take Quiz
+                                </button>
+                                <button
+                                  className="btn btn-purple action-btn"
+                                  onClick={() => navigate(`/my-results/${quiz._id}`)}
+                                  style={{
+                                    fontSize: '12px',
+                                    padding: '8px 12px',
+                                    minWidth: 'auto'
+                                  }}
+                                >
+                                  <span className="btn-icon">📊</span>
+                                  My Result
+                                </button>
+                              </>
                             ) : (
                               <>
                                 <button

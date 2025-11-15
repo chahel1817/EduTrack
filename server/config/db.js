@@ -3,7 +3,9 @@ import mongoose from "mongoose";
 const connectDB = async () => {
   try {
     const mongoURI = process.env.MONGO_URI || "mongodb+srv://chahel1817_db_user:Chahelbat18!@cluster0.dfqyk4v.mongodb.net/edutrack";
-    await mongoose.connect(mongoURI);
+    await mongoose.connect(mongoURI, {
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+    });
     console.log("✅ MongoDB Connected Successfully");
   } catch (error) {
     console.error("❌ MongoDB Connection Failed:", error.message);
