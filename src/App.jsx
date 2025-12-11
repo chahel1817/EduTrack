@@ -15,6 +15,7 @@ import QuizResults from "./pages/QuizResults";
 import QuizResultsList from "./pages/QuizResultsList";
 import StudentResults from "./pages/StudentResults";
 import StudentProfile from "./pages/StudentProfile";
+import Leaderboard from "./pages/Leaderboard";
 
 import "./App.css";
 
@@ -174,6 +175,16 @@ export default function App() {
             element={
               <ProtectedRoute roles={["teacher"]}>
                 <QuizResultsList />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Leaderboard Page */}
+          <Route
+            path="/leaderboard/:quizId"
+            element={
+              <ProtectedRoute>
+                <Leaderboard />
               </ProtectedRoute>
             }
           />

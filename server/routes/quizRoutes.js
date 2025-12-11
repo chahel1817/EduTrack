@@ -1,6 +1,6 @@
 import express from "express";
-import Quiz from "../models/Quiz.js";
-import Result from "../models/Result.js";
+import { body, validationResult } from "express-validator";
+import supabase from "../config/supabase.js";
 import { authenticate, authorize } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -12,26 +12,67 @@ router.post(
   "/",
   authenticate,
   authorize(["teacher"]),
+  [
+    body("title").trim().isLength({ min: 3 }).withMessage("Title must be at least 3 characters"),
+    body("subject").trim().notEmpty().withMessage("Subject is required"),
+    body("questions").isArray({ min: 1 }).withMessage("At least one question is required"),
+  ],
   async (req, res) => {
     try {
-      const { title, subject, description, questions, timeLimit } = req.body;
-
-      if (!title || !subject || !questions || questions.length === 0) {
-        return res.status(400).json({
-          message: "Quiz must include title, subject, and at least 1 question",
-        });
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ message: errors.array()[0].msg });
       }
 
-      const quiz = await Quiz.create({
-        title: title.trim(),
-        subject: subject.trim(),
-        description: description || "",
-        questions,
-        timeLimit: timeLimit || 30,
-        createdBy: req.user.id,
-      });
+      const { title, subject, description, questions, timeLimit, difficulty } = req.body;
 
-      return res.status(201).json(quiz);
+      const { data: quiz, error: quizError } = await supabase
+        .from("quizzes")
+        .insert({
+          title: title.trim(),
+          subject: subject.trim(),
+          description: description || "",
+          time_limit: timeLimit || 30,
+          difficulty: difficulty || "medium",
+          created_by: req.user.id,
+        })
+        .select()
+        .single();
+
+      if (quizError) {
+        console.error("Quiz creation error:", quizError);
+        return res.status(500).json({ message: "Failed to create quiz" });
+      }
+
+      const questionsToInsert = questions.map((q, index) => ({
+        quiz_id: quiz.id,
+        question_text: q.question,
+        options: q.options,
+        correct_answer: q.correctAnswer,
+        points: q.points || 1,
+        order_index: index,
+      }));
+
+      const { error: questionsError } = await supabase
+        .from("questions")
+        .insert(questionsToInsert);
+
+      if (questionsError) {
+        console.error("Questions creation error:", questionsError);
+        await supabase.from("quizzes").delete().eq("id", quiz.id);
+        return res.status(500).json({ message: "Failed to create questions" });
+      }
+
+      const { data: completeQuiz } = await supabase
+        .from("quizzes")
+        .select(`
+          *,
+          questions (*)
+        `)
+        .eq("id", quiz.id)
+        .single();
+
+      return res.status(201).json(completeQuiz);
     } catch (error) {
       console.error("Create Quiz Error:", error);
       return res.status(500).json({ message: "Server error" });
@@ -44,30 +85,60 @@ router.post(
 -------------------------------------------------------- */
 router.get("/", authenticate, async (req, res) => {
   try {
-    const quizzes = await Quiz.find()
-      .populate("createdBy", "name role")
-      .sort({ createdAt: -1 });
+    const { subject, difficulty, search } = req.query;
 
-    return res.json(quizzes);
+    let query = supabase
+      .from("quizzes")
+      .select(`
+        *,
+        created_by_user:users!created_by (
+          id,
+          name,
+          role
+        ),
+        questions (id)
+      `)
+      .eq("is_active", true)
+      .order("created_at", { ascending: false });
+
+    if (subject) {
+      query = query.eq("subject", subject);
+    }
+
+    if (difficulty) {
+      query = query.eq("difficulty", difficulty);
+    }
+
+    if (search) {
+      query = query.or(`title.ilike.%${search}%,subject.ilike.%${search}%`);
+    }
+
+    const { data: quizzes, error } = await query;
+
+    if (error) {
+      console.error("Get quizzes error:", error);
+      return res.status(500).json({ message: "Failed to fetch quizzes" });
+    }
+
+    const formattedQuizzes = quizzes.map((quiz) => ({
+      _id: quiz.id,
+      id: quiz.id,
+      title: quiz.title,
+      subject: quiz.subject,
+      description: quiz.description,
+      difficulty: quiz.difficulty,
+      timeLimit: quiz.time_limit,
+      isActive: quiz.is_active,
+      totalPoints: quiz.total_points,
+      createdAt: quiz.created_at,
+      updatedAt: quiz.updated_at,
+      createdBy: quiz.created_by_user,
+      questions: quiz.questions,
+    }));
+
+    return res.json(formattedQuizzes);
   } catch (error) {
     console.error("Get Quizzes Error:", error);
-    return res.status(500).json({ message: "Server error" });
-  }
-});
-
-/* --------------------------------------------------------
-   CLEAR ALL QUIZZES + RESULTS (Dev Only)
--------------------------------------------------------- */
-router.delete("/clear", async (req, res) => {
-  try {
-    await Quiz.deleteMany();
-    await Result.deleteMany();
-
-    return res.json({
-      message: "All quizzes & results cleared (dev feature only)",
-    });
-  } catch (error) {
-    console.error("Clear Error:", error);
     return res.status(500).json({ message: "Server error" });
   }
 });
@@ -77,16 +148,49 @@ router.delete("/clear", async (req, res) => {
 -------------------------------------------------------- */
 router.get("/:id", authenticate, async (req, res) => {
   try {
-    const quiz = await Quiz.findById(req.params.id).populate(
-      "createdBy",
-      "name role"
-    );
+    const { data: quiz, error } = await supabase
+      .from("quizzes")
+      .select(`
+        *,
+        created_by_user:users!created_by (
+          id,
+          name,
+          role
+        ),
+        questions (*)
+      `)
+      .eq("id", req.params.id)
+      .maybeSingle();
 
-    if (!quiz) {
+    if (error || !quiz) {
       return res.status(404).json({ message: "Quiz not found" });
     }
 
-    return res.json(quiz);
+    quiz.questions.sort((a, b) => a.order_index - b.order_index);
+
+    const formattedQuiz = {
+      _id: quiz.id,
+      id: quiz.id,
+      title: quiz.title,
+      subject: quiz.subject,
+      description: quiz.description,
+      difficulty: quiz.difficulty,
+      timeLimit: quiz.time_limit,
+      isActive: quiz.is_active,
+      totalPoints: quiz.total_points,
+      createdAt: quiz.created_at,
+      updatedAt: quiz.updated_at,
+      createdBy: quiz.created_by_user,
+      questions: quiz.questions.map(q => ({
+        _id: q.id,
+        question: q.question_text,
+        options: q.options,
+        correctAnswer: q.correct_answer,
+        points: q.points
+      }))
+    };
+
+    return res.json(formattedQuiz);
   } catch (error) {
     console.error("Get Quiz Error:", error);
     return res.status(500).json({ message: "Server error" });
@@ -102,16 +206,26 @@ router.put(
   authorize(["teacher"]),
   async (req, res) => {
     try {
-      const updated = await Quiz.findOneAndUpdate(
-        { _id: req.params.id, createdBy: req.user.id },
-        req.body,
-        { new: true }
-      );
+      const { title, subject, description, timeLimit, difficulty, isActive } = req.body;
 
-      if (!updated) {
-        return res.status(404).json({
-          message: "Quiz not found or you are not the creator",
-        });
+      const updateData = {};
+      if (title) updateData.title = title.trim();
+      if (subject) updateData.subject = subject.trim();
+      if (description !== undefined) updateData.description = description;
+      if (timeLimit) updateData.time_limit = timeLimit;
+      if (difficulty) updateData.difficulty = difficulty;
+      if (isActive !== undefined) updateData.is_active = isActive;
+
+      const { data: updated, error } = await supabase
+        .from("quizzes")
+        .update(updateData)
+        .eq("id", req.params.id)
+        .eq("created_by", req.user.id)
+        .select()
+        .single();
+
+      if (error || !updated) {
+        return res.status(404).json({ message: "Quiz not found or unauthorized" });
       }
 
       return res.json(updated);
@@ -131,15 +245,14 @@ router.delete(
   authorize(["teacher"]),
   async (req, res) => {
     try {
-      const deleted = await Quiz.findOneAndDelete({
-        _id: req.params.id,
-        createdBy: req.user.id,
-      });
+      const { error } = await supabase
+        .from("quizzes")
+        .delete()
+        .eq("id", req.params.id)
+        .eq("created_by", req.user.id);
 
-      if (!deleted) {
-        return res.status(404).json({
-          message: "Quiz not found or unauthorized",
-        });
+      if (error) {
+        return res.status(404).json({ message: "Quiz not found or unauthorized" });
       }
 
       return res.json({ message: "Quiz deleted successfully" });
@@ -149,5 +262,38 @@ router.delete(
     }
   }
 );
+
+/* --------------------------------------------------------
+   GET TEACHER'S QUIZZES
+-------------------------------------------------------- */
+router.get("/teacher/my-quizzes", authenticate, authorize(["teacher"]), async (req, res) => {
+  try {
+    const { data: quizzes, error } = await supabase
+      .from("quizzes")
+      .select(`
+        *,
+        questions (id),
+        results (id)
+      `)
+      .eq("created_by", req.user.id)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Get teacher quizzes error:", error);
+      return res.status(500).json({ message: "Failed to fetch quizzes" });
+    }
+
+    const formattedQuizzes = quizzes.map((quiz) => ({
+      ...quiz,
+      questionsCount: quiz.questions.length,
+      submissionsCount: quiz.results.length,
+    }));
+
+    return res.json(formattedQuizzes);
+  } catch (error) {
+    console.error("Get Teacher Quizzes Error:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
 
 export default router;
