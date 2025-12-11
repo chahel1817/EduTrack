@@ -6,46 +6,77 @@ import { authenticate } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Signup
+/* --------------------------------------------------------
+   SIGNUP
+-------------------------------------------------------- */
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, password, role, age, phone } = req.body;
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: "Email already exists" });
+    // Basic validation
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "Name, email & password are required" });
+    }
 
+    // Email already exists
+    const existing = await User.findOne({ email });
+    if (existing) {
+      return res.status(400).json({ message: "Email already exists" });
+    }
+
+    // Password hashing
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
-      name,
-      email,
+    // Create user
+    await User.create({
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
       password: hashedPassword,
-      role,
+      role: role || "student",
       age,
       phone
     });
 
-    res.status(201).json({ message: "Signup successful" });
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    return res.status(201).json({ message: "Signup successful" });
+  } catch (error) {
+    console.error("Signup Error:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 });
 
-// Login
+/* --------------------------------------------------------
+   LOGIN
+-------------------------------------------------------- */
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Invalid email or password" });
+    // Validate
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+
+    const user = await User.findOne({ email: email.trim().toLowerCase() });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: "Invalid email or password" });
 
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
 
-    // Return user data without password
-    const userData = {
+    // JWT (expires in 7 days)
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    // Clean user data (no password)
+    const safeUser = {
       _id: user._id,
       name: user.name,
       email: user.email,
@@ -56,21 +87,28 @@ router.post("/login", async (req, res) => {
       updatedAt: user.updatedAt
     };
 
-    res.json({ token, user: userData });
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    return res.json({ token, user: safeUser });
+  } catch (error) {
+    console.error("Login Error:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 });
 
-// Profile route to get user data
+/* --------------------------------------------------------
+   PROFILE (Protected)
+-------------------------------------------------------- */
 router.get("/profile", authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
-    if (!user) return res.status(404).json({ message: "User not found" });
 
-    res.json(user);
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.json(user);
+  } catch (error) {
+    console.error("Profile Error:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 });
 

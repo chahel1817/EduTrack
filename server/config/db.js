@@ -2,14 +2,22 @@ import mongoose from "mongoose";
 
 const connectDB = async () => {
   try {
-    const mongoURI = process.env.MONGO_URI || "mongodb+srv://chahel1817_db_user:Chahelbat18!@cluster0.dfqyk4v.mongodb.net/edutrack";
+    const mongoURI = process.env.MONGO_URI;
+
+    if (!mongoURI) {
+      throw new Error("❌ MONGO_URI is not defined in environment variables");
+    }
+
     await mongoose.connect(mongoURI, {
-      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+      serverSelectionTimeoutMS: 5000,
     });
-    console.log("✅ MongoDB Connected Successfully");
+
+    console.log("🟢 MongoDB Connected Successfully");
   } catch (error) {
-    console.error("❌ MongoDB Connection Failed:", error.message);
-    process.exit(1);
+    console.error("🔴 MongoDB Connection Error:", error.message);
+
+    // Retry after 5 seconds
+    setTimeout(connectDB, 5000);
   }
 };
 

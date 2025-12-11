@@ -4,82 +4,102 @@ import { authenticate, authorize } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Student submits quiz result
+/* --------------------------------------------------------
+   SUBMIT QUIZ RESULT (Student Only)
+-------------------------------------------------------- */
 router.post("/", authenticate, async (req, res) => {
-  const { quiz, score, total, answers, timeSpent } = req.body;
-
-  if (score === undefined || total === undefined || !quiz) {
-    return res.status(400).json({ message: "Quiz, score, and total are required" });
-  }
-
-  if (total === 0) {
-    return res.status(400).json({ message: "Total questions cannot be 0" });
-  }
-
   try {
-    // Check if student already submitted this quiz
-    const existingResult = await Result.findOne({ student: req.user.id, quiz });
-    if (existingResult) {
+    const { quiz, score, total, answers, timeSpent } = req.body;
+
+    // Validate inputs
+    if (!quiz || score === undefined || total === undefined) {
+      return res.status(400).json({ message: "Quiz, score, and total are required" });
+    }
+
+    if (total <= 0) {
+      return res.status(400).json({ message: "Total questions must be greater than 0" });
+    }
+
+    // Prevent double submission
+    const existing = await Result.findOne({ student: req.user.id, quiz });
+    if (existing) {
       return res.status(400).json({ message: "You have already submitted this quiz" });
     }
 
-    const percentage = Math.round((score / total) * 100);
+    // Convert time (seconds -> minutes)
+    const minutesSpent = Math.max(0, Math.floor((timeSpent || 0) / 60));
 
-    console.log('Creating result:', {
-      student: req.user.id,
-      quiz,
-      score,
-      total,
-      percentage,
-      answersCount: answers?.length || 0,
-      timeSpent: Math.floor((timeSpent || 0) / 60)
-    });
-
+    // Create result record
     const result = await Result.create({
       student: req.user.id,
       quiz,
       score,
       total,
-      answers: answers || [],
-      timeSpent: Math.floor((timeSpent || 0) / 60), // convert seconds to minutes
-      percentage
+      answers: Array.isArray(answers) ? answers : [],
+      timeSpent: minutesSpent
+      // Percentage auto-calculated by schema pre-save
     });
 
-    await result.populate('quiz', 'title subject');
-    res.status(201).json(result);
-  } catch (err) {
-    console.error('Error submitting quiz result:', err);
-    res.status(500).json({ message: "Failed to submit quiz result. Please try again." });
+    await result.populate("quiz", "title subject");
+
+    return res.status(201).json(result);
+  } catch (error) {
+    console.error("Result Submission Error:", error);
+    return res.status(500).json({
+      message: "Failed to submit quiz result. Please try again.",
+    });
   }
 });
 
-// Student view own results
+/* --------------------------------------------------------
+   GET STUDENT'S OWN RESULTS
+-------------------------------------------------------- */
 router.get("/student", authenticate, async (req, res) => {
   try {
-    const results = await Result.find({ student: req.user.id }).populate("quiz", "title subject");
-    res.json(results);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    const results = await Result.find({ student: req.user.id })
+      .populate("quiz", "title subject")
+      .sort({ createdAt: -1 })
+      .lean();
+
+    return res.json(results);
+  } catch (error) {
+    console.error("Get Student Results Error:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 });
 
-// Teacher view all student results
+/* --------------------------------------------------------
+   GET ALL RESULTS (Teacher Only)
+-------------------------------------------------------- */
 router.get("/all", authenticate, authorize(["teacher"]), async (req, res) => {
   try {
-    const results = await Result.find().populate("student", "name email").populate("quiz", "title subject");
-    res.json(results);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    const results = await Result.find()
+      .populate("student", "name email")
+      .populate("quiz", "title subject")
+      .sort({ createdAt: -1 })
+      .lean();
+
+    return res.json(results);
+  } catch (error) {
+    console.error("Get All Results Error:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 });
 
-// Get results for a specific quiz (teacher)
+/* --------------------------------------------------------
+   GET RESULTS FOR SPECIFIC QUIZ (Teacher Only)
+-------------------------------------------------------- */
 router.get("/quiz/:quizId", authenticate, authorize(["teacher"]), async (req, res) => {
   try {
-    const results = await Result.find({ quiz: req.params.quizId }).populate("student", "name email");
-    res.json(results);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    const results = await Result.find({ quiz: req.params.quizId })
+      .populate("student", "name email")
+      .sort({ createdAt: -1 })
+      .lean();
+
+    return res.json(results);
+  } catch (error) {
+    console.error("Get Quiz Results Error:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 });
 
