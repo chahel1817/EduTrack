@@ -17,7 +17,8 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
-  AlertTriangle
+  AlertTriangle,
+  BarChart3
 } from "lucide-react";
 
 /**
@@ -29,7 +30,9 @@ import {
  * - Reusable StatCard and EmptyState components matching global CSS
  */
 
-const StatCard = ({ icon: Icon, value, label, gradient, border, progress, progressColor, isDarkMode }) => (
+const StatCard = ({ icon: Icon, value, label, gradient, border, progress, progressColor, isDarkMode }) => {
+  const progressBarBg = isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)";
+  return (
   <div
     className="stat-card hover-lift"
     style={{
@@ -51,7 +54,7 @@ const StatCard = ({ icon: Icon, value, label, gradient, border, progress, progre
 
     {typeof progress === "number" && (
       <div style={{ marginTop: 12 }}>
-        <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 6, overflow: "hidden" }}>
+        <div style={{ height: 6, background: progressBarBg, borderRadius: 6, overflow: "hidden" }}>
           <div
             style={{
               height: "100%",
@@ -64,7 +67,8 @@ const StatCard = ({ icon: Icon, value, label, gradient, border, progress, progre
       </div>
     )}
   </div>
-);
+  );
+};
 
 const EmptyState = ({ icon: Icon, title, message, ctaText, ctaOnClick, isDarkMode }) => (
   <div className="dashboard-section" style={{ textAlign: "center" }}>
@@ -121,8 +125,21 @@ const QuizResults = () => {
     return () => observer.disconnect();
   }, []);
 
+  // Update dark mode when theme changes
   useEffect(() => {
-    if (!id) return;
+    const handleThemeChange = () => {
+      setIsDarkMode(document.body.classList.contains("dark"));
+    };
+    window.addEventListener("storage", handleThemeChange);
+    return () => window.removeEventListener("storage", handleThemeChange);
+  }, []);
+
+  useEffect(() => {
+    if (!id) {
+      setError("No quiz ID provided");
+      setLoading(false);
+      return;
+    }
 
     let mounted = true;
     const controller = new AbortController();
@@ -132,7 +149,7 @@ const QuizResults = () => {
       setError("");
       try {
         const [quizRes, resultsRes] = await Promise.all([
-          api.get(`/quiz/${id}`, { signal: controller.signal }),
+          api.get(`/quizzes/${id}`, { signal: controller.signal }),
           api.get(`/results/quiz/${id}`, { signal: controller.signal }),
         ]);
 
@@ -142,7 +159,28 @@ const QuizResults = () => {
       } catch (err) {
         if (err.name === "CanceledError" || err.name === "AbortError") return;
         console.error("QuizResults fetch error:", err);
-        if (mounted) setError("Unable to load quiz or results. Please try again later.");
+        console.error("Error details:", {
+          status: err.response?.status,
+          data: err.response?.data,
+          message: err.message,
+          url: err.config?.url
+        });
+        if (mounted) {
+          let errorMessage = "Unable to load quiz or results. Please try again later.";
+          
+          if (err.response) {
+            // Server responded with error
+            errorMessage = err.response.data?.message || `Server error: ${err.response.status}`;
+          } else if (err.request) {
+            // Request made but no response
+            errorMessage = "No response from server. Please check if the server is running.";
+          } else {
+            // Error setting up request
+            errorMessage = err.message || errorMessage;
+          }
+          
+          setError(errorMessage);
+        }
       } finally {
         if (mounted) setLoading(false);
       }
@@ -163,13 +201,13 @@ const QuizResults = () => {
         <Navbar />
         <main className="dashboard-main">
           <div className="dashboard-section">
-            <div className="loading" style={{ textAlign: 'center', padding: '3rem' }}>
-              <Loader2 size={48} className="loading-spinner" style={{ 
+            <div className="loading" style={{ textAlign: 'center', padding: '3rem', color: isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'var(--gray-600)' }}>
+              <Loader2 size={48} className="loading-spinner" style={{
                 animation: 'spin 1s linear infinite',
                 margin: '0 auto 1rem',
-                color: 'var(--blue)'
+                color: isDarkMode ? 'var(--blue)' : 'var(--blue)'
               }} />
-              <div>Loading quiz results...</div>
+              <div style={{ color: isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'var(--gray-600)' }}>Loading quiz results...</div>
             </div>
           </div>
         </main>
@@ -230,7 +268,7 @@ const QuizResults = () => {
           {/* Header */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
             <div style={{ minWidth: 240 }}>
-              <h2 className="section-heading" style={{ margin: 0, fontSize: 24, fontWeight: 700, display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <h2 className="section-heading" style={{ margin: 0, fontSize: 24, fontWeight: 700, display: 'flex', alignItems: 'center', gap: '12px', color: isDarkMode ? '#ffffff' : 'inherit' }}>
                 <BarChart3 size={28} />
                 Quiz Results: {quiz.title}
               </h2>
@@ -259,7 +297,7 @@ const QuizResults = () => {
                     r.total ?? "",
                     r.percentage ?? "",
                     r.timeSpent ?? "",
-                    new Date(r.submittedAt).toLocaleString()
+                    r.submittedAt ? new Date(r.submittedAt).toLocaleString() : ''
                   ]);
                   const csv = [header.join(","), ...rows.map((r) => r.join(","))].join("\n");
                   const blob = new Blob([csv], { type: "text/csv" });
@@ -347,82 +385,102 @@ const QuizResults = () => {
               </thead>
 
               <tbody>
-                {results.map((r, idx) => {
-                  const perc = r.percentage ?? Math.round(((r.score ?? 0) / Math.max(1, r.total ?? 1)) * 100);
-                  return (
-                    <tr key={r._id || idx} className={idx % 2 === 0 ? "even-row" : "odd-row"}>
-                      <td>
-                        <div style={{
-                          width: 40, height: 40, borderRadius: "50%",
-                          background: "linear-gradient(135deg,var(--primary),var(--secondary))",
-                          color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700
-                        }}>
-                          {r.student?.name?.charAt(0)?.toUpperCase() || "?"}
+                {results.length === 0 ? (
+                  <tr>
+                    <td colSpan="8" style={{ textAlign: "center", padding: "3rem 2rem" }}>
+                      <div className="empty-state enhanced" style={{ margin: 0 }}>
+                        <div
+                          className="empty-icon"
+                          style={{
+                            marginBottom: "1rem",
+                            animation: "float 3s ease-in-out infinite",
+                            display: "flex",
+                            justifyContent: "center"
+                          }}
+                        >
+                          <FileText size={64} color={isDarkMode ? 'var(--blue)' : 'var(--primary)'} />
                         </div>
-                      </td>
 
-                      <td style={{ fontWeight: 600 }}>{r.student?.name || "Unknown Student"}</td>
-                      <td style={{ color: "var(--gray-600)" }}>{r.student?.email || "N/A"}</td>
+                        <h3 style={{ marginBottom: "0.75rem", fontSize: 22, fontWeight: 700 }}>
+                          <span className="section-heading" style={{ background: "linear-gradient(135deg,var(--blue),var(--purple))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+                            No Results Yet
+                          </span>
+                        </h3>
 
-                      <td>
-                        <span style={{
-                          padding: "6px 12px",
-                          borderRadius: 999,
-                          fontWeight: 700,
-                          background: isDarkMode
-                            ? (perc >= 80 ? "rgba(16,185,129,0.15)" : perc >= 60 ? "rgba(245,158,11,0.15)" : "rgba(239,68,68,0.15)")
-                            : (perc >= 80 ? "rgba(16,185,129,0.08)" : perc >= 60 ? "rgba(245,158,11,0.08)" : "rgba(239,68,68,0.06)"),
-                          color: perc >= 80 ? "var(--accent-dark)" : perc >= 60 ? "var(--warning-dark)" : "var(--error-dark)",
-                          border: `1px solid ${perc >= 80 ? "rgba(16,185,129,0.2)" : perc >= 60 ? "rgba(245,158,11,0.2)" : "rgba(239,68,68,0.15)"}`,
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '6px'
-                        }}>
-                          {perc >= 80 ? <CheckCircle2 size={14} /> : perc >= 60 ? <AlertTriangle size={14} /> : <XCircle size={14} />}
-                          {perc >= 80 ? "Excellent" : perc >= 60 ? "Good" : "Needs Improvement"}
-                        </span>
-                      </td>
+                        <p style={{ color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : "var(--gray-600)", marginBottom: "1.25rem", lineHeight: 1.6, maxWidth: 640, margin: "0 auto 1.25rem" }}>
+                          Students haven't submitted this quiz yet. Check back later or share the quiz link with students.
+                        </p>
 
-                      <td style={{ fontWeight: 700, color: isDarkMode ? '#ffffff' : 'var(--black)' }}>{r.score}/{r.total}</td>
-                      <td style={{ fontWeight: 700, color: isDarkMode ? '#ffffff' : 'var(--black)' }}>{perc}%</td>
+                        <button className="btn btn-primary empty-cta" onClick={() => navigate("/dashboard")} style={{ display: "inline-flex", gap: 8, alignItems: "center" }}>
+                          Back to Dashboard
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  results.map((r, idx) => {
+                    const perc = r.percentage ?? Math.round(((r.score ?? 0) / Math.max(1, r.total ?? 1)) * 100);
+                    return (
+                      <tr key={r._id || idx} className={idx % 2 === 0 ? "even-row" : "odd-row"}>
+                        <td>
+                          <div style={{
+                            width: 40, height: 40, borderRadius: "50%",
+                            background: "linear-gradient(135deg,var(--primary),var(--secondary))",
+                            color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700
+                          }}>
+                            {r.student?.name?.charAt(0)?.toUpperCase() || "?"}
+                          </div>
+                        </td>
 
-                      <td>
-                        <span style={{
-                          padding: "4px 8px",
-                          borderRadius: 12,
-                          background: isDarkMode ? "rgba(99,102,241,0.15)" : "rgba(99,102,241,0.06)",
-                          fontWeight: 600,
-                          color: isDarkMode ? "var(--blue)" : "var(--primary)",
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '4px'
-                        }}>
-                          <Clock size={14} />
-                          {r.timeSpent ?? 0} min
-                        </span>
-                      </td>
+                        <td style={{ fontWeight: 600, color: isDarkMode ? '#ffffff' : 'var(--black)' }}>{r.student?.name || "Unknown Student"}</td>
+                        <td style={{ color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : "var(--gray-600)" }}>{r.student?.email || "N/A"}</td>
 
-                      <td style={{ color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : "var(--gray-600)" }}>{new Date(r.submittedAt).toLocaleString()}</td>
-                    </tr>
-                  );
-                })}
+                        <td>
+                          <span style={{
+                            padding: "6px 12px",
+                            borderRadius: 999,
+                            fontWeight: 700,
+                            background: isDarkMode
+                              ? (perc >= 80 ? "rgba(16,185,129,0.15)" : perc >= 60 ? "rgba(245,158,11,0.15)" : "rgba(239,68,68,0.15)")
+                              : (perc >= 80 ? "rgba(16,185,129,0.08)" : perc >= 60 ? "rgba(245,158,11,0.08)" : "rgba(239,68,68,0.06)"),
+                            color: perc >= 80 ? "var(--accent-dark)" : perc >= 60 ? "var(--warning-dark)" : "var(--error-dark)",
+                            border: `1px solid ${perc >= 80 ? "rgba(16,185,129,0.2)" : perc >= 60 ? "rgba(245,158,11,0.2)" : "rgba(239,68,68,0.15)"}`,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px'
+                          }}>
+                            {perc >= 80 ? <CheckCircle2 size={14} /> : perc >= 60 ? <AlertTriangle size={14} /> : <XCircle size={14} />}
+                            {perc >= 80 ? "Excellent" : perc >= 60 ? "Good" : "Needs Improvement"}
+                          </span>
+                        </td>
+
+                        <td style={{ fontWeight: 700, color: isDarkMode ? '#ffffff' : 'var(--black)' }}>{r.score}/{r.total}</td>
+                        <td style={{ fontWeight: 700, color: isDarkMode ? '#ffffff' : 'var(--black)' }}>{perc}%</td>
+
+                        <td>
+                          <span style={{
+                            padding: "4px 8px",
+                            borderRadius: 12,
+                            background: isDarkMode ? "rgba(99,102,241,0.15)" : "rgba(99,102,241,0.06)",
+                            fontWeight: 600,
+                            color: isDarkMode ? "var(--blue)" : "var(--primary)",
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}>
+                            <Clock size={14} />
+                            {r.timeSpent ?? 0} min
+                          </span>
+                        </td>
+
+                        <td style={{ color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : "var(--gray-600)" }}>{r.submittedAt ? new Date(r.submittedAt).toLocaleString() : 'N/A'}</td>
+                      </tr>
+                    );
+                  })
+                )}
               </tbody>
             </table>
           </div>
-
-          {/* Empty fallback if there are no results */}
-          {results.length === 0 && (
-            <div style={{ marginTop: 18 }}>
-              <EmptyState
-                icon={FileText}
-                title="No Results Yet"
-                message="Students haven't submitted this quiz yet. Check back later or share the quiz link with students."
-                ctaText="Back to Dashboard"
-                ctaOnClick={() => navigate("/dashboard")}
-                isDarkMode={isDarkMode}
-              />
-            </div>
-          )}
         </div>
       </main>
       <Footer />

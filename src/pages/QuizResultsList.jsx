@@ -22,7 +22,7 @@ const QuizResultsList = () => {
     const fetchData = async () => {
       try {
         const [quizzesRes, resultsRes] = await Promise.all([
-          api.get("/quiz"),
+          api.get("/quizzes"),
           api.get("/results/all"),
         ]);
 

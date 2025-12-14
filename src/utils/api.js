@@ -1,31 +1,64 @@
 import axios from "axios";
 
+/* --------------------------------------------------
+   AXIOS INSTANCE
+-------------------------------------------------- */
 export const api = axios.create({
-  baseURL: "http://localhost:5000/api",
-  timeout: 10000, // 10 second timeout
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
+  timeout: 15000,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-// Add request interceptor for better error handling
+/* --------------------------------------------------
+   REQUEST INTERCEPTOR
+   → Attach JWT token automatically
+-------------------------------------------------- */
 api.interceptors.request.use(
   (config) => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
     return config;
   },
-  (error) => {
-    console.error("Request error:", error);
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Add response interceptor for better error handling
+/* --------------------------------------------------
+   RESPONSE INTERCEPTOR
+   → Global error handling
+-------------------------------------------------- */
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
-    if (error.code === 'ECONNREFUSED' || error.message.includes('Network Error')) {
-      console.error("Cannot connect to server. Make sure the backend server is running on http://localhost:5000");
-      error.message = "Cannot connect to server. Please ensure the backend server is running.";
+    if (!error.response) {
+      console.error("❌ Network error or server down");
+      return Promise.reject(error);
     }
+
+    const { status } = error.response;
+
+    // Unauthorized → logout
+    if (status === 401) {
+      console.warn("🔐 Session expired. Logging out...");
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    }
+
+    // Forbidden
+    if (status === 403) {
+      console.warn("🚫 Access denied");
+    }
+
+    // Server error
+    if (status >= 500) {
+      console.error("🔥 Server error:", error.response.data);
+    }
+
     return Promise.reject(error);
   }
 );

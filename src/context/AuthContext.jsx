@@ -1,88 +1,60 @@
-import { createContext, useContext, useState, useEffect, useRef } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { api } from "../utils/api";
 
 const AuthContext = createContext();
-export const useAuth = () => useContext(AuthContext);
 
+/* --------------------------------------------------
+   AUTH PROVIDER
+-------------------------------------------------- */
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Prevent duplicate profile requests on strict mode
-  const loadedRef = useRef(false);
-
+  /* ---------------- LOAD USER ON APP START ---------------- */
   useEffect(() => {
-    if (loadedRef.current) return;
-    loadedRef.current = true;
+  const token = localStorage.getItem("token");
 
-    const verifyUser = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setLoading(false);
-          return;
-        }
+  if (!token) {
+    setLoading(false);
+    return;
+  }
 
-        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-        const res = await api.get("/auth/profile");
-        setUser(res.data);
-      } catch (error) {
-        console.warn("Auto login failed:", error.response?.data || error.message);
-        localStorage.removeItem("token");
-        delete api.defaults.headers.common["Authorization"];
-      } finally {
-        setLoading(false);
-      }
-    };
+  api
+    .get("/auth/me")
+    .then((res) => setUser(res.data))
+    .catch(logout)
+    .finally(() => setLoading(false));
+}, []);
 
-    verifyUser();
-  }, []);
 
-  /* ------------------------------ LOGIN ------------------------------ */
-  const login = async (email, password) => {
-    try {
-      const res = await api.post("/auth/login", { email, password });
 
-      if (!res.data || !res.data.token) {
-        throw new Error("Invalid response from server");
-      }
+  /* ---------------- LOGIN ---------------- */
+  const login = async (credentials) => {
+    const res = await api.post("/auth/login", credentials);
 
-      const { token, user: userData } = res.data;
+    const { token, user } = res.data;
 
-      if (!token || !userData) {
-        throw new Error("Missing token or user data");
-      }
+    localStorage.setItem("token", token);
+    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      localStorage.setItem("token", token);
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
-      setUser(userData);
-      return userData;
-    } catch (err) {
-      console.error("Login error in AuthContext:", err);
-      if (err.code === 'ECONNREFUSED' || err.message?.includes('Network Error')) {
-        throw { message: "Cannot connect to server. Please ensure the backend server is running on http://localhost:5000" };
-      }
-      throw err.response?.data || err || { message: "Login failed" };
-    }
+    setUser(user);
   };
 
-  /* ------------------------------ SIGNUP ------------------------------ */
-  const signup = async (userInfo) => {
-    try {
-      const res = await api.post("/auth/signup", userInfo);
-      return res.data;
-    } catch (err) {
-      console.error("Signup error in AuthContext:", err);
-      if (err.code === 'ECONNREFUSED' || err.message?.includes('Network Error')) {
-        throw { message: "Cannot connect to server. Please ensure the backend server is running on http://localhost:5000" };
-      }
-      throw err.response?.data || err || { message: "Signup failed" };
-    }
+  /* ---------------- SIGNUP ---------------- */
+  const signup = async (data) => {
+    await api.post("/auth/signup", data);
   };
 
-  /* ------------------------------ LOGOUT ------------------------------ */
+  /* ---------------- SET AUTH (for OTP login) ---------------- */
+  const setAuth = (token, userData) => {
+    localStorage.setItem("token", token);
+    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    setUser(userData);
+  };
+
+  /* ---------------- LOGOUT ---------------- */
   const logout = () => {
     localStorage.removeItem("token");
     delete api.defaults.headers.common["Authorization"];
@@ -90,8 +62,24 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, loading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        signup,
+        setAuth,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
+};
+
+/* --------------------------------------------------
+   CUSTOM HOOK
+-------------------------------------------------- */
+export const useAuth = () => {
+  return useContext(AuthContext);
 };

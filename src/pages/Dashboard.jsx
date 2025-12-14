@@ -122,12 +122,38 @@ export default function Dashboard() {
   /* -------------------------------------------------- */
   const fetchQuizzes = useCallback(async (signal) => {
     try {
-      const res = await api.get("/quiz", { signal });
-      setQuizzes(res.data || []);
+      console.log("📚 Fetching quizzes for user:", user?.role);
+      const res = await api.get("/quizzes", { signal });
+      console.log("📚 Quizzes received:", res.data?.length || 0);
+      console.log("📚 Quiz data:", res.data);
+      
+      const quizzesData = res.data || [];
+      
+      // For teachers, show only their quizzes on dashboard
+      // For students, show all quizzes
+      if (user?.role === "teacher") {
+        const myQuizzes = quizzesData.filter(
+          (q) => q.createdBy?._id === user._id || 
+                 q.createdBy?._id?.toString() === user._id?.toString() ||
+                 q.createdBy?.toString() === user._id?.toString() ||
+                 q.createdBy === user._id
+        );
+        console.log("📚 Filtered teacher quizzes:", myQuizzes.length);
+        setQuizzes(myQuizzes);
+      } else {
+        // Students see all quizzes
+        console.log("📚 Showing all quizzes for student:", quizzesData.length);
+        setQuizzes(quizzesData);
+      }
     } catch (err) {
-      console.error("Failed to fetch quizzes:", err);
+      console.error("❌ Failed to fetch quizzes:", err);
+      console.error("Error details:", {
+        status: err.response?.status,
+        data: err.response?.data,
+        message: err.message
+      });
     }
-  }, []);
+  }, [user]);
 
   const fetchStudentResults = useCallback(async (signal) => {
     try {
@@ -328,7 +354,7 @@ export default function Dashboard() {
                   )}
                   <button
                     className="btn btn-outline"
-                    onClick={() => navigate(`/my-results/${user._id}`)}
+                    onClick={() => navigate(`/my-results/${r.quiz._id}`)}
                   >
                     <BarChart3 size={18} />
                     My Results
@@ -572,17 +598,15 @@ export default function Dashboard() {
                           </span>
                         </td>
                         <td>{new Date(r.submittedAt || r.createdAt).toLocaleDateString()}</td>
-                        {user.role === "teacher" && (
-                          <td>
-                            <button
-                              className="btn btn-outline"
-                              style={{ padding: '6px 12px', fontSize: '12px' }}
-                              onClick={() => navigate(`/results/${r.quiz?._id}`)}
-                            >
-                              View
-                            </button>
-                          </td>
-                        )}
+                        <td>
+                          <button
+                            className="btn btn-outline"
+                            style={{ padding: '6px 12px', fontSize: '12px' }}
+                            onClick={() => navigate(user.role === "teacher" ? `/results/${r.quiz?._id}` : `/my-results/${r.quiz?._id}`)}
+                          >
+                            View
+                          </button>
+                        </td>
                       </tr>
                     );
                   })}
@@ -591,11 +615,11 @@ export default function Dashboard() {
             </div>
           )}
 
-          {results.length > 10 && (
+          {results.length > 10 && user.role === "teacher" && (
             <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
               <button
                 className="btn btn-outline"
-                onClick={() => navigate(user.role === "teacher" ? "/results" : `/my-results/${user._id}`)}
+                onClick={() => navigate("/results")}
               >
                 View All Results ({results.length})
               </button>

@@ -16,19 +16,34 @@ const Quizzes = () => {
   const [subjects, setSubjects] = useState([]);
 
   useEffect(() => {
-    fetchQuizzes();
-  }, []);
+    if (user) {
+      fetchQuizzes();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const fetchQuizzes = async () => {
     try {
-      const res = await api.get('/quiz');
-      setQuizzes(res.data || []);
+      setLoading(true);
+      console.log('📚 Fetching quizzes for user:', user?.role);
+      const res = await api.get('/quizzes');
+      console.log('📚 Quizzes received:', res.data?.length || 0);
+      console.log('📚 Quiz data:', res.data);
+      
+      const quizzesData = res.data || [];
+      setQuizzes(quizzesData);
 
       // Extract unique subjects
-      const uniqueSubjects = [...new Set((res.data || []).map(quiz => quiz.subject))];
+      const uniqueSubjects = [...new Set(quizzesData.map(quiz => quiz.subject))];
       setSubjects(uniqueSubjects);
+      console.log('📚 Unique subjects:', uniqueSubjects);
     } catch (err) {
-      console.error('Failed to fetch quizzes:', err);
+      console.error('❌ Failed to fetch quizzes:', err);
+      console.error('Error details:', {
+        status: err.response?.status,
+        data: err.response?.data,
+        message: err.message
+      });
     } finally {
       setLoading(false);
     }

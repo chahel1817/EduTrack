@@ -25,6 +25,20 @@ const Navbar = () => {
   const [dark, setDark] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
+  /* -------------------------
+      PREVENT BODY SCROLL WHEN MOBILE MENU IS OPEN
+  -------------------------- */
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
   const isActive = (path) => location.pathname === path;
 
   /* -------------------------
@@ -74,6 +88,23 @@ const Navbar = () => {
           <span className="logo-text gradient-text">EduTrack</span>
         </div>
 
+        {/* MOBILE MENU BUTTON */}
+        <button
+          className="mobile-menu-toggle"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+
+        {/* MOBILE MENU BACKDROP */}
+        {mobileMenuOpen && (
+          <div
+            className="mobile-menu-backdrop"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+        )}
+
         {/* LINKS */}
         <div className={`navbar-links ${mobileMenuOpen ? 'mobile-menu-open' : ''}`}>
 
@@ -122,12 +153,12 @@ const Navbar = () => {
           {/* Results */}
           <button
             className={`navbar-link glow-link ${
-              isActive("/results") || isActive(`/my-results/${user._id}`)
+              isActive("/results") || isActive("/my-results")
                 ? "active"
                 : ""
             }`}
             onClick={() => {
-              navigate(user.role === "teacher" ? "/results" : `/my-results/${user._id}`);
+              navigate(user.role === "teacher" ? "/results" : "/my-results");
               setMobileMenuOpen(false);
             }}
           >
@@ -135,14 +166,6 @@ const Navbar = () => {
             <span>Results</span>
           </button>
         </div>
-
-        {/* MOBILE MENU BUTTON */}
-        <button
-          className="mobile-menu-toggle"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
 
         {/* RIGHT SIDE: THEME + USER */}
         <div className="navbar-user" style={{ position: "relative" }}>

@@ -5,19 +5,19 @@ const connectDB = async () => {
     const mongoURI = process.env.MONGO_URI;
 
     if (!mongoURI) {
-      throw new Error("❌ MONGO_URI is not defined in environment variables");
+      console.error("❌ MONGO_URI not found in environment variables");
+      process.exit(1);
     }
 
-    await mongoose.connect(mongoURI, {
-      serverSelectionTimeoutMS: 5000,
+    const conn = await mongoose.connect(mongoURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
     });
 
-    console.log("🟢 MongoDB Connected Successfully");
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error("🔴 MongoDB Connection Error:", error.message);
-
-    // Retry after 5 seconds
-    setTimeout(connectDB, 5000);
+    console.error("❌ MongoDB connection failed:", error.message);
+    process.exit(1);
   }
 };
 

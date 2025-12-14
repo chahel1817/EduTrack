@@ -34,7 +34,7 @@ const StudentProfile = () => {
       try {
         const [resultsRes, quizzesRes] = await Promise.all([
           api.get("/results/student"),
-          api.get("/quiz"),
+          api.get("/quizzes"),
         ]);
         setResults(resultsRes.data || []);
         setQuizzes(quizzesRes.data || []);

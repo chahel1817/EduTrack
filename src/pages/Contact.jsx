@@ -1,247 +1,168 @@
-import { useState } from 'react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import { Mail, MessageSquare, Send, CheckCircle, AlertCircle } from 'lucide-react';
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import {
+  Mail,
+  Phone,
+  MessageCircle,
+  FileText,
+  Clock,
+  Users,
+  Send
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
-  const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    // Basic validation
-    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
-      setError('Please fill in all required fields.');
-      setLoading(false);
-      return;
-    }
-
-    // Simulate API call
-    try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setSubmitted(true);
-    } catch (err) {
-      setError('Failed to send message. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (submitted) {
-    return (
-      <div className="dashboard-container">
-        <Navbar />
-        <main className="dashboard-main">
-          <div className="dashboard-section">
-            <div className="text-center">
-              <div style={{ fontSize: '6rem', marginBottom: '1.5rem', animation: 'bounce 2s infinite' }}>
-                <CheckCircle size={80} style={{ color: 'var(--success)' }} />
-              </div>
-              <h2 style={{
-                fontSize: '36px',
-                fontWeight: '700',
-                marginBottom: '1rem',
-                background: 'linear-gradient(135deg, var(--success), var(--blue))',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                letterSpacing: '-0.5px'
-              }}>
-                Message Sent Successfully!
-              </h2>
-              <p style={{
-                fontSize: '18px',
-                color: '#64748b',
-                marginBottom: '2rem',
-                maxWidth: '600px',
-                margin: '0 auto 3rem auto',
-                lineHeight: '1.6'
-              }}>
-                Thank you for reaching out! We've received your message and will get back to you within 24 hours.
-              </p>
-              <button
-                onClick={() => {
-                  setSubmitted(false);
-                  setFormData({ name: '', email: '', subject: '', message: '' });
-                }}
-                className="btn btn-primary"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  margin: '0 auto',
-                  padding: '16px 32px',
-                  fontSize: '16px',
-                  animation: 'pulse 2s infinite'
-                }}
-              >
-                Send Another Message
-              </button>
-            </div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+  const navigate = useNavigate();
 
   return (
     <div className="dashboard-container">
       <Navbar />
+
       <main className="dashboard-main">
         <div className="dashboard-section">
-          {/* Header */}
+
+          {/* HEADER */}
           <div className="page-header">
             <div className="header-content">
               <div className="header-icon">
-                <Mail size={32} />
+                <Mail size={30} />
               </div>
               <div>
-                <h1 className="page-title">Contact Us</h1>
-                <p className="page-subtitle">Get in touch with our support team</p>
+                <h1 className="page-title">Contact EduTrack</h1>
+                <p className="page-subtitle">
+                  We’re here to help, collaborate, and listen.
+                </p>
               </div>
             </div>
           </div>
 
-          <div className="contact-container">
-            {/* Contact Info */}
-            <div className="contact-info">
-              <div className="info-card">
-                <div className="info-icon">
-                  <Mail size={24} />
-                </div>
-                <h3>Email Support</h3>
-                <p>Get help with technical issues, account problems, or general inquiries.</p>
-                <a href="mailto:support@edutrack.com" className="contact-link">
-                  support@edutrack.com
-                </a>
-              </div>
+          {/* INTRO TEXT */}
+          <p
+            style={{
+              maxWidth: "900px",
+              lineHeight: "1.9",
+              marginBottom: "3rem",
+              color: "var(--gray-700)",
+            }}
+          >
+            EduTrack is designed to empower students and educators with meaningful
+            learning insights. Whether you’re facing a technical issue, looking to
+            collaborate, or want to share ideas — our team is always ready to assist.
+          </p>
 
-              <div className="info-card">
-                <div className="info-icon">
-                  <MessageSquare size={24} />
-                </div>
-                <h3>Live Chat</h3>
-                <p>Chat with our support team for immediate assistance.</p>
-                <span className="contact-status">Available 9 AM - 6 PM EST</span>
+          {/* CONTACT OPTIONS */}
+          <div
+            className="help-grid"
+            style={{
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            }}
+          >
+
+            {/* EMAIL */}
+            <div className="help-card hover-lift">
+              <div className="help-card-icon">
+                <Mail size={26} />
               </div>
+              <h3>Email Support</h3>
+              <p>
+                Reach out for account issues, technical assistance, partnerships,
+                or general questions.
+              </p>
+              <a
+                href="mailto:support@edutrack.com"
+                className="help-link"
+              >
+                support@edutrack.com
+              </a>
             </div>
 
-            {/* Contact Form */}
-            <div className="contact-form-card">
-              <h2 className="form-title">Send us a Message</h2>
-              <p className="form-subtitle">Fill out the form below and we'll get back to you soon.</p>
+            {/* PHONE */}
+            <div className="help-card hover-lift">
+              <div className="help-card-icon">
+                <Phone size={26} />
+              </div>
+              <h3>Phone Support</h3>
+              <p>
+                Prefer speaking directly? Call us during business hours for
+                faster assistance.
+              </p>
+              <span className="help-link">+91 98765 43210</span>
+            </div>
 
-              <form onSubmit={handleSubmit} className="contact-form">
-                {error && (
-                  <div className="error-message">
-                    <AlertCircle size={16} />
-                    {error}
-                  </div>
-                )}
+            {/* LIVE CHAT */}
+            <div className="help-card hover-lift">
+              <div className="help-card-icon">
+                <MessageCircle size={26} />
+              </div>
+              <h3>Live Chat</h3>
+              <p>
+                Chat with our support team in real time for quick questions
+                and troubleshooting.
+              </p>
+              <span className="contact-status">
+                🟢 Available (Mon–Fri, 9 AM – 6 PM)
+              </span>
+            </div>
 
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="name" className="form-label">Full Name *</label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      className="form-input"
-                      placeholder="Enter your full name"
-                      required
-                    />
-                  </div>
+          </div>
 
-                  <div className="form-group">
-                    <label htmlFor="email" className="form-label">Email Address *</label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="form-input"
-                      placeholder="Enter your email address"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="subject" className="form-label">Subject</label>
-                  <select
-                    id="subject"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    className="form-select"
-                  >
-                    <option value="">Select a subject</option>
-                    <option value="technical">Technical Support</option>
-                    <option value="account">Account Issues</option>
-                    <option value="billing">Billing & Payments</option>
-                    <option value="feature">Feature Request</option>
-                    <option value="feedback">Feedback</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="message" className="form-label">Message *</label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    className="form-textarea"
-                    placeholder="Describe your issue or question..."
-                    rows={6}
-                    required
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="btn btn-primary contact-submit-btn"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <div className="spinner"></div>
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      <Send size={16} />
-                      Send Message
-                    </>
-                  )}
-                </button>
-              </form>
+          {/* BUSINESS HOURS */}
+          <div
+            className="card"
+            style={{
+              marginTop: "3rem",
+              display: "flex",
+              alignItems: "center",
+              gap: "16px",
+            }}
+          >
+            <Clock size={28} />
+            <div>
+              <h3>Business Hours</h3>
+              <p>Monday – Friday</p>
+              <p>9:00 AM – 6:00 PM (IST)</p>
             </div>
           </div>
+
+          {/* FEEDBACK CTA */}
+          <div
+            className="card hover-lift"
+            style={{
+              marginTop: "3rem",
+              textAlign: "center",
+              background:
+                "linear-gradient(135deg, var(--primary), var(--secondary))",
+              color: "white",
+            }}
+          >
+            <Users size={40} style={{ marginBottom: "1rem" }} />
+            <h2 style={{ marginBottom: "0.5rem" }}>
+              Help Us Improve EduTrack
+            </h2>
+            <p
+              style={{
+                maxWidth: "750px",
+                margin: "0 auto 1.5rem",
+                opacity: 0.95,
+              }}
+            >
+              Your feedback plays a huge role in shaping better learning
+              experiences for students and teachers.
+            </p>
+
+            <button
+              className="btn btn-light"
+              onClick={() => navigate("/feedback")}
+              style={{ display: "inline-flex", gap: "8px", alignItems: "center" }}
+            >
+              <FileText size={18} />
+              Go to Feedback
+            </button>
+          </div>
+
         </div>
       </main>
+
       <Footer />
     </div>
   );
