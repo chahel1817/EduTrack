@@ -18,6 +18,7 @@ import QuizResultsList from "./pages/QuizResultsList";
 import StudentResults from "./pages/StudentResults";
 import MyResults from "./pages/MyResults";
 import StudentProfile from "./pages/StudentProfile";
+<<<<<<< HEAD
 import FAQs from "./pages/FAQs"; // ✅ FAQ IMPORT
 import ScrollToTop from "./components/ScrollToTop";
 import "./index.css";
@@ -27,6 +28,11 @@ import CreateQuizQuestions from "./pages/CreateQuizQuestions";
 import QuizSuccess from "./pages/QuizSuccess";
 import Documentation from "./pages/Documentation";
 import Tutorials from "./pages/Tutorials";
+=======
+import Leaderboard from "./pages/Leaderboard";
+
+import "./App.css";
+>>>>>>> b88a038d8fd3994e1d8e412b28adc53c774f02e5
 
 /* --------------------------------------------------
    Protected Route Wrapper (ONLY for core features)
@@ -186,7 +192,101 @@ export default function App() {
             }
           />
 
+<<<<<<< HEAD
           {/* ---------- FALLBACK ---------- */}
+=======
+          {/* Student-only */}
+          <Route
+            path="/my-results/:id"
+            element={
+              <ProtectedRoute roles={["student"]}>
+                <StudentResults />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Shared Route (student + teacher) */}
+          <Route
+            path="/quiz/:id"
+            element={
+              <ProtectedRoute>
+                <TakeQuiz />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Quizzes Page */}
+          <Route
+            path="/quizzes"
+            element={
+              <ProtectedRoute>
+                <Quizzes />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Help Page */}
+          <Route
+            path="/help"
+            element={
+              <ProtectedRoute>
+                <Help />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Contact Page */}
+          <Route
+            path="/contact"
+            element={
+              <ProtectedRoute>
+                <Contact />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* About Page */}
+          <Route
+            path="/about"
+            element={
+              <ProtectedRoute>
+                <About />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Privacy Page */}
+          <Route
+            path="/privacy"
+            element={
+              <ProtectedRoute>
+                <Privacy />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Teacher Results Page - List all quizzes with results */}
+          <Route
+            path="/results"
+            element={
+              <ProtectedRoute roles={["teacher"]}>
+                <QuizResultsList />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Leaderboard Page */}
+          <Route
+            path="/leaderboard/:quizId"
+            element={
+              <ProtectedRoute>
+                <Leaderboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Redirects */}
+>>>>>>> b88a038d8fd3994e1d8e412b28adc53c774f02e5
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
 
