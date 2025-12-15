@@ -1,33 +1,12 @@
 import express from "express";
-<<<<<<< HEAD
-import { signup, login, getProfile, forgotPassword, verifyOTP } from "../controllers/authController.js";
-=======
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { body, validationResult } from "express-validator";
-import supabase from "../config/supabase.js";
->>>>>>> b88a038d8fd3994e1d8e412b28adc53c774f02e5
-import { authenticate } from "../middleware/authMiddleware.js";
 import User from "../models/User.js";
+import { authenticate } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-<<<<<<< HEAD
-/* ---------------- SIGNUP ---------------- */
-router.post("/signup", signup);
-
-/* ---------------- PASSWORD LOGIN ---------------- */
-router.post("/login", login);
-
-/* ---------------- FORGOT PASSWORD ---------------- */
-router.post("/forgot-password", forgotPassword);
-
-/* ---------------- VERIFY OTP ---------------- */
-router.post("/verify-otp", verifyOTP);
-
-/* ---------------- PROFILE (Protected) ---------------- */
-router.get("/profile", authenticate, getProfile);
-=======
 /* --------------------------------------------------------
    SIGNUP
 -------------------------------------------------------- */
@@ -48,11 +27,7 @@ router.post(
 
       const { name, email, password, role, age, phone } = req.body;
 
-      const { data: existingUser } = await supabase
-        .from("users")
-        .select("id")
-        .eq("email", email.toLowerCase())
-        .maybeSingle();
+      const existingUser = await User.findOne({ email: email.toLowerCase() });
 
       if (existingUser) {
         return res.status(400).json({ message: "Email already exists" });
@@ -60,23 +35,16 @@ router.post(
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      const { data: newUser, error } = await supabase
-        .from("users")
-        .insert({
-          name: name.trim(),
-          email: email.toLowerCase(),
-          password: hashedPassword,
-          role: role || "student",
-          age: age ? parseInt(age) : null,
-          phone: phone || null,
-        })
-        .select()
-        .single();
+      const newUser = new User({
+        name: name.trim(),
+        email: email.toLowerCase(),
+        password: hashedPassword,
+        role: role || "student",
+        age: age ? parseInt(age) : null,
+        phone: phone || null,
+      });
 
-      if (error) {
-        console.error("Signup error:", error);
-        return res.status(500).json({ message: "Failed to create account" });
-      }
+      await newUser.save();
 
       return res.status(201).json({ message: "Signup successful" });
     } catch (error) {
@@ -85,14 +53,10 @@ router.post(
     }
   }
 );
->>>>>>> b88a038d8fd3994e1d8e412b28adc53c774f02e5
 
 /* --------------------------------------------------------
-   GET CURRENT USER (ME)
+   LOGIN
 -------------------------------------------------------- */
-<<<<<<< HEAD
-router.get("/me", authenticate, async (req, res) => {
-=======
 router.post(
   "/login",
   [
@@ -108,13 +72,9 @@ router.post(
 
       const { email, password } = req.body;
 
-      const { data: user, error } = await supabase
-        .from("users")
-        .select("*")
-        .eq("email", email.toLowerCase())
-        .maybeSingle();
+      const user = await User.findOne({ email: email.toLowerCase() });
 
-      if (error || !user) {
+      if (!user) {
         return res.status(400).json({ message: "Invalid email or password" });
       }
 
@@ -125,12 +85,21 @@ router.post(
       }
 
       const token = jwt.sign(
-        { id: user.id, role: user.role, user_id: user.id },
+        { id: user._id.toString(), role: user.role, user_id: user._id.toString() },
         process.env.JWT_SECRET,
         { expiresIn: "7d" }
       );
 
-      const { password: _, ...safeUser } = user;
+      const safeUser = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        age: user.age,
+        phone: user.phone,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      };
 
       return res.json({ token, user: safeUser });
     } catch (error) {
@@ -141,24 +110,55 @@ router.post(
 );
 
 /* --------------------------------------------------------
-   PROFILE (Protected)
+   GET CURRENT USER (ME)
 -------------------------------------------------------- */
-router.get("/profile", authenticate, async (req, res) => {
->>>>>>> b88a038d8fd3994e1d8e412b28adc53c774f02e5
+router.get("/me", authenticate, async (req, res) => {
   try {
-    const { data: user, error } = await supabase
-      .from("users")
-      .select("id, name, email, role, age, phone, avatar_url, created_at, updated_at")
-      .eq("id", req.user.id)
-      .maybeSingle();
+    const user = await User.findById(req.user.id).select("name email role age phone createdAt updatedAt");
 
-    if (error || !user) {
+    if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.json(user);
+    res.json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      age: user.age,
+      phone: user.phone,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    });
   } catch (error) {
     console.error("Auth Me Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+/* --------------------------------------------------------
+   PROFILE (Protected)
+-------------------------------------------------------- */
+router.get("/profile", authenticate, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("name email role age phone createdAt updatedAt");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      age: user.age,
+      phone: user.phone,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    });
+  } catch (error) {
+    console.error("Auth Profile Error:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -188,18 +188,26 @@ router.put(
       if (age) updateData.age = parseInt(age);
       if (phone !== undefined) updateData.phone = phone || null;
 
-      const { data: updatedUser, error } = await supabase
-        .from("users")
-        .update(updateData)
-        .eq("id", req.user.id)
-        .select("id, name, email, role, age, phone, avatar_url, created_at, updated_at")
-        .single();
+      const updatedUser = await User.findByIdAndUpdate(
+        req.user.id,
+        updateData,
+        { new: true, select: "name email role age phone createdAt updatedAt" }
+      );
 
-      if (error) {
-        return res.status(500).json({ message: "Failed to update profile" });
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
       }
 
-      return res.json(updatedUser);
+      return res.json({
+        id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        age: updatedUser.age,
+        phone: updatedUser.phone,
+        createdAt: updatedUser.createdAt,
+        updatedAt: updatedUser.updatedAt,
+      });
     } catch (error) {
       console.error("Update Profile Error:", error);
       return res.status(500).json({ message: "Server error" });
