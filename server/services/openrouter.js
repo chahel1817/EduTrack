@@ -23,6 +23,13 @@ export const generateQuizWithAI = async ({ topic, difficulty, totalQuestions }) 
   const prompt = `
 Generate ${totalQuestions} ${difficulty} level multiple-choice questions on "${topic}".
 
+Requirements:
+- Questions should be practical and real-world oriented
+- Focus on concepts, applications, and problem-solving
+- Make questions educational and relevant to real scenarios
+- Ensure questions test understanding, not just memorization
+- Options should be plausible and clearly distinguishable
+
 Return ONLY valid JSON in this format:
 {
   "questions": [
