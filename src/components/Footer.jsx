@@ -19,48 +19,47 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="footer-links">
+       <div className="footer-links">
+  <div className="footer-links-left">
+    {/* PLATFORM */}
+    <div className="footer-section">
+      <h4 className="footer-section-title">Platform</h4>
+      <Link to="/dashboard" className="footer-link">Dashboard</Link>
+      <Link to="/quizzes" className="footer-link">Quizzes</Link>
+      <Link to="/results" className="footer-link">Results</Link>
+      <Link to="/profile" className="footer-link">Profile</Link>
+    </div>
+
+    {/* SUPPORT */}
+    <div className="footer-section">
+      <h4 className="footer-section-title">Support</h4>
+      <Link to="/help" className="footer-link">Help Center</Link>
+      <Link to="/contact" className="footer-link">Contact Us</Link>
+      <Link to="/faqs" className="footer-link">FAQ</Link>
+      <Link to="/feedback" className="footer-link">Feedback</Link>
+    </div>
+  </div>
+
+  {/* CONNECT (RIGHT SIDE) */}
+  <div className="footer-social-wrapper">
+    <h4 className="footer-section-title">Connect</h4>
+    <div className="footer-social">
+      <a href="mailto:chahel1817@gmail.com" className="social-link">
+        <Mail size={20} />
+      </a>
+      <a href="https://github.com/chahel1817" target="_blank" className="social-link">
+        <Github size={20} />
+      </a>
+      <a href="https://www.instagram.com/chahel_1817/" target="_blank" className="social-link">
+        <Instagram size={20} />
+      </a>
+    </div>
+  </div>
+</div>
+</div>
+
           {/* PLATFORM */}
-          <div className="footer-section">
-            <h4 className="footer-section-title">Platform</h4>
-            <Link to="/dashboard" className="footer-link">Dashboard</Link>
-            <Link to="/quizzes" className="footer-link">Quizzes</Link>
-            <Link to="/results" className="footer-link">Results</Link>
-            <Link to="/profile" className="footer-link">Profile</Link>
-          </div>
-
-          {/* SUPPORT */}
-          <div className="footer-section">
-            <h4 className="footer-section-title">Support</h4>
-
-            {/* ✅ CORRECT */}
-            <Link to="/help" className="footer-link">Help Center</Link>
-            <Link to="/contact" className="footer-link">Contact Us</Link>
-
-            {/* ✅ FIXED FAQ LINK */}
-            <Link to="/faqs" className="footer-link">FAQ</Link>
-
-            {/* ✅ FIXED FEEDBACK LINK */}
-            <Link to="/feedback" className="footer-link">Feedback</Link>
-          </div>
-
-          {/* CONNECT */}
-          <div className="footer-section">
-            <h4 className="footer-section-title">Connect</h4>
-            <div className="footer-social">
-              <a href="mailto:chahel1817@gmail.com" className="social-link" title="Email">
-                <Mail size={20} />
-              </a>
-              <a href="https://github.com/chahel1817" target="_blank" rel="noopener noreferrer" className="social-link" title="GitHub">
-                <Github size={20} />
-              </a>
-              <a href="https://www.instagram.com/chahel_1817/" target="_blank" rel="noopener noreferrer" className="social-link" title="Instagram">
-                <Instagram size={20} />
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
+          
 
       <div className="footer-bottom">
         <div className="footer-bottom-content">

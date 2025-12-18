@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { api } from "../utils/api";
 import { Mail, Loader2, Sparkles } from "lucide-react";
 
 const ForgotPassword = () => {
@@ -21,12 +21,9 @@ const ForgotPassword = () => {
       setLoading(true);
       setError("");
 
-      await axios.post("http://localhost:5000/api/auth/forgot-password", {
-        email,
-      });
+      await api.post("/auth/forgot-password", { email });
 
       navigate("/verify-otp", { state: { email } });
-
     } catch (err) {
       setError(err.response?.data?.message || "Failed to send OTP");
     } finally {
@@ -38,7 +35,6 @@ const ForgotPassword = () => {
     <div className="auth-page">
       <div className="auth-container">
         <div className="glass-card">
-
           <div className="auth-header">
             <Mail size={52} />
             <Sparkles size={18} />
@@ -63,7 +59,6 @@ const ForgotPassword = () => {
               {loading ? <Loader2 className="loading-spinner" /> : "Send OTP"}
             </button>
           </form>
-
         </div>
       </div>
     </div>

@@ -19,33 +19,27 @@ const Help = () => {
         <div className="dashboard-section">
 
           {/* HEADER */}
-          <div className="page-header">
-            <div className="header-content">
-              <div className="header-icon">
-                <HelpCircle size={32} />
-              </div>
-              <div>
-                <h1 className="page-title">Help Center</h1>
-                <p className="page-subtitle">
-                  Everything you need to get the most out of EduTrack
-                </p>
+          <div className="help-header-block">
+            <div className="page-header">
+              <div className="header-content">
+                <div className="header-icon">
+                  <HelpCircle size={32} />
+                </div>
+                <div>
+                  <h1 className="page-title">Help Center</h1>
+                  <p className="page-subtitle">
+                    Everything you need to get the most out of EduTrack
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* INTRO */}
-          <p
-            style={{
-              maxWidth: "900px",
-              marginBottom: "3rem",
-              lineHeight: "1.8",
-              color: "var(--gray-700)"
-            }}
-          >
-            Whether you're a student taking quizzes or a teacher creating them,
-            our Help Center provides guides, support channels, and resources to
-            ensure a smooth learning experience.
-          </p>
+            <p className="help-intro">
+              Whether you're a student taking quizzes or a teacher creating them,
+              our Help Center provides guides, support channels, and resources to
+              ensure a smooth learning experience.
+            </p>
+          </div>
 
           {/* HELP OPTIONS */}
           <div className="help-grid">
@@ -103,7 +97,7 @@ const Help = () => {
               </p>
               <Link to="/faqs" className="help-link">
                 View FAQs <ChevronRight size={16} />
-                
+
               </Link>
             </div>
 

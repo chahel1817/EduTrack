@@ -20,50 +20,60 @@ const QuizResultsList = () => {
     }
 
     const fetchData = async () => {
-      try {
-        const [quizzesRes, resultsRes] = await Promise.all([
-          api.get("/quizzes"),
-          api.get("/results/all"),
-        ]);
+  try {
+    // 1️⃣ fetch quizzes
+    const quizzesRes = await api.get("/quizzes");
 
-        // Filter quizzes created by this teacher
-        const myQuizzes = (quizzesRes.data || []).filter(
-          (q) => q.createdBy?._id === user._id || q.createdBy === user._id
-        );
+    const myQuizzes = (quizzesRes.data || []).filter(
+  (q) =>
+    String(q.createdBy?._id || q.createdBy) === String(user.id)
+);
 
-        setQuizzes(myQuizzes);
-        setResults(resultsRes.data || []);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+
+    setQuizzes(myQuizzes);
+
+    // 2️⃣ fetch results (THIS WAS MISSING ❌)
+    const resultsRes = await api.get("/results/all");
+    setResults(resultsRes.data || []);
+
+  } catch (err) {
+    console.error("Error fetching data:", err);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
     fetchData();
   }, [user, navigate]);
 
   // Calculate stats for each quiz
-  const getQuizStats = (quizId) => {
-    const quizResults = results.filter((r) => r.quiz?._id === quizId || r.quiz === quizId);
-    const totalSubmissions = quizResults.length;
-    const averageScore =
-      totalSubmissions > 0
-        ? (
-            quizResults.reduce((sum, r) => sum + (r.score || 0), 0) /
-            totalSubmissions
-          ).toFixed(1)
-        : 0;
-    const averagePercentage =
-      totalSubmissions > 0
-        ? (
-            quizResults.reduce((sum, r) => sum + (r.percentage || 0), 0) /
-            totalSubmissions
-          ).toFixed(1)
-        : 0;
+ const getQuizStats = (quizId) => {
+  const quizResults = results.filter(
+    (r) => String(r.quiz?._id || r.quiz) === String(quizId)
+  );
 
-    return { totalSubmissions, averageScore, averagePercentage };
-  };
+  const totalSubmissions = quizResults.length;
+
+  const averageScore =
+    totalSubmissions > 0
+      ? (
+          quizResults.reduce((sum, r) => sum + (r.score || 0), 0) /
+          totalSubmissions
+        ).toFixed(1)
+      : 0;
+
+  const averagePercentage =
+    totalSubmissions > 0
+      ? (
+          quizResults.reduce((sum, r) => sum + (r.percentage || 0), 0) /
+          totalSubmissions
+        ).toFixed(1)
+      : 0;
+
+  return { totalSubmissions, averageScore, averagePercentage };
+};
+
 
   if (loading) {
     return (
@@ -86,11 +96,14 @@ const QuizResultsList = () => {
           {/* Header */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "32px", flexWrap: "wrap", gap: "16px" }}>
             <div>
-              <h2 className="section-heading" style={{ margin: 0 }}>
-                <BarChart3 size={28} style={{ marginRight: "12px", verticalAlign: "middle" }} />
-                Quiz Results
-              </h2>
-              <p style={{ color: "var(--gray-600)", marginTop: "8px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+  <BarChart3 size={30} />
+  <h2 className="section-heading" style={{ margin: 0 }}>
+    Quiz Results
+  </h2>
+</div>
+             <p style={{ color: "var(--gray-600)", marginTop: "6px", maxWidth: "520px" }}>
+
                 View and analyze results for all your quizzes
               </p>
             </div>
@@ -134,7 +147,7 @@ const QuizResultsList = () => {
                       </p>
                       <div className="quiz-card-stats">
                         <div className="quiz-stat-item">
-                          <BookOpen size={14} />
+                          <BookOpen size={16} />
                           <span>{quiz.questions?.length || 0} questions</span>
                         </div>
                         <div className="quiz-stat-item">

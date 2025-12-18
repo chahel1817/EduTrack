@@ -1,11 +1,8 @@
-# TODO: Remove Supabase and Switch to MongoDB Only
+# TODO: Fix Quiz Submission Issue
 
 ## Tasks
-- [x] Remove @supabase/supabase-js from server/package.json
-- [x] Update server/index.js: remove Supabase import and update health check
-- [x] Update server/routes/authRoutes.js: replace Supabase with User model
-- [x] Update server/routes/quizRoutes.js: replace Supabase with Quiz model
-- [ ] Update server/routes/resultRoutes.js: replace Supabase with Result model
-- [ ] Remove supabase folder
-- [ ] Run npm install in server directory
-- [ ] Test the application
+- [x] Analyze the quiz submission problem
+- [ ] Update Result model to use `question` ObjectId instead of `questionIndex`
+- [ ] Test quiz submission functionality
+- [ ] Verify results are stored in database
+- [ ] Confirm students can access results in the results section

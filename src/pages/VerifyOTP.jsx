@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import { api } from "../utils/api";
 import { useAuth } from "../context/AuthContext";
 import { Key, Loader2 } from "lucide-react";
 
@@ -14,9 +14,11 @@ const VerifyOTP = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  if (!email) {
-    navigate("/login");
-  }
+  useEffect(() => {
+    if (!email) {
+      navigate("/login");
+    }
+  }, [email, navigate]);
 
   const handleVerifyOTP = async () => {
     if (!otp) {
@@ -28,12 +30,9 @@ const VerifyOTP = () => {
       setLoading(true);
       setError("");
 
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/verify-otp",
-        { email, otp }
-      );
+      const res = await api.post("/auth/verify-otp", { email, otp });
 
-      // ✅ DIRECT LOGIN
+      // ✅ DIRECT LOGIN (JWT + user stored)
       setAuth(res.data.token, res.data.user);
 
       navigate("/dashboard");
@@ -48,7 +47,6 @@ const VerifyOTP = () => {
     <div className="auth-page">
       <div className="auth-container">
         <div className="glass-card">
-
           <div className="auth-header">
             <Key size={52} />
             <h1 className="auth-title">Verify OTP</h1>
@@ -72,10 +70,13 @@ const VerifyOTP = () => {
               onClick={handleVerifyOTP}
               disabled={loading}
             >
-              {loading ? <Loader2 className="loading-spinner" /> : "Verify & Login"}
+              {loading ? (
+                <Loader2 className="loading-spinner" />
+              ) : (
+                "Verify & Login"
+              )}
             </button>
           </div>
-
         </div>
       </div>
     </div>

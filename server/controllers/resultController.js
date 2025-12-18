@@ -110,9 +110,13 @@ export const getResultsByQuiz = async (req, res) => {
 -------------------------------------------------------- */
 export const getStudentResults = async (req, res) => {
   try {
-    const results = await Result.find({ student: req.user.id })
-      .populate("quiz", "title subject")
-      .sort({ createdAt: -1 });
+   console.log("👤 Student ID:", req.user.id);
+
+const results = await Result.find({ student: req.user.id })
+  .populate("quiz", "title subject")
+  .sort({ createdAt: -1 });
+
+console.log("📊 Student results found:", results.length);
 
     return res.json(results);
   } catch (error) {
@@ -131,11 +135,24 @@ export const getAllResults = async (req, res) => {
     }
 
     const results = await Result.find()
-      .populate("quiz", "title subject")
-      .populate("student", "name email")
-      .sort({ createdAt: -1 });
+  .populate({
+    path: "quiz",
+    select: "title subject createdBy", // 🔥 createdBy is REQUIRED
+  })
+  .populate("student", "name email")
+  .sort({ createdAt: -1 });
 
-    return res.json(results);
+// 🔐 Filter ONLY quizzes created by this teacher
+const teacherResults = results.filter(
+  (r) => String(r.quiz?.createdBy) === String(req.user.id)
+);
+
+console.log("👨‍🏫 Teacher ID:", req.user.id);
+console.log("📊 Total results in DB:", results.length);
+console.log("✅ Teacher results found:", teacherResults.length);
+
+return res.json(teacherResults);
+
   } catch (error) {
     console.error("Get All Results Error:", error);
     return res.status(500).json({ message: "Server error" });

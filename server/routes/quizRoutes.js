@@ -1,6 +1,7 @@
 import express from "express";
 import { body, validationResult } from "express-validator";
 import Quiz from "../models/Quiz.js";
+import Result from "../models/Result.js";
 import { authenticate, authorize } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -13,9 +14,17 @@ router.post(
   authenticate,
   authorize(["teacher"]),
   [
-    body("title").trim().isLength({ min: 3 }).withMessage("Title must be at least 3 characters"),
-    body("subject").trim().notEmpty().withMessage("Subject is required"),
-    body("questions").isArray({ min: 1 }).withMessage("At least one question is required"),
+    body("title")
+      .trim()
+      .isLength({ min: 3 })
+      .withMessage("Title must be at least 3 characters"),
+    body("subject")
+      .trim()
+      .notEmpty()
+      .withMessage("Subject is required"),
+    body("questions")
+      .isArray({ min: 1 })
+      .withMessage("At least one question is required"),
   ],
   async (req, res) => {
     try {
@@ -24,13 +33,20 @@ router.post(
         return res.status(400).json({ message: errors.array()[0].msg });
       }
 
-      const { title, subject, description, questions, timeLimit, enableQuestionTimeLimit } = req.body;
+      const {
+        title,
+        subject,
+        description,
+        questions,
+        timeLimit,
+        enableQuestionTimeLimit,
+      } = req.body;
 
-      const quizData = {
+      const quiz = new Quiz({
         title: title.trim(),
         subject: subject.trim(),
         description: description || "",
-        questions: questions.map(q => ({
+        questions: questions.map((q) => ({
           question: q.question,
           options: q.options,
           correctAnswer: q.correctAnswer,
@@ -40,28 +56,18 @@ router.post(
         timeLimit: timeLimit || null,
         enableQuestionTimeLimit: enableQuestionTimeLimit || false,
         createdBy: req.user.id,
-      };
+      });
 
-      const quiz = new Quiz(quizData);
       await quiz.save();
+      await quiz.populate("createdBy", "name email role");
 
-      // Populate createdBy for response
-      await quiz.populate('createdBy', 'name email role');
-
-      return res.status(201).json({
+      res.status(201).json({
         _id: quiz._id,
         id: quiz._id,
         title: quiz.title,
         subject: quiz.subject,
         description: quiz.description,
-        questions: quiz.questions.map(q => ({
-          _id: q._id,
-          question: q.question,
-          options: q.options,
-          correctAnswer: q.correctAnswer,
-          points: q.points,
-          timeLimit: q.timeLimit,
-        })),
+        questions: quiz.questions,
         timeLimit: quiz.timeLimit,
         enableQuestionTimeLimit: quiz.enableQuestionTimeLimit,
         createdBy: quiz.createdBy,
@@ -70,7 +76,7 @@ router.post(
       });
     } catch (error) {
       console.error("Create Quiz Error:", error);
-      return res.status(500).json({ message: "Server error" });
+      res.status(500).json({ message: "Server error" });
     }
   }
 );
@@ -80,28 +86,11 @@ router.post(
 -------------------------------------------------------- */
 router.get("/", authenticate, async (req, res) => {
   try {
-    const { subject, search } = req.query;
-
-    let query = Quiz.find()
-      .populate('createdBy', 'name email role')
+    const quizzes = await Quiz.find()
+      .populate("createdBy", "name email role")
       .sort({ createdAt: -1 });
 
-    if (subject) {
-      query = query.where('subject', subject);
-    }
-
-    if (search) {
-      query = query.where({
-        $or: [
-          { title: { $regex: search, $options: 'i' } },
-          { subject: { $regex: search, $options: 'i' } }
-        ]
-      });
-    }
-
-    const quizzes = await query;
-
-    const formattedQuizzes = quizzes.map((quiz) => ({
+    const formatted = quizzes.map((quiz) => ({
       _id: quiz._id,
       id: quiz._id,
       title: quiz.title,
@@ -113,13 +102,13 @@ router.get("/", authenticate, async (req, res) => {
       updatedAt: quiz.updatedAt,
       createdBy: quiz.createdBy,
       questionsCount: quiz.questions.length,
-      totalPoints: quiz.questions.reduce((sum, q) => sum + q.points, 0),
+      totalPoints: quiz.questions.reduce((s, q) => s + q.points, 0),
     }));
 
-    return res.json(formattedQuizzes);
+    res.json(formatted);
   } catch (error) {
     console.error("Get Quizzes Error:", error);
-    return res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
@@ -128,13 +117,16 @@ router.get("/", authenticate, async (req, res) => {
 -------------------------------------------------------- */
 router.get("/:id", authenticate, async (req, res) => {
   try {
-    const quiz = await Quiz.findById(req.params.id).populate('createdBy', 'name email role');
+    const quiz = await Quiz.findById(req.params.id).populate(
+      "createdBy",
+      "name email role"
+    );
 
     if (!quiz) {
       return res.status(404).json({ message: "Quiz not found" });
     }
 
-    const formattedQuiz = {
+    res.json({
       _id: quiz._id,
       id: quiz._id,
       title: quiz.title,
@@ -145,26 +137,17 @@ router.get("/:id", authenticate, async (req, res) => {
       createdAt: quiz.createdAt,
       updatedAt: quiz.updatedAt,
       createdBy: quiz.createdBy,
-      questions: quiz.questions.map(q => ({
-        _id: q._id,
-        question: q.question,
-        options: q.options,
-        correctAnswer: q.correctAnswer,
-        points: q.points,
-        timeLimit: q.timeLimit,
-      })),
-      totalPoints: quiz.questions.reduce((sum, q) => sum + q.points, 0),
-    };
-
-    return res.json(formattedQuiz);
+      questions: quiz.questions,
+      totalPoints: quiz.questions.reduce((s, q) => s + q.points, 0),
+    });
   } catch (error) {
     console.error("Get Quiz Error:", error);
-    return res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
 /* --------------------------------------------------------
-   UPDATE QUIZ (Teacher + Must Be Creator)
+   UPDATE QUIZ (Teacher + Creator Only)
 -------------------------------------------------------- */
 router.put(
   "/:id",
@@ -172,66 +155,31 @@ router.put(
   authorize(["teacher"]),
   async (req, res) => {
     try {
-      const { title, subject, description, timeLimit, enableQuestionTimeLimit, questions } = req.body;
-
-      const quiz = await Quiz.findOne({ _id: req.params.id, createdBy: req.user.id });
+      const quiz = await Quiz.findOne({
+        _id: req.params.id,
+        createdBy: req.user.id,
+      });
 
       if (!quiz) {
-        return res.status(404).json({ message: "Quiz not found or unauthorized" });
+        return res
+          .status(404)
+          .json({ message: "Quiz not found or unauthorized" });
       }
 
-      const updateData = {};
-      if (title) updateData.title = title.trim();
-      if (subject) updateData.subject = subject.trim();
-      if (description !== undefined) updateData.description = description;
-      if (timeLimit !== undefined) updateData.timeLimit = timeLimit;
-      if (enableQuestionTimeLimit !== undefined) updateData.enableQuestionTimeLimit = enableQuestionTimeLimit;
-      if (questions) {
-        updateData.questions = questions.map(q => ({
-          question: q.question,
-          options: q.options,
-          correctAnswer: q.correctAnswer,
-          points: q.points || 1,
-          timeLimit: q.timeLimit || null,
-        }));
-      }
+      Object.assign(quiz, req.body);
+      await quiz.save();
+      await quiz.populate("createdBy", "name email role");
 
-      const updatedQuiz = await Quiz.findByIdAndUpdate(
-        req.params.id,
-        updateData,
-        { new: true }
-      ).populate('createdBy', 'name email role');
-
-      return res.json({
-        _id: updatedQuiz._id,
-        id: updatedQuiz._id,
-        title: updatedQuiz.title,
-        subject: updatedQuiz.subject,
-        description: updatedQuiz.description,
-        timeLimit: updatedQuiz.timeLimit,
-        enableQuestionTimeLimit: updatedQuiz.enableQuestionTimeLimit,
-        createdBy: updatedQuiz.createdBy,
-        createdAt: updatedQuiz.createdAt,
-        updatedAt: updatedQuiz.updatedAt,
-        questions: updatedQuiz.questions.map(q => ({
-          _id: q._id,
-          question: q.question,
-          options: q.options,
-          correctAnswer: q.correctAnswer,
-          points: q.points,
-          timeLimit: q.timeLimit,
-        })),
-        totalPoints: updatedQuiz.questions.reduce((sum, q) => sum + q.points, 0),
-      });
+      res.json(quiz);
     } catch (error) {
       console.error("Update Quiz Error:", error);
-      return res.status(500).json({ message: "Server error" });
+      res.status(500).json({ message: "Server error" });
     }
   }
 );
 
 /* --------------------------------------------------------
-   DELETE QUIZ (Teacher + Must Be Creator)
+   DELETE QUIZ (Teacher + Creator Only)  ✅ FIXED
 -------------------------------------------------------- */
 router.delete(
   "/:id",
@@ -239,55 +187,65 @@ router.delete(
   authorize(["teacher"]),
   async (req, res) => {
     try {
-      const { error } = await supabase
-        .from("quizzes")
-        .delete()
-        .eq("id", req.params.id)
-        .eq("created_by", req.user.id);
+      const quiz = await Quiz.findOne({
+        _id: req.params.id,
+        createdBy: req.user.id,
+      });
 
-      if (error) {
-        return res.status(404).json({ message: "Quiz not found or unauthorized" });
+      if (!quiz) {
+        return res
+          .status(404)
+          .json({ message: "Quiz not found or unauthorized" });
       }
 
-      return res.json({ message: "Quiz deleted successfully" });
+      // 🔥 Delete related results first
+      await Result.deleteMany({ quiz: quiz._id });
+
+      // 🔥 Delete quiz
+      await Quiz.findByIdAndDelete(quiz._id);
+
+      res.json({ message: "Quiz deleted successfully" });
     } catch (error) {
       console.error("Delete Quiz Error:", error);
-      return res.status(500).json({ message: "Server error" });
+      res.status(500).json({ message: "Server error" });
     }
   }
 );
 
-
 /* --------------------------------------------------------
    GET TEACHER'S QUIZZES
 -------------------------------------------------------- */
-router.get("/teacher/my-quizzes", authenticate, authorize(["teacher"]), async (req, res) => {
-  try {
-    const quizzes = await Quiz.find({ createdBy: req.user.id })
-      .populate('createdBy', 'name email role')
-      .sort({ createdAt: -1 });
+router.get(
+  "/teacher/my-quizzes",
+  authenticate,
+  authorize(["teacher"]),
+  async (req, res) => {
+    try {
+      const quizzes = await Quiz.find({ createdBy: req.user.id })
+        .populate("createdBy", "name email role")
+        .sort({ createdAt: -1 });
 
-    const formattedQuizzes = quizzes.map((quiz) => ({
-      _id: quiz._id,
-      id: quiz._id,
-      title: quiz.title,
-      subject: quiz.subject,
-      description: quiz.description,
-      timeLimit: quiz.timeLimit,
-      enableQuestionTimeLimit: quiz.enableQuestionTimeLimit,
-      createdAt: quiz.createdAt,
-      updatedAt: quiz.updatedAt,
-      createdBy: quiz.createdBy,
-      questionsCount: quiz.questions.length,
-      totalPoints: quiz.questions.reduce((sum, q) => sum + q.points, 0),
-      submissionsCount: 0, // TODO: Implement when results are migrated
-    }));
-
-    return res.json(formattedQuizzes);
-  } catch (error) {
-    console.error("Get Teacher Quizzes Error:", error);
-    return res.status(500).json({ message: "Server error" });
+      res.json(
+        quizzes.map((quiz) => ({
+          _id: quiz._id,
+          id: quiz._id,
+          title: quiz.title,
+          subject: quiz.subject,
+          description: quiz.description,
+          timeLimit: quiz.timeLimit,
+          enableQuestionTimeLimit: quiz.enableQuestionTimeLimit,
+          createdAt: quiz.createdAt,
+          updatedAt: quiz.updatedAt,
+          createdBy: quiz.createdBy,
+          questionsCount: quiz.questions.length,
+          totalPoints: quiz.questions.reduce((s, q) => s + q.points, 0),
+        }))
+      );
+    } catch (error) {
+      console.error("Get Teacher Quizzes Error:", error);
+      res.status(500).json({ message: "Server error" });
+    }
   }
-});
+);
 
 export default router;

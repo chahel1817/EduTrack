@@ -103,14 +103,6 @@ export default function App() {
             }
           />
 
-          <Route
-            path="/quizzes"
-            element={
-              <ProtectedRoute>
-                <Quizzes />
-              </ProtectedRoute>
-            }
-          />
 
           <Route
             path="/quiz/:id"
@@ -131,14 +123,6 @@ export default function App() {
             }
           />
 
-          <Route
-            path="/my-results/:id"
-            element={
-              <ProtectedRoute roles={["student"]}>
-                <StudentResults />
-              </ProtectedRoute>
-            }
-          />
 
           {/* ---------- TEACHER ONLY ---------- */}
          {/* ---------- TEACHER ONLY ---------- */}
@@ -169,18 +153,6 @@ export default function App() {
   }
 />
 
-
-         
-
-          <Route
-            path="/results"
-            element={
-              <ProtectedRoute roles={["teacher"]}>
-                <QuizResultsList />
-              </ProtectedRoute>
-            }
-          />
-
           <Route
             path="/results/:id"
             element={
@@ -201,15 +173,7 @@ export default function App() {
             }
           />
 
-          {/* Shared Route (student + teacher) */}
-          <Route
-            path="/quiz/:id"
-            element={
-              <ProtectedRoute>
-                <TakeQuiz />
-              </ProtectedRoute>
-            }
-          />
+      
 
           {/* Quizzes Page */}
           <Route

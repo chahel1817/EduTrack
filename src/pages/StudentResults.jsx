@@ -2,6 +2,17 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../utils/api";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+
+import {
+  BarChart3,
+  BookOpen,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  ArrowLeft,
+  Award,
+} from "lucide-react";
 
 const StudentResults = () => {
   const { id } = useParams(); // quizId
@@ -11,39 +22,60 @@ const StudentResults = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchResult = async () => {
-      try {
-        const res = await api.get("/results/student");
-        const results = res.data || [];
+  const fetchResult = async () => {
+    try {
+      console.log("🔍 Fetching student results for quiz:", id);
 
-        const found = results.find(
-          (r) => r.quiz?._id?.toString() === id
-        );
+      const res = await api.get("/results/student");
 
-        if (!found) return;
+      console.log("📦 Raw API response:", res.data);
 
-        setResult(found);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      const results = res.data || [];
 
-    fetchResult();
-  }, [id]);
+     const found = results.find(
+  (r) => String(r.quiz?._id || r.quiz) === String(id)
+);
 
-  if (loading) return <p>Loading...</p>;
 
-  if (!result)
+      console.log("🎯 Matched result:", found);
+
+      if (found) setResult(found);
+    } catch (err) {
+      console.error("❌ Frontend error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchResult();
+}, [id]);
+
+
+  if (loading) {
     return (
-      <>
+      <div className="dashboard-container">
         <Navbar />
-        <h2 style={{ textAlign: "center" }}>
-          ❌ Result not found
-        </h2>
-      </>
+        <main className="dashboard-main">
+          <div className="loading">Loading result...</div>
+        </main>
+      </div>
     );
+  }
+
+  if (!result) {
+    return (
+      <div className="dashboard-container">
+        <Navbar />
+        <main className="dashboard-main">
+          <div className="empty-state enhanced">
+            <XCircle size={64} color="var(--error)" />
+            <h3>Result Not Found</h3>
+            <p>The result for this quiz could not be found.</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   const { quiz } = result;
 
@@ -51,54 +83,112 @@ const StudentResults = () => {
     <div className="dashboard-container">
       <Navbar />
       <main className="dashboard-main">
-        <h2>📊 {quiz.title}</h2>
-        <p>Subject: {quiz.subject}</p>
 
-        <p>
-          Score: <strong>{result.score}/{result.total}</strong>
-        </p>
-        <p>
-          Percentage: <strong>{result.percentage}%</strong>
-        </p>
-        <p>
-          Time Spent: <strong>{result.timeSpent} min</strong>
-        </p>
+        {/* HEADER */}
+        <section className="dashboard-section">
+          <div className="card" style={{ padding: "2rem" }}>
+            <h2 className="section-heading">
+              <BarChart3 size={28} style={{ marginRight: 10 }} />
+              {quiz.title}
+            </h2>
+            <p style={{ color: "var(--gray-600)", marginTop: 4 }}>
+              <BookOpen size={14} /> Subject: {quiz.subject}
+            </p>
 
-        <hr />
+            {/* STATS */}
+            <div className="stats-grid" style={{ marginTop: "1.5rem" }}>
+              <div className="stat-card">
+                <Award size={24} />
+                <h3>{result.score}/{result.total}</h3>
+                <p>Score</p>
+              </div>
 
-        <h3>📝 Question Review</h3>
+              <div className="stat-card">
+                <CheckCircle2 size={24} />
+                <h3>{result.percentage}%</h3>
+                <p>Percentage</p>
+              </div>
 
-        {quiz.questions.map((q, index) => {
-          const ans = result.answers.find(
-            (a) => a.questionIndex === index
-          );
-
-          return (
-            <div key={index} style={{ marginBottom: "1rem" }}>
-              <p><strong>{index + 1}. {q.question}</strong></p>
-              {q.options.map((opt, i) => (
-                <p
-                  key={i}
-                  style={{
-                    color:
-                      i === q.correctAnswer
-                        ? "green"
-                        : ans?.selectedAnswer === i
-                        ? "red"
-                        : "black",
-                  }}
-                >
-                  {opt}
-                </p>
-              ))}
+              <div className="stat-card">
+                <Clock size={24} />
+                <h3>{result.timeSpent} min</h3>
+                <p>Time Spent</p>
+              </div>
             </div>
-          );
-        })}
+          </div>
+        </section>
 
-        <button onClick={() => navigate("/my-results")}>
-          Back to My Results
-        </button>
+        {/* QUESTION REVIEW */}
+        <section className="dashboard-section">
+          <h2 className="section-heading">
+            <BookOpen size={28} style={{ marginRight: 10 }} />
+            Question Review
+          </h2>
+
+          {quiz.questions.map((q, index) => {
+            const ans = result.answers.find(
+              (a) => a.questionIndex === index
+            );
+
+            return (
+              <div key={index} className="card" style={{ marginBottom: "1.5rem" }}>
+                <h3 style={{ marginBottom: "1rem" }}>
+                  {index + 1}. {q.question}
+                </h3>
+
+                {q.options.map((opt, i) => {
+                  const isCorrect = i === q.correctAnswer;
+                  const isSelected = ans?.selectedAnswer === i;
+
+                  return (
+                    <div
+                      key={i}
+                      style={{
+                        padding: "10px 14px",
+                        borderRadius: "8px",
+                        marginBottom: "8px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        background: isCorrect
+                          ? "rgba(16,185,129,0.15)"
+                          : isSelected
+                          ? "rgba(239,68,68,0.15)"
+                          : "var(--gray-50)",
+                        border: isCorrect
+                          ? "1px solid rgba(16,185,129,0.4)"
+                          : isSelected
+                          ? "1px solid rgba(239,68,68,0.4)"
+                          : "1px solid var(--border-gray)",
+                      }}
+                    >
+                      {isCorrect ? (
+                        <CheckCircle2 size={18} color="var(--accent-dark)" />
+                      ) : isSelected ? (
+                        <XCircle size={18} color="var(--error-dark)" />
+                      ) : null}
+                      <span>{opt}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </section>
+
+        {/* ACTION */}
+        <section className="dashboard-section" style={{ textAlign: "center" }}>
+          <button
+            className="btn btn-outline"
+            onClick={() => navigate("/my-results")}
+          >
+            <ArrowLeft size={18} />
+            Back to My Results
+          </button>
+        </section>
+
       </main>
+      <Footer />
     </div>
   );
 };

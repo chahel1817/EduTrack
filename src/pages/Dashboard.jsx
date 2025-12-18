@@ -74,7 +74,7 @@ const QuizCard = ({ quiz, onTakeQuiz, isTeacher, navigate }) => (
       <div className="quiz-card-stats">
         <div className="quiz-stat-item">
           <FileText size={14} />
-          <span>{quiz.questions?.length || 0} questions</span>
+          <span>{quiz.questionsCount || quiz.questions?.length || 0} questions</span>
         </div>
         {quiz.timeLimit && (
           <div className="quiz-stat-item">
@@ -120,40 +120,28 @@ export default function Dashboard() {
   /* -------------------------------------------------- */
   /* API FETCHES */
   /* -------------------------------------------------- */
-  const fetchQuizzes = useCallback(async (signal) => {
-    try {
-      console.log("📚 Fetching quizzes for user:", user?.role);
-      const res = await api.get("/quizzes", { signal });
-      console.log("📚 Quizzes received:", res.data?.length || 0);
-      console.log("📚 Quiz data:", res.data);
-      
-      const quizzesData = res.data || [];
-      
-      // For teachers, show only their quizzes on dashboard
-      // For students, show all quizzes
-      if (user?.role === "teacher") {
-        const myQuizzes = quizzesData.filter(
-          (q) => q.createdBy?._id === user._id || 
-                 q.createdBy?._id?.toString() === user._id?.toString() ||
-                 q.createdBy?.toString() === user._id?.toString() ||
-                 q.createdBy === user._id
-        );
-        console.log("📚 Filtered teacher quizzes:", myQuizzes.length);
-        setQuizzes(myQuizzes);
-      } else {
-        // Students see all quizzes
-        console.log("📚 Showing all quizzes for student:", quizzesData.length);
-        setQuizzes(quizzesData);
-      }
-    } catch (err) {
-      console.error("❌ Failed to fetch quizzes:", err);
-      console.error("Error details:", {
-        status: err.response?.status,
-        data: err.response?.data,
-        message: err.message
-      });
+ const fetchQuizzes = useCallback(async (signal) => {
+  try {
+    console.log("📚 Fetching quizzes for user:", user?.role);
+
+    let res;
+
+    if (user?.role === "teacher") {
+      // ✅ CORRECT endpoint for teacher dashboard
+      res = await api.get("/quizzes/teacher/my-quizzes", { signal });
+    } else {
+      // ✅ Students see all quizzes
+      res = await api.get("/quizzes", { signal });
     }
-  }, [user]);
+
+    console.log("📚 Quizzes received:", res.data?.length || 0);
+    setQuizzes(res.data || []);
+  }catch (err) {
+  if (err.code === "ERR_CANCELED") return; // ✅ ignore cancel
+  console.error("Failed to fetch quizzes:", err);
+}
+}, [user]);
+
 
   const fetchStudentResults = useCallback(async (signal) => {
     try {

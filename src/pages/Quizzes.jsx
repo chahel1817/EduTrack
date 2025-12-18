@@ -1,69 +1,92 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { api } from '../utils/api';
-import { useAuth } from '../context/AuthContext';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import { Search, BookOpen, Clock, Users, Play, Plus, Filter } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { api } from "../utils/api";
+import { useAuth } from "../context/AuthContext";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import {
+  Search,
+  BookOpen,
+  Clock,
+  Users,
+  Play,
+  Plus,
+  Filter,
+} from "lucide-react";
 
 const Quizzes = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterSubject, setFilterSubject] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterSubject, setFilterSubject] = useState("");
   const [subjects, setSubjects] = useState([]);
 
+  /* --------------------------------------------------
+     ROLE GUARD — TEACHERS NOT ALLOWED HERE
+  -------------------------------------------------- */
   useEffect(() => {
-    if (user) {
-      fetchQuizzes();
+    if (!user) return;
+
+    // 🚫 Teachers should never access student quizzes page
+    if (user.role === "teacher") {
+      navigate("/teacher-quizzes"); // or /dashboard
+      return;
     }
+
+    fetchQuizzes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
+  /* --------------------------------------------------
+     FETCH QUIZZES (STUDENTS ONLY)
+  -------------------------------------------------- */
   const fetchQuizzes = async () => {
     try {
       setLoading(true);
-      console.log('📚 Fetching quizzes for user:', user?.role);
-      const res = await api.get('/quizzes');
-      console.log('📚 Quizzes received:', res.data?.length || 0);
-      console.log('📚 Quiz data:', res.data);
-      
+      const res = await api.get("/quizzes");
+
       const quizzesData = res.data || [];
       setQuizzes(quizzesData);
 
-      // Extract unique subjects
-      const uniqueSubjects = [...new Set(quizzesData.map(quiz => quiz.subject))];
+      // unique subjects
+      const uniqueSubjects = [
+        ...new Set(quizzesData.map((q) => q.subject)),
+      ];
       setSubjects(uniqueSubjects);
-      console.log('📚 Unique subjects:', uniqueSubjects);
     } catch (err) {
-      console.error('❌ Failed to fetch quizzes:', err);
-      console.error('Error details:', {
-        status: err.response?.status,
-        data: err.response?.data,
-        message: err.message
-      });
+      console.error("❌ Failed to fetch quizzes:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredQuizzes = quizzes.filter(quiz => {
-    const matchesSearch = quiz.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         quiz.subject.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesSubject = !filterSubject || quiz.subject === filterSubject;
+  /* --------------------------------------------------
+     FILTER LOGIC
+  -------------------------------------------------- */
+  const filteredQuizzes = quizzes.filter((quiz) => {
+    const matchesSearch =
+      quiz.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      quiz.subject.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesSubject =
+      !filterSubject || quiz.subject === filterSubject;
+
     return matchesSearch && matchesSubject;
   });
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+  const formatDate = (dateString) =>
+    new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
-  };
 
+  /* --------------------------------------------------
+     LOADING STATE
+  -------------------------------------------------- */
   if (loading) {
     return (
       <div className="dashboard-container">
@@ -76,12 +99,15 @@ const Quizzes = () => {
     );
   }
 
+  /* --------------------------------------------------
+     UI
+  -------------------------------------------------- */
   return (
     <div className="dashboard-container">
       <Navbar />
       <main className="dashboard-main">
         <div className="dashboard-section">
-          {/* Header */}
+          {/* HEADER */}
           <div className="page-header">
             <div className="header-content">
               <div className="header-icon">
@@ -89,23 +115,16 @@ const Quizzes = () => {
               </div>
               <div>
                 <h1 className="page-title">Available Quizzes</h1>
-                <p className="page-subtitle">Browse and take quizzes to test your knowledge</p>
+                <p className="page-subtitle">
+                  Browse and take quizzes to test your knowledge
+                </p>
               </div>
             </div>
 
-            {user.role === 'teacher' && (
-              <button
-                onClick={() => navigate('/create-quiz')}
-                className="btn btn-primary"
-                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-              >
-                <Plus size={18} />
-                Create Quiz
-              </button>
-            )}
+            {/* Teachers see Create Quiz button elsewhere, not here */}
           </div>
 
-          {/* Search and Filter */}
+          {/* SEARCH & FILTER */}
           <div className="filters-section">
             <div className="search-bar">
               <Search size={20} />
@@ -126,35 +145,38 @@ const Quizzes = () => {
                 className="filter-select"
               >
                 <option value="">All Subjects</option>
-                {subjects.map(subject => (
-                  <option key={subject} value={subject}>{subject}</option>
+                {subjects.map((subject) => (
+                  <option key={subject} value={subject}>
+                    {subject}
+                  </option>
                 ))}
               </select>
             </div>
           </div>
 
-          {/* Quizzes Grid */}
+          {/* QUIZZES GRID */}
           {filteredQuizzes.length === 0 ? (
             <div className="empty-state enhanced">
-              <div className="empty-icon">
-                📚
-              </div>
+              <div className="empty-icon">📚</div>
               <h3>No quizzes found</h3>
               <p>Try adjusting your search or filter criteria.</p>
             </div>
           ) : (
             <div className="quizzes-grid">
-              {filteredQuizzes.map(quiz => (
+              {filteredQuizzes.map((quiz) => (
                 <div key={quiz._id} className="quiz-card">
                   <div className="quiz-header">
                     <div className="quiz-subject">{quiz.subject}</div>
-                    <div className="quiz-date">{formatDate(quiz.createdAt)}</div>
+                    <div className="quiz-date">
+                      {formatDate(quiz.createdAt)}
+                    </div>
                   </div>
 
                   <div className="quiz-content">
                     <h3 className="quiz-title">{quiz.title}</h3>
                     <p className="quiz-description">
-                      {quiz.description || 'Test your knowledge with this interactive quiz.'}
+                      {quiz.description ||
+                        "Test your knowledge with this interactive quiz."}
                     </p>
 
                     <div className="quiz-stats">
@@ -164,20 +186,25 @@ const Quizzes = () => {
                       </div>
                       <div className="stat-item">
                         <Users size={16} />
-                        <span>Created by {quiz.createdBy?.name || 'Teacher'}</span>
+                        <span>
+                          Created by {quiz.createdBy?.name || "Teacher"}
+                        </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="quiz-actions">
-                    <button
-                      onClick={() => navigate(`/quiz/${quiz._id}`)}
-                      className="btn btn-primary quiz-btn"
-                    >
-                      <Play size={16} />
-                      Take Quiz
-                    </button>
-                  </div>
+                  {/* ✅ STUDENTS ONLY */}
+                  {user.role === "student" && (
+                    <div className="quiz-actions">
+                      <button
+                        onClick={() => navigate(`/quiz/${quiz._id}`)}
+                        className="btn btn-primary quiz-btn"
+                      >
+                        <Play size={16} />
+                        Take Quiz
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

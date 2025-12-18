@@ -28,7 +28,7 @@ const Leaderboard = () => {
       try {
         const [leaderboardRes, quizRes] = await Promise.all([
           api.get(`/results/leaderboard/${quizId}`),
-          api.get(`/quiz/${quizId}`)
+          api.get(`/quizzes/${quizId}`)
         ]);
         setLeaderboard(leaderboardRes.data || []);
         setQuiz(quizRes.data);

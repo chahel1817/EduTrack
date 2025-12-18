@@ -239,6 +239,12 @@ const TakeQuiz = () => {
         timeSpent: finalTimeSpent
       });
       setSubmitted(true);
+      window.scrollTo({
+  top: 0,
+  left: 0,
+  behavior: "smooth",
+});
+
     } catch (err) {
       setSubmitError(
         err.response?.data?.message ||
@@ -548,7 +554,7 @@ const TakeQuiz = () => {
             padding: '2rem',
             boxShadow: isDarkMode ? '0 4px 16px rgba(0,0,0,0.2)' : '0 4px 16px rgba(0,0,0,0.1)'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
               <div>
                 <h2 style={{
                   fontSize: '1.8rem',

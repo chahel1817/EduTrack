@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 
 const answerSchema = new mongoose.Schema({
-  questionIndex: {
-    type: Number,
+  question: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Quiz.questions",
     required: true,
   },
   selectedAnswer: {

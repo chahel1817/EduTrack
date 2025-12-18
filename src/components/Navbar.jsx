@@ -138,17 +138,18 @@ const Navbar = () => {
 
           {/* Quizzes */}
           <button
-            className={`navbar-link glow-link ${
-              isActive("/quizzes") ? "active" : ""
-            }`}
-            onClick={() => {
-              navigate("/quizzes");
-              setMobileMenuOpen(false);
-            }}
-          >
-            <FileEdit size={18} />
-            <span>Quizzes</span>
-          </button>
+  className={`navbar-link ${
+    isActive("/quizzes") || isActive("/teacher-quizzes") ? "active" : ""
+  }`}
+  onClick={() => {
+    navigate(user.role === "teacher" ? "/results" : "/quizzes");
+    setMobileMenuOpen(false);
+  }}
+>
+  <FileEdit size={18} />
+  <span>Quizzes</span>
+</button>
+
 
           {/* Results */}
           <button

@@ -3,7 +3,14 @@ import { useState } from "react";
 import { api } from "../utils/api";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { Plus, Save, CheckCircle, Trash2, AlertCircle } from "lucide-react";
+import {
+  Plus,
+  Save,
+  Trash2,
+  AlertCircle,
+  Sparkles,
+  Wand2,
+} from "lucide-react";
 
 const CreateQuizQuestions = () => {
   const { state: quizDetails } = useLocation();
@@ -16,6 +23,13 @@ const CreateQuizQuestions = () => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  /* ---------------- AI STATES (NEW) ---------------- */
+  const [difficulty, setDifficulty] = useState("Easy");
+  const [totalQuestions, setTotalQuestions] = useState(5);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  /* ---------------- QUESTION HANDLERS ---------------- */
+
   const addQuestion = () => {
     setQuestions([
       ...questions,
@@ -26,18 +40,16 @@ const CreateQuizQuestions = () => {
 
   const removeQuestion = (index) => {
     if (questions.length > 1) {
-      const newQuestions = questions.filter((_, i) => i !== index);
-      setQuestions(newQuestions);
+      setQuestions(questions.filter((_, i) => i !== index));
       setErrors({});
     }
   };
 
   const updateQuestion = (index, field, value) => {
-    const newQuestions = [...questions];
-    newQuestions[index][field] = value;
-    setQuestions(newQuestions);
+    const updated = [...questions];
+    updated[index][field] = value;
+    setQuestions(updated);
 
-    // Clear error for this question when user starts editing
     if (errors[index]) {
       const newErrors = { ...errors };
       delete newErrors[index];
@@ -45,29 +57,59 @@ const CreateQuizQuestions = () => {
     }
   };
 
-  const updateOption = (questionIndex, optionIndex, value) => {
-    const newQuestions = [...questions];
-    newQuestions[questionIndex].options[optionIndex] = value;
-    setQuestions(newQuestions);
+  const updateOption = (qIndex, oIndex, value) => {
+    const updated = [...questions];
+    updated[qIndex].options[oIndex] = value;
+    setQuestions(updated);
   };
+
+  /* ---------------- AI GENERATE HANDLER (NEW) ---------------- */
+
+  const handleGenerateAI = async () => {
+    setIsGenerating(true);
+    try {
+      const res = await api.post("/ai/generate-quiz", {
+        topic: quizDetails.subject,
+        difficulty,
+        totalQuestions,
+      });
+
+      if (res.data?.questions?.length > 0) {
+  setQuestions(res.data.questions);
+} else {
+  alert("AI returned no questions, try again");
+}
+
+    } catch (err) {
+      console.error("AI generation failed:", err);
+      alert("AI service is temporarily unavailable. Try again in a moment.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  /* ---------------- VALIDATION ---------------- */
 
   const validateQuestions = () => {
     const newErrors = {};
 
     questions.forEach((q, index) => {
       if (!q.question.trim()) {
-        newErrors[index] = { ...newErrors[index], question: "Question text is required" };
+        newErrors[index] = { question: "Question text is required" };
       }
 
-      const filledOptions = q.options.filter(opt => opt.trim());
-      if (filledOptions.length < 2) {
-        newErrors[index] = { ...newErrors[index], options: "At least 2 options are required" };
+      if (q.options.filter(o => o.trim()).length < 2) {
+        newErrors[index] = {
+          ...newErrors[index],
+          options: "At least 2 options are required",
+        };
       }
 
-      if (q.correctAnswer === null || q.correctAnswer === undefined) {
-        newErrors[index] = { ...newErrors[index], correctAnswer: "Please select the correct answer" };
-      } else if (!q.options[q.correctAnswer]?.trim()) {
-        newErrors[index] = { ...newErrors[index], correctAnswer: "Correct answer must be a filled option" };
+      if (q.correctAnswer === null) {
+        newErrors[index] = {
+          ...newErrors[index],
+          correctAnswer: "Select the correct answer",
+        };
       }
     });
 
@@ -75,10 +117,10 @@ const CreateQuizQuestions = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  /* ---------------- SUBMIT ---------------- */
+
   const handleSubmit = async () => {
-    if (!validateQuestions()) {
-      return;
-    }
+    if (!validateQuestions()) return;
 
     setIsSubmitting(true);
     try {
@@ -89,8 +131,8 @@ const CreateQuizQuestions = () => {
 
       navigate("/quiz-success");
     } catch (error) {
-      console.error("Error creating quiz:", error);
-      alert("Failed to create quiz. Please try again.");
+      console.error(error);
+      alert("Failed to create quiz");
     } finally {
       setIsSubmitting(false);
     }
@@ -99,120 +141,121 @@ const CreateQuizQuestions = () => {
   return (
     <div className="dashboard-container">
       <Navbar />
+
       <main className="dashboard-main">
         <div className="dashboard-section max-w-4xl mx-auto">
 
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="section-heading mb-0">
-              Add Questions
-            </h2>
-            <div className="text-sm text-gray-600">
-              {questions.length} question{questions.length !== 1 ? 's' : ''}
+          {/* ---------------- AI GENERATOR UI ---------------- */}
+          <div className="ai-generator-card">
+            <div className="ai-generator-header">
+              <Sparkles size={20} />
+              <h3>Generate Questions with AI</h3>
+            </div>
+
+            <div className="ai-generator-controls">
+              <div className="control-group">
+                <label>Difficulty</label>
+                <select
+                  className="input-field"
+                  value={difficulty}
+                  onChange={(e) => setDifficulty(e.target.value)}
+                >
+                  <option>Easy</option>
+                  <option>Medium</option>
+                  <option>Hard</option>
+                </select>
+              </div>
+
+              <div className="control-group">
+                <label>Number of Questions</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="50"
+                  className="input-field"
+                  value={totalQuestions}
+                  onChange={(e) => setTotalQuestions(Number(e.target.value))}
+                  placeholder="Number of questions"
+                />
+              </div>
+
+              <button
+                className="btn btn-primary ai-generate-btn"
+                onClick={handleGenerateAI}
+                disabled={isGenerating}
+              >
+                {isGenerating ? "Generating..." : "✨ Generate"}
+              </button>
             </div>
           </div>
 
+
+
+
+          {/* ---------------- QUESTIONS ---------------- */}
           {questions.map((q, i) => (
             <div key={i} className="card mb-6">
-              <div className="flex items-start justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-800">
+              <div className="flex justify-between mb-4">
+                <h3 className="text-lg font-semibold">
                   Question {i + 1}
                 </h3>
                 {questions.length > 1 && (
-                  <button
-                    onClick={() => removeQuestion(i)}
-                    className="text-red-500 hover:text-red-700 p-1"
-                    title="Remove question"
-                  >
+                  <button onClick={() => removeQuestion(i)}>
                     <Trash2 size={18} />
                   </button>
                 )}
               </div>
 
-              <div className="space-y-4">
-                <div>
-                  <textarea
-                    className={`input-field ${errors[i]?.question ? 'border-red-500' : ''}`}
-                    placeholder="Enter your question here..."
-                    rows="3"
-                    value={q.question}
-                    onChange={(e) => updateQuestion(i, 'question', e.target.value)}
-                  />
-                  {errors[i]?.question && (
-                    <div className="flex items-center gap-2 mt-2 p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
-                      <AlertCircle size={16} className="text-red-500" />
-                      <span className="font-medium">{errors[i].question}</span>
-                    </div>
-                  )}
-                </div>
+              <textarea
+                className="input-field mb-6"
+                value={q.question}
+                onChange={(e) => updateQuestion(i, "question", e.target.value)}
+                placeholder="Enter question"
+              />
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
-                    Answer Options (select the correct answer)
-                  </label>
-                  <div className="space-y-3">
-                    {q.options.map((opt, idx) => (
-                      <div key={idx} className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name={`correct-${i}`}
-                          checked={q.correctAnswer === idx}
-                          onChange={() => updateQuestion(i, 'correctAnswer', idx)}
-                          className="w-4 h-4 text-blue-600"
-                        />
-                        <input
-                          className={`input-field flex-1 ${errors[i]?.options ? 'border-red-500' : ''}`}
-                          placeholder={`Option ${String.fromCharCode(65 + idx)}`}
-                          value={opt}
-                          onChange={(e) => updateOption(i, idx, e.target.value)}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  {errors[i]?.options && (
-                    <div className="flex items-center gap-2 mt-3 p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
-                      <AlertCircle size={16} className="text-red-500" />
-                      <span className="font-medium">{errors[i].options}</span>
-                    </div>
-                  )}
-                  {errors[i]?.correctAnswer && (
-                    <div className="flex items-center gap-2 mt-3 p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
-                      <AlertCircle size={16} className="text-red-500" />
-                      <span className="font-medium">{errors[i].correctAnswer}</span>
-                    </div>
-                  )}
+              {q.options.map((opt, idx) => (
+                <div key={idx} className="flex gap-3 mb-4 items-center">
+
+                  <input
+                    type="radio"
+                    checked={q.correctAnswer === idx}
+                    onChange={() => updateQuestion(i, "correctAnswer", idx)}
+                  />
+                  <input
+                    className="input-field flex-1"
+                    value={opt}
+                    onChange={(e) => updateOption(i, idx, e.target.value)}
+                    placeholder={`Option ${idx + 1}`}
+                  />
                 </div>
-              </div>
+              ))}
+
+              {errors[i] && (
+                <div className="text-red-600 text-sm flex items-center gap-2">
+                  <AlertCircle size={16} /> Fix errors before submitting
+                </div>
+              )}
             </div>
           ))}
 
-          <div className="flex flex-col sm:flex-row justify-between gap-4">
-            <button
-              className="btn btn-outline flex items-center gap-2"
-              onClick={addQuestion}
-            >
+          {/* ---------------- ACTIONS ---------------- */}
+          <div className="flex justify-between gap-4">
+            <button className="btn btn-outline" onClick={addQuestion}>
               <Plus size={18} /> Add Question
             </button>
 
             <button
-              className="btn btn-primary flex items-center gap-2"
+              className="btn btn-primary"
               onClick={handleSubmit}
               disabled={isSubmitting}
             >
-              {isSubmitting ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  Creating Quiz...
-                </>
-              ) : (
-                <>
-                  <Save size={18} /> Create Quiz
-                </>
-              )}
+              {isSubmitting ? "Creating..." : <><Save size={18} /> Create Quiz</>}
             </button>
           </div>
 
         </div>
       </main>
+
       <Footer />
     </div>
   );
