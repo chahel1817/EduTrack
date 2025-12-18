@@ -2425,9 +2425,9 @@ body.dark .dashboard-footer {
 ====================================================== */
 .quiz-card-dashboard {
   background: var(--card-bg);
-  border-radius: var(--radius-lg);
-  min-width: 320px;      
-  max-width: 380px;
+  border-radius: var(--radius-lg);      
+  width: 100%;
+  max-width: none;
   padding: 24px;
   box-shadow: var(--shadow-md);
   border: 1px solid var(--border-gray);
@@ -2502,10 +2502,10 @@ body.dark .dashboard-footer {
 
 .quizzes-grid-dashboard {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(3, minmax(0, 1fr)); /* ✅ ONLY 3 PER ROW */
+  gap: 32px;
+  justify-items: center;
   margin-top: 24px;
-  align-items: stretch;
 }
 
 /* ======================================================
@@ -3224,9 +3224,19 @@ body.dark .enhanced-table tr:hover {
     max-width: 1400px;
   }
 
-  .quizzes-grid-dashboard,
-  .quizzes-grid {
-    grid-template-columns: repeat(4, 1fr);
+  
+}
+
+@media (max-width: 1024px) {
+  .quizzes-grid-dashboard {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .quizzes-grid-dashboard {
+    grid-template-columns: 1fr;
   }
 }
 
