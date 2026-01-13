@@ -14,6 +14,7 @@ import {
   LogOut,
   Menu,
   X,
+  MessageSquare,
 } from "lucide-react";
 
 const Navbar = () => {
@@ -165,6 +166,18 @@ const Navbar = () => {
           >
             <BarChart3 size={18} />
             <span>Results</span>
+          </button>
+
+          {/* Feedback */}
+          <button
+            className={`navbar-link glow-link ${isActive("/feedback") ? "active" : ""}`}
+            onClick={() => {
+              navigate("/feedback");
+              setMobileMenuOpen(false);
+            }}
+          >
+            <MessageSquare size={18} />
+            <span>Feedback</span>
           </button>
         </div>
 

@@ -13,6 +13,7 @@ import authRoutes from "./routes/authRoutes.js";
 import quizRoutes from "./routes/quizRoutes.js";
 import resultRoutes from "./routes/resultRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
+import feedbackRoutes from "./routes/feedbackRoutes.js";
 import sendEmail from "./utils/sendEmail.js";
 
 /**
@@ -60,6 +61,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/quizzes", quizRoutes);
 app.use("/api/results", resultRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/feedback", feedbackRoutes);
 
 /**
  * ✅ Health
