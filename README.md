@@ -1,28 +1,71 @@
-# React + Vite
+# 🎓 EduTrack - Advanced Learning Management & Quiz Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+EduTrack is a comprehensive MERN stack application designed to streamline the educational experience for both teachers and students. It provides a robust platform for creating, managing, and taking quizzes with a modern, responsive user interface and integrated AI features.
 
-Currently, two official plugins are available:
+## 🚀 Key Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### For Teachers
+- **Quiz Creation:** Build complex quizzes with multiple-choice questions, difficulty levels, and time limits.
+- **AI-Powered Generation:** Leverage AI to automatically generate questions based on topics and difficulty.
+- **Student Analytics:** Detailed insights into student performance, exportable to CSV.
+- **Leaderboards:** Real-time ranking of students across different quiz categories.
 
-## React Compiler
+### For Students
+- **Interactive Quizzes:** Clean, timed quiz interface with immediate feedback.
+- **Personal Dashboard:** Track personal progress, view history, and earned badges.
+- **Global Leaderboards:** Compare performance with peers.
+- **Detailed Results:** Deep dive into correct/incorrect answers for better learning.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Modern UI/UX
+- **Beautiful Design:** Glass-morphism, smooth animations, and a professional aesthetic.
+- **Dark Mode Support:** Fully integrated dark mode for late-night study sessions.
+- **Responsive Layout:** Works seamlessly across mobile, tablet, and desktop.
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **Frontend:** React 19, Vite, Lucide Icons, Vanilla CSS
+- **Backend:** Node.js, Express.js
+- **Database:** MongoDB (via Mongoose) / Supabase (PostgreSQL)
+- **Authentication:** JWT (JSON Web Tokens) with Role-Based Access Control
+- **AI Integration:** Specialized endpoints for automated content generation
 
+## 📁 Documentation
 
-## Quick fixes applied by assistant
-- src/utils/api.js now reads VITE_API_URL from environment with fallback.
-- Added server/.env.example and guidance about secrets.
+- [Features List](FEATURES.md) - Full breakdown of all implemented and future features.
+- [API Documentation](API_DOCUMENTATION.md) - Detailed API endpoint usage and Postman-style docs.
 
-## How to run (dev)
-1. Install server deps: `cd server && npm install`
-2. Create `server/.env` from `server/.env.example` and set MONGO_URI and JWT_SECRET.
-3. Start server: `npm run dev` (from server folder)
-4. In project root: `npm install` then `npm run dev` to start the client (Vite).
+## ⚙️ Getting Started
 
+### Prerequisites
+- Node.js installed
+- MongoDB or Supabase account/URL
+- JWT Secret
+
+### Installation & Setup
+
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd edutrack
+   ```
+
+2. **Backend Setup:**
+   ```bash
+   cd server
+   npm install
+   # Create a .env file from .env.example and add your MONGO_URI and JWT_SECRET
+   npm run dev
+   ```
+
+3. **Frontend Setup:**
+   ```bash
+   cd ..
+   npm install
+   npm run dev
+   ```
+
+## 📝 License
+This project is licensed under the MIT License.
+
+---
+Built with ❤️ for better education. online at [EduTrack](https://github.com/chahel1817/EduTrack)
