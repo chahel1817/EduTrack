@@ -70,13 +70,13 @@ const TakeQuiz = () => {
       console.log('Fetching quiz with ID:', id);
       const res = await api.get(`/quizzes/${id}`);
       console.log('Quiz fetched successfully:', res.data);
-      
+
       if (!res.data) {
         console.error('Quiz data is null');
         setLoading(false);
         return;
       }
-      
+
       setQuiz(res.data);
       setStartTime(Date.now());
 
@@ -93,7 +93,7 @@ const TakeQuiz = () => {
         message: err.message,
         url: err.config?.url
       });
-      
+
       // Set error state so user sees proper error message
       if (err.response?.status === 404) {
         // Quiz not found - will be handled by the !quiz check
@@ -240,10 +240,10 @@ const TakeQuiz = () => {
       });
       setSubmitted(true);
       window.scrollTo({
-  top: 0,
-  left: 0,
-  behavior: "smooth",
-});
+        top: 0,
+        left: 0,
+        behavior: "smooth",
+      });
 
     } catch (err) {
       setSubmitError(
@@ -299,8 +299,8 @@ const TakeQuiz = () => {
             <div className="loading" style={{
               textAlign: 'center',
               padding: '3rem',
-              background: isDarkMode ? 'var(--card-bg-dark)' : 'var(--card-bg)',
-              border: `1px solid ${isDarkMode ? 'var(--border-dark)' : 'var(--border)'}`,
+              background: 'var(--card-bg)',
+              border: '1px solid var(--border)',
               borderRadius: '16px',
               boxShadow: isDarkMode ? '0 4px 16px rgba(0,0,0,0.2)' : '0 4px 16px rgba(0,0,0,0.1)'
             }}>
@@ -337,8 +337,8 @@ const TakeQuiz = () => {
             <div className="empty-state enhanced" style={{
               textAlign: 'center',
               padding: '3rem',
-              background: isDarkMode ? 'var(--card-bg-dark)' : 'var(--card-bg)',
-              border: `1px solid ${isDarkMode ? 'var(--border-dark)' : 'var(--border)'}`,
+              background: 'var(--card-bg)',
+              border: '1px solid var(--border)',
               borderRadius: '16px',
               boxShadow: isDarkMode ? '0 4px 16px rgba(0,0,0,0.2)' : '0 4px 16px rgba(0,0,0,0.1)'
             }}>
@@ -392,7 +392,6 @@ const TakeQuiz = () => {
     const isGood = percentage >= 60;
     const performanceColor = isExcellent ? 'var(--success)' : isGood ? 'var(--warning)' : 'var(--error)';
     const performanceBg = isExcellent ? 'rgba(16,185,129,0.1)' : isGood ? 'rgba(245,158,11,0.1)' : 'rgba(239,68,68,0.1)';
-    const performanceIcon = isExcellent ? '🎉' : isGood ? '👍' : '📚';
 
     return (
       <div className="dashboard-container">
@@ -400,16 +399,16 @@ const TakeQuiz = () => {
         <main className="dashboard-main">
           <div className="dashboard-section text-center">
             <div className="card" style={{
-              background: isDarkMode ? 'var(--card-bg-dark)' : 'var(--card-bg)',
-              border: `1px solid ${isDarkMode ? 'var(--border-dark)' : 'var(--border)'}`,
-              borderRadius: '16px',
+              background: 'var(--card-bg)',
+              border: '1px solid var(--border)',
+              borderRadius: '24px',
               padding: '3rem',
-              maxWidth: '600px',
+              maxWidth: '650px',
               margin: '0 auto',
-              boxShadow: isDarkMode ? '0 8px 32px rgba(0,0,0,0.3)' : '0 8px 32px rgba(0,0,0,0.1)'
+              boxShadow: 'var(--shadow-lg)'
             }}>
               <div style={{
-                fontSize: '4rem',
+                fontSize: '5rem',
                 marginBottom: '1rem',
                 animation: 'bounce 1s ease-in-out'
               }}>
@@ -418,24 +417,24 @@ const TakeQuiz = () => {
 
               <div style={{
                 padding: '1.5rem',
-                borderRadius: '12px',
-                background: 'rgba(255,255,255,0.05)',
-                border: `2px solid ${performanceColor}20`,
+                borderRadius: '16px',
+                background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'var(--gray-50)',
+                border: `1px solid ${performanceColor}30`,
                 marginBottom: '2rem',
                 textAlign: 'center'
               }}>
                 <div style={{
-                  fontSize: '1.2rem',
-                  fontWeight: '600',
-                  color: isDarkMode ? '#ffffff' : 'var(--black)',
+                  fontSize: '1.3rem',
+                  fontWeight: '700',
+                  color: 'var(--gray-900)',
                   marginBottom: '0.5rem'
                 }}>
                   Performance Feedback
                 </div>
                 <div style={{
                   fontSize: '1rem',
-                  color: isDarkMode ? 'rgba(255,255,255,0.9)' : 'var(--gray-700)',
-                  lineHeight: '1.5'
+                  color: 'var(--gray-600)',
+                  lineHeight: '1.6'
                 }}>
                   {getPerformanceFeedback(percentage)}
                 </div>
@@ -443,49 +442,49 @@ const TakeQuiz = () => {
 
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                gap: '1rem',
-                marginBottom: '2rem'
+                gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+                gap: '1.5rem',
+                marginBottom: '2.5rem'
               }}>
                 <div style={{
                   padding: '1.5rem',
-                  borderRadius: '12px',
+                  borderRadius: '16px',
                   background: performanceBg,
-                  border: `2px solid ${performanceColor}30`
+                  border: `2px solid ${performanceColor}20`
                 }}>
-                  <div style={{ fontSize: '2rem', fontWeight: '700', color: performanceColor }}>
+                  <div style={{ fontSize: '2.2rem', fontWeight: '800', color: performanceColor }}>
                     {percentage}%
                   </div>
-                  <div style={{ fontSize: '0.9rem', color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'var(--gray-600)' }}>
-                    Score
+                  <div style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--gray-500)' }}>
+                    Accuracy
                   </div>
                 </div>
 
                 <div style={{
                   padding: '1.5rem',
-                  borderRadius: '12px',
-                  background: 'rgba(99,102,241,0.1)',
-                  border: '2px solid rgba(99,102,241,0.3)'
+                  borderRadius: '16px',
+                  background: 'rgba(109,40,241,0.08)',
+                  border: '2px solid rgba(109,40,241,0.15)'
                 }}>
-                  <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--primary)' }}>
+                  <div style={{ fontSize: '2.2rem', fontWeight: '800', color: 'var(--primary)' }}>
                     {score}/{quiz.questions.length}
                   </div>
-                  <div style={{ fontSize: '0.9rem', color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'var(--gray-600)' }}>
-                    Correct
+                  <div style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--gray-500)' }}>
+                    Correct Answers
                   </div>
                 </div>
 
                 <div style={{
                   padding: '1.5rem',
-                  borderRadius: '12px',
-                  background: 'rgba(139,92,246,0.1)',
-                  border: '2px solid rgba(139,92,246,0.3)'
+                  borderRadius: '16px',
+                  background: 'rgba(6,182,212,0.08)',
+                  border: '2px solid rgba(6,182,212,0.15)'
                 }}>
-                  <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--secondary)' }}>
+                  <div style={{ fontSize: '2.2rem', fontWeight: '800', color: 'var(--accent)' }}>
                     {formatTime(timeSpent)}
                   </div>
-                  <div style={{ fontSize: '0.9rem', color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'var(--gray-600)' }}>
-                    Time Spent
+                  <div style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--gray-500)' }}>
+                    Time Taken
                   </div>
                 </div>
               </div>
@@ -499,31 +498,17 @@ const TakeQuiz = () => {
                 <button
                   className="btn btn-primary"
                   onClick={() => navigate('/dashboard')}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '12px 24px',
-                    borderRadius: '8px',
-                    fontWeight: '600'
-                  }}
+                  style={{ padding: '14px 28px', borderRadius: '12px' }}
                 >
-                  <Home size={18} /> Dashboard
+                  <Home size={18} /> Back to Home
                 </button>
 
                 <button
                   className="btn btn-outline"
                   onClick={() => navigate(`/my-results/${quiz._id}`)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '12px 24px',
-                    borderRadius: '8px',
-                    fontWeight: '600'
-                  }}
+                  style={{ padding: '14px 28px', borderRadius: '12px' }}
                 >
-                  <Trophy size={18} /> View Detailed Results
+                  <Trophy size={18} /> Full Analysis
                 </button>
               </div>
             </div>
@@ -543,245 +528,165 @@ const TakeQuiz = () => {
   return (
     <div className="dashboard-container">
       <Navbar />
-      <main className="dashboard-main">
-        <div className="dashboard-section">
+      <main className="dashboard-main animate-fade-in">
+        <div className="dashboard-section" style={{ border: 'none', background: 'transparent', boxShadow: 'none', padding: 0 }}>
 
-          {/* HEADER */}
-          <div className="card mb-6" style={{
-            background: isDarkMode ? 'var(--card-bg-dark)' : 'var(--card-bg)',
-            border: `1px solid ${isDarkMode ? 'var(--border-dark)' : 'var(--border)'}`,
-            borderRadius: '16px',
-            padding: '2rem',
-            boxShadow: isDarkMode ? '0 4px 16px rgba(0,0,0,0.2)' : '0 4px 16px rgba(0,0,0,0.1)'
+          {/* TIMER & PROGRESS STICKY BAR */}
+          <div className="glass-card" style={{
+            position: 'sticky',
+            top: '80px',
+            zIndex: 10,
+            padding: '16px 24px',
+            marginBottom: '30px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '20px'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <div style={{ background: 'var(--primary)', color: 'white', padding: '8px', borderRadius: '10px' }}>
+                <BookOpen size={20} />
+              </div>
               <div>
-                <h2 style={{
-                  fontSize: '1.8rem',
-                  fontWeight: '700',
-                  color: isDarkMode ? '#ffffff' : 'var(--black)',
-                  margin: 0
-                }}>
-                  {quiz.title}
+                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700 }}>{quiz.title}</h3>
+                <span style={{ fontSize: '12px', color: 'var(--gray-500)' }}>{quiz.subject}</span>
+              </div>
+            </div>
+
+            <div style={{ flex: 1, maxWidth: '400px', margin: '0 20px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '12px', fontWeight: 700 }}>
+                <span>Progress</span>
+                <span>{getProgressPercentage()}%</span>
+              </div>
+              <div style={{ width: '100%', height: '8px', background: 'var(--gray-200)', borderRadius: '4px', overflow: 'hidden' }}>
+                <div style={{ width: `${getProgressPercentage()}%`, height: '100%', background: 'linear-gradient(90deg, var(--primary), var(--accent))', transition: 'width 0.3s ease' }} />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '15px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', background: 'var(--gray-100)', borderRadius: '10px', color: 'var(--gray-700)', fontWeight: 700 }}>
+                <Clock size={16} />
+                <span>{formatTime(quizTimeLimit ? quizTimeLeft : timeSpent)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '30px', alignItems: 'start' }}>
+
+            {/* MAIN QUESTION SECTION */}
+            <div className="glass-card" style={{ padding: '40px' }}>
+              <div style={{ marginBottom: '30px' }}>
+                <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                  Question {currentQuestion + 1} of {quiz.questions.length}
+                </span>
+                <h2 style={{ fontSize: '24px', fontWeight: 800, marginTop: '10px', lineHeight: 1.4 }}>
+                  {question.question}
                 </h2>
-                <p style={{
-                  color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'var(--gray-600)',
-                  margin: '0.5rem 0'
-                }}>
-                  {quiz.subject}
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {question.options.map((option, index) => (
+                  <label key={index} className="option-item" style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '20px 24px',
+                    border: `2px solid ${answers[currentQuestion] === index ? 'var(--primary)' : 'var(--border)'}`,
+                    borderRadius: '16px',
+                    background: answers[currentQuestion] === index ? 'rgba(109,40,217,0.05)' : 'var(--card-bg)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    position: 'relative',
+                    overflow: 'hidden'
+                  }}>
+                    <input
+                      type="radio"
+                      name={`question-${currentQuestion}`}
+                      checked={answers[currentQuestion] === index}
+                      onChange={() => handleAnswerSelect(currentQuestion, index)}
+                      style={{ marginRight: '16px', width: '20px', height: '20px', accentColor: 'var(--primary)' }}
+                    />
+                    <span style={{ fontSize: '16px', fontWeight: 600, color: 'var(--gray-800)' }}>{option}</span>
+                    {answers[currentQuestion] === index && (
+                      <div style={{ position: 'absolute', right: '20px', color: 'var(--primary)' }}>
+                        <CheckCircle2 size={24} />
+                      </div>
+                    )}
+                  </label>
+                ))}
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '40px', paddingTop: '30px', borderTop: '1px solid var(--border)' }}>
+                <button
+                  onClick={handlePrevious}
+                  disabled={currentQuestion === 0}
+                  className="btn btn-outline"
+                  style={{ padding: '12px 24px', borderRadius: '12px' }}
+                >
+                  <ChevronLeft size={20} /> Previous
+                </button>
+
+                {currentQuestion === quiz.questions.length - 1 ? (
+                  <button
+                    onClick={handleSubmit}
+                    disabled={submitting}
+                    className="btn btn-primary"
+                    style={{ padding: '14px 32px', borderRadius: '12px', background: 'var(--success)', border: 'none', boxShadow: '0 10px 20px rgba(16,185,129,0.2)' }}
+                  >
+                    {submitting ? <Loader2 size={18} className="animate-spin" /> : <><Send size={18} /> Finish Quiz</>}
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleNext}
+                    disabled={answers[currentQuestion] === undefined}
+                    className="btn btn-primary"
+                    style={{ padding: '12px 32px', borderRadius: '12px' }}
+                  >
+                    Next Question <ChevronRight size={20} />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* SIDEBAR: NAVIGATION DOTS */}
+            <aside className="glass-card" style={{ padding: '24px' }}>
+              <h4 style={{ margin: '0 0 20px 0', fontSize: '16px', fontWeight: 700 }}>Question Map</h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
+                {quiz.questions.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentQuestion(i)}
+                    style={{
+                      width: '100%',
+                      aspectRatio: '1',
+                      borderRadius: '10px',
+                      border: 'none',
+                      fontSize: '14px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      background: currentQuestion === i ? 'var(--primary)' : answers[i] !== undefined ? 'var(--gray-200)' : 'var(--gray-100)',
+                      color: currentQuestion === i ? 'white' : answers[i] !== undefined ? 'var(--gray-700)' : 'var(--gray-400)'
+                    }}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+
+              <div style={{ marginTop: '30px', padding: '20px', borderRadius: '16px', background: 'var(--gray-50)', border: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--gray-600)', fontSize: '14px' }}>
+                  <AlertCircle size={16} />
+                  <span>Finalizing...</span>
+                </div>
+                <p style={{ margin: '10px 0 0 0', fontSize: '12px', color: 'var(--gray-500)', lineHeight: '1.4' }}>
+                  Make sure you've answered all questions before submitting.
                 </p>
               </div>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1rem',
-                fontSize: '0.9rem',
-                color: isDarkMode ? 'rgba(255,255,255,0.8)' : 'var(--gray-700)'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <Clock size={16} />
-                  <span>Time Left: {formatTime(quizTimeLeft)}</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <Clock size={16} />
-                  <span>Spent: {formatTime(timeSpent)}</span>
-                </div>
-              </div>
-            </div>
-
-            <div style={{ marginBottom: '1rem' }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '0.5rem'
-              }}>
-                <span style={{ fontWeight: '600', color: isDarkMode ? '#ffffff' : 'var(--black)' }}>
-                  Progress
-                </span>
-                <span style={{ fontSize: '0.9rem', color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'var(--gray-600)' }}>
-                  {getProgressPercentage()}%
-                </span>
-              </div>
-              <div style={{
-                width: '100%',
-                height: '8px',
-                background: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
-                borderRadius: '4px',
-                overflow: 'hidden'
-              }}>
-                <div style={{
-                  width: `${getProgressPercentage()}%`,
-                  height: '100%',
-                  background: 'linear-gradient(90deg, var(--primary), var(--secondary))',
-                  transition: 'width 0.3s ease'
-                }}></div>
-              </div>
-            </div>
-          </div>
-
-          {/* QUESTION */}
-          <div className="card" style={{
-            background: isDarkMode ? 'var(--card-bg-dark)' : 'var(--card-bg)',
-            border: `1px solid ${isDarkMode ? 'var(--border-dark)' : 'var(--border)'}`,
-            borderRadius: '16px',
-            padding: '2rem',
-            boxShadow: isDarkMode ? '0 4px 16px rgba(0,0,0,0.2)' : '0 4px 16px rgba(0,0,0,0.1)'
-          }}>
-            <div style={{ marginBottom: '1.5rem' }}>
-              <h3 style={{
-                fontSize: '1.4rem',
-                fontWeight: '600',
-                color: isDarkMode ? '#ffffff' : 'var(--black)',
-                marginBottom: '0.5rem'
-              }}>
-                Question {currentQuestion + 1} of {quiz.questions.length}
-              </h3>
-              <p style={{
-                fontSize: '1.1rem',
-                color: isDarkMode ? 'rgba(255,255,255,0.9)' : 'var(--gray-800)',
-                lineHeight: '1.6'
-              }}>
-                {question.question}
-              </p>
-            </div>
-
-            <div className="options-grid" style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr',
-              gap: '1rem'
-            }}>
-              {question.options.map((option, index) => (
-                <label key={index} className="option-item" style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  padding: '1rem 1.5rem',
-                  border: `2px solid ${answers[currentQuestion] === index ? 'var(--primary)' : (isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)')}`,
-                  borderRadius: '12px',
-                  background: answers[currentQuestion] === index ? 'rgba(99,102,241,0.1)' : (isDarkMode ? 'rgba(255,255,255,0.05)' : 'transparent'),
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  fontSize: '1rem',
-                  color: isDarkMode ? '#ffffff' : 'var(--black)'
-                }}>
-                  <input
-                    type="radio"
-                    name={`question-${currentQuestion}`}
-                    checked={answers[currentQuestion] === index}
-                    onChange={() =>
-                      handleAnswerSelect(currentQuestion, index)
-                    }
-                    style={{ marginRight: '12px', accentColor: 'var(--primary)' }}
-                  />
-                  {option}
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* NAVIGATION */}
-          <div className="quiz-navigation" style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginTop: '2rem',
-            padding: '1.5rem',
-            background: isDarkMode ? 'var(--card-bg-dark)' : 'var(--card-bg)',
-            border: `1px solid ${isDarkMode ? 'var(--border-dark)' : 'var(--border)'}`,
-            borderRadius: '12px',
-            boxShadow: isDarkMode ? '0 4px 16px rgba(0,0,0,0.2)' : '0 4px 16px rgba(0,0,0,0.1)'
-          }}>
-            <button
-              onClick={handlePrevious}
-              disabled={currentQuestion === 0}
-              className="btn btn-outline"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '12px 20px',
-                borderRadius: '8px',
-                fontWeight: '600',
-                opacity: currentQuestion === 0 ? 0.5 : 1,
-                cursor: currentQuestion === 0 ? 'not-allowed' : 'pointer'
-              }}
-            >
-              <ChevronLeft size={18} /> Previous
-            </button>
-
-            <div style={{
-              fontSize: '0.9rem',
-              color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'var(--gray-600)',
-              fontWeight: '500'
-            }}>
-              {answeredCount} of {quiz.questions.length} answered
-            </div>
-
-            {currentQuestion === quiz.questions.length - 1 ? (
-              <button
-                onClick={handleSubmit}
-                disabled={
-                  answeredCount !== quiz.questions.length || submitting
-                }
-                className="btn btn-success"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '12px 20px',
-                  borderRadius: '8px',
-                  fontWeight: '600',
-                  background: answeredCount === quiz.questions.length && !submitting ? '#23c074' : '#666',
-                  color: 'white',
-                  border: 'none',
-                  cursor: answeredCount === quiz.questions.length && !submitting ? 'pointer' : 'not-allowed',
-                  opacity: 1
-                }}
-              >
-                {submitting ? (
-                  <>
-                    <Loader2 size={18} className="loading-spinner" /> Submitting...
-                  </>
-                ) : (
-                  <>
-                    <Send size={18} /> Submit Quiz
-                  </>
-                )}
-              </button>
-            ) : (
-              <button
-                onClick={handleNext}
-                disabled={answers[currentQuestion] === undefined}
-                className="btn btn-primary"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '12px 20px',
-                  borderRadius: '8px',
-                  fontWeight: '600',
-                  opacity: answers[currentQuestion] === undefined ? 0.5 : 1,
-                  cursor: answers[currentQuestion] === undefined ? 'not-allowed' : 'pointer'
-                }}
-              >
-                Next <ChevronRight size={18} />
-              </button>
-            )}
+            </aside>
           </div>
 
           {submitError && (
-            <div className="error-box" style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '1rem 1.5rem',
-              background: 'rgba(239,68,68,0.1)',
-              border: '1px solid rgba(239,68,68,0.3)',
-              borderRadius: '8px',
-              color: 'var(--error)',
-              marginTop: '1rem',
-              fontWeight: '500'
-            }}>
+            <div className="auth-error" style={{ marginTop: '20px' }}>
               <AlertCircle size={18} /> {submitError}
             </div>
           )}

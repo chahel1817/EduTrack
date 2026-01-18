@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -6,7 +7,8 @@ import {
   Loader2,
   Sparkles,
   Mail,
-  Key
+  Lock,
+  ArrowRight
 } from "lucide-react";
 
 const Login = () => {
@@ -18,7 +20,6 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  /* ---------------- PASSWORD LOGIN ---------------- */
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -36,51 +37,71 @@ const Login = () => {
   return (
     <div className="auth-page">
       <div className="auth-container">
-        <div className="glass-card">
+        <div className="glass-card auth-card animate-fade-in">
 
           <div className="auth-header">
-            <GraduationCap size={56} className="auth-main-icon" />
-            <Sparkles size={18} className="auth-sparkle-icon" />
+            <div className="auth-icon-wrapper" style={{ marginBottom: '20px' }}>
+              <GraduationCap size={64} className="auth-main-icon" />
+              <Sparkles size={24} className="auth-sparkle-icon" />
+            </div>
             <h1 className="auth-title">Welcome Back</h1>
-            <p className="auth-subtitle">Secure login with password</p>
+            <p className="auth-subtitle">Sign in to continue your learning journey</p>
           </div>
 
           {error && <div className="auth-error">{error}</div>}
 
-          <form className="auth-form" onSubmit={handleLogin}>
-            <input
-              className="auth-input"
-              type="email"
-              placeholder="Email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+          <form className="auth-form" onSubmit={handleLogin} style={{ marginTop: '30px' }}>
+            <div className="auth-input-group auth-input-wrapper">
+              <Mail className="auth-input-icon" size={20} />
+              <input
+                className="auth-input"
+                type="email"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
 
-            <input
-              className="auth-input"
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="auth-input-group auth-input-wrapper">
+              <Lock className="auth-input-icon" size={20} />
+              <input
+                className="auth-input"
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
 
-            <button className="auth-btn" disabled={loading}>
-              {loading ? <Loader2 className="loading-spinner" /> : "Login"}
+            <div style={{ textAlign: 'right', marginBottom: '24px' }}>
+              <Link to="/forgot-password" style={{ fontSize: '14px', color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>
+                Forgot password?
+              </Link>
+            </div>
+
+            <button className="auth-btn glow-btn" disabled={loading} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              {loading ? <Loader2 className="loading-spinner" /> : (
+                <>
+                  <span>Sign In</span>
+                  <ArrowRight size={20} />
+                </>
+              )}
             </button>
-
-            <Link to="/forgot-password" className="auth-text-link">
-              Forgot password?
-            </Link>
           </form>
 
-          <Link to="/signup" className="auth-text-link">
-            Don’t have an account? Sign up
-          </Link>
+          <div style={{ marginTop: '32px', textAlign: 'center', color: 'var(--gray-500)', fontSize: '15px' }}>
+            Don’t have an account?{" "}
+            <Link to="/signup" style={{ color: 'var(--primary)', fontWeight: 700, textDecoration: 'none' }}>
+              Create Free Account
+            </Link>
+          </div>
 
         </div>
       </div>
     </div>
   );
-  };
+};
 
-  export default Login;
+export default Login;

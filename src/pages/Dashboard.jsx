@@ -1,4 +1,4 @@
-// src/pages/Dashboard.jsx
+
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
 import { api } from "../utils/api";
@@ -7,108 +7,170 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 import {
-  LayoutDashboard,
   BookOpen,
   Users,
   TrendingUp,
-  Target,
-  SquareKanban,
   Award,
-  Flame,
-  Rocket,
   Plus,
   Clock,
   CheckCircle2,
   BarChart3,
   FileText,
-  Zap,
+  Sparkles,
+  ArrowRight,
+  Trophy,
+  Activity,
+  Zap
 } from "lucide-react";
 
 /* ------------------------------------------------------
-   REUSABLE STAT CARD (Premium Theme Safe)
+   REUSABLE STAT CARD 
 ------------------------------------------------------ */
-const StatCard = ({ icon: Icon, value, label, gradient, onClick }) => (
-  <div 
-    className="stat-card hover-lift" 
+const StatCard = ({ icon: Icon, value, label, onClick, color }) => (
+  <div
+    className="stat-card"
     onClick={onClick}
-    style={{
-      cursor: onClick ? 'pointer' : 'default',
-      background: gradient ? `linear-gradient(135deg, ${gradient})` : 'var(--card-bg)',
-    }}
+    style={{ cursor: onClick ? 'pointer' : 'default' }}
   >
-    <div className="stat-icon-wrapper">
-      <Icon size={28} />
+    <div className="stat-icon-wrapper" style={{ background: color ? `${color}15` : 'rgba(109, 40, 217, 0.1)', color: color || 'var(--primary)' }}>
+      <Icon size={24} />
     </div>
     <h3 className="stat-value">{value}</h3>
     <p className="stat-label">{label}</p>
-  </div>
-);
-
-/* ------------------------------------------------------
-   EMPTY STATE (Dark-Mode Friendly)
------------------------------------------------------- */
-const EmptyBox = ({ icon: Icon, title, subtitle }) => (
-  <div className="empty-state enhanced">
-    <Icon size={50} color="var(--primary)" />
-    <h3>{title}</h3>
-    <p>{subtitle}</p>
+    <div className="stat-card-glow" style={{ position: 'absolute', bottom: '-20px', right: '-20px', width: '80px', height: '80px', background: color || 'var(--primary)', opacity: 0.05, borderRadius: '50%', filter: 'blur(30px)' }} />
   </div>
 );
 
 /* ------------------------------------------------------
    QUIZ CARD COMPONENT
 ------------------------------------------------------ */
-const QuizCard = ({ quiz, onTakeQuiz, isTeacher, navigate }) => (
-  <div className="quiz-card-dashboard hover-lift">
-    <div className="quiz-card-header">
-      <div className="quiz-card-subject">{quiz.subject}</div>
-      <div className="quiz-card-date">
-        {new Date(quiz.createdAt).toLocaleDateString()}
-      </div>
-    </div>
-    <div className="quiz-card-content">
-      <h3 className="quiz-card-title">{quiz.title}</h3>
-      <p className="quiz-card-description">
-        {quiz.description || "Test your knowledge with this interactive quiz."}
-      </p>
-      <div className="quiz-card-stats">
-        <div className="quiz-stat-item">
-          <FileText size={14} />
-          <span>{quiz.questionsCount || quiz.questions?.length || 0} questions</span>
+const QuizCard = ({ quiz, onTakeQuiz, isTeacher, navigate, hasTaken }) => {
+  const now = new Date();
+  const isExpired = quiz.endDate && now > new Date(quiz.endDate);
+  const isUpcoming = quiz.startDate && now < new Date(quiz.startDate);
+  const isActive = !isExpired && !isUpcoming;
+
+  return (
+    <div
+      className={`glass-card ${(hasTaken || isExpired || isUpcoming) ? '' : 'hover-lift'}`}
+      style={{
+        padding: '28px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '20px',
+        border: '1px solid var(--border)',
+        opacity: (hasTaken || isExpired || isUpcoming) ? 0.8 : 1,
+        position: 'relative',
+        overflow: 'hidden'
+      }}
+    >
+      {hasTaken ? (
+        <div style={{
+          position: 'absolute',
+          top: '12px',
+          right: '-35px',
+          background: 'var(--success)',
+          color: 'white',
+          padding: '5px 40px',
+          fontSize: '10px',
+          fontWeight: 900,
+          transform: 'rotate(45deg)',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+          zIndex: 1
+        }}>
+          COMPLETED
         </div>
-        {quiz.timeLimit && (
-          <div className="quiz-stat-item">
-            <Clock size={14} />
-            <span>{quiz.timeLimit} min</span>
-          </div>
+      ) : isExpired ? (
+        <div style={{
+          position: 'absolute',
+          top: '12px',
+          right: '-35px',
+          background: 'var(--gray-500)',
+          color: 'white',
+          padding: '5px 40px',
+          fontSize: '10px',
+          fontWeight: 900,
+          transform: 'rotate(45deg)',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+          zIndex: 1
+        }}>
+          EXPIRED
+        </div>
+      ) : isUpcoming ? (
+        <div style={{
+          position: 'absolute',
+          top: '12px',
+          right: '-35px',
+          background: 'var(--accent)',
+          color: 'white',
+          padding: '5px 40px',
+          fontSize: '10px',
+          fontWeight: 900,
+          transform: 'rotate(45deg)',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+          zIndex: 1
+        }}>
+          UPCOMING
+        </div>
+      ) : null}
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ padding: '6px 14px', background: 'rgba(109, 40, 217, 0.08)', borderRadius: '12px', fontSize: '13px', fontWeight: 700, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Zap size={14} /> {quiz.subject}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--gray-400)', fontSize: '13px' }}>
+          <Clock size={14} /> {quiz.timeLimit ? `${quiz.timeLimit}m` : "No limit"}
+        </div>
+      </div>
+
+      <div>
+        <h3 style={{ fontSize: '22px', fontWeight: 800, marginBottom: '10px', color: 'var(--gray-900)' }}>{quiz.title}</h3>
+        <p style={{ color: 'var(--gray-500)', fontSize: '15px', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+          {quiz.description || "Challenge yourself with this quiz and master the concepts of " + quiz.subject + "."}
+        </p>
+
+        {isUpcoming && (
+          <p style={{ margin: '8px 0 0', fontSize: '12px', color: 'var(--accent)', fontWeight: 600 }}>
+            Starts: {new Date(quiz.startDate).toLocaleString()}
+          </p>
+        )}
+        {isExpired && !hasTaken && (
+          <p style={{ margin: '8px 0 0', fontSize: '12px', color: 'var(--gray-400)', fontWeight: 600 }}>
+            Closed: {new Date(quiz.endDate).toLocaleString()}
+          </p>
         )}
       </div>
-    </div>
-    <div className="quiz-card-actions">
-      {isTeacher ? (
-        <button
-          className="btn btn-outline"
-          onClick={() => navigate(`/results/${quiz._id}`)}
-        >
-          <BarChart3 size={16} />
-          View Results
-        </button>
-      ) : (
-        <button
-          className="btn btn-primary"
-          onClick={() => onTakeQuiz(quiz._id)}
-        >
-          <Rocket size={16} />
-          Take Quiz
-        </button>
-      )}
-    </div>
-  </div>
-);
 
-/* ------------------------------------------------------
-   MAIN DASHBOARD
------------------------------------------------------- */
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--gray-600)', fontWeight: 600, fontSize: '14px' }}>
+          <FileText size={16} color="var(--primary)" />
+          <span>{quiz.questionsCount || quiz.questions?.length || 0} Questions</span>
+        </div>
+        <button
+          className={isTeacher || (hasTaken && !quiz.allowMultipleAttempts) || isExpired || isUpcoming ? "btn btn-outline" : "btn btn-primary"}
+          onClick={() => {
+            if (isTeacher) {
+              navigate(`/results/${quiz._id}`);
+            } else if (hasTaken && !quiz.allowMultipleAttempts) {
+              navigate('/my-results');
+            } else if (isActive) {
+              onTakeQuiz(quiz._id);
+            }
+          }}
+          disabled={!isTeacher && !isActive && !hasTaken}
+          style={{ padding: '10px 20px', borderRadius: '12px' }}
+        >
+          {isTeacher ? "View Results" :
+            isUpcoming ? "Coming Soon" :
+              (hasTaken && !quiz.allowMultipleAttempts) ? "View Result" :
+                isExpired ? "Expired" :
+                  hasTaken ? "Retake Quiz" : "Take Quiz"}
+        </button>
+      </div>
+    </div>
+  );
+};
+
 export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -117,503 +179,245 @@ export default function Dashboard() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  /* -------------------------------------------------- */
-  /* API FETCHES */
-  /* -------------------------------------------------- */
- const fetchQuizzes = useCallback(async (signal) => {
-  try {
-    console.log("📚 Fetching quizzes for user:", user?.role);
-
-    let res;
-
-    if (user?.role === "teacher") {
-      // ✅ CORRECT endpoint for teacher dashboard
-      res = await api.get("/quizzes/teacher/my-quizzes", { signal });
-    } else {
-      // ✅ Students see all quizzes
-      res = await api.get("/quizzes", { signal });
-    }
-
-    console.log("📚 Quizzes received:", res.data?.length || 0);
-    setQuizzes(res.data || []);
-  }catch (err) {
-  if (err.code === "ERR_CANCELED") return; // ✅ ignore cancel
-  console.error("Failed to fetch quizzes:", err);
-}
-}, [user]);
-
-
-  const fetchStudentResults = useCallback(async (signal) => {
+  const fetchQuizzes = useCallback(async (signal) => {
     try {
-      const res = await api.get("/results/student", { signal });
+      let res = await api.get(user?.role === "teacher" ? "/quizzes/teacher/my-quizzes" : "/quizzes", { signal });
+      setQuizzes(res.data || []);
+    } catch (err) {
+      if (err.code === "ERR_CANCELED") return;
+      console.error("Failed to fetch quizzes:", err);
+    }
+  }, [user]);
+
+  const fetchResults = useCallback(async (signal) => {
+    try {
+      const endpoint = user?.role === "teacher" ? "/results/all" : "/results/student";
+      const res = await api.get(endpoint, { signal });
       setResults(res.data || []);
     } catch (err) {
-      console.error("Failed to fetch student results:", err);
+      if (err.code === "ERR_CANCELED") return;
+      console.error("Failed to fetch results:", err);
     }
-  }, []);
-
-  const fetchTeacherResults = useCallback(async (signal) => {
-    try {
-      const res = await api.get("/results/all", { signal });
-      setResults(res.data || []);
-    } catch (err) {
-      console.error("Failed to fetch teacher results:", err);
-    }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
-
     const controller = new AbortController();
     setLoading(true);
 
-    (async () => {
-      await Promise.all([
-        fetchQuizzes(controller.signal),
-        user.role === "teacher"
-          ? fetchTeacherResults(controller.signal)
-          : fetchStudentResults(controller.signal),
-      ]);
-
-      setLoading(false);
-    })();
+    Promise.all([fetchQuizzes(controller.signal), fetchResults(controller.signal)])
+      .finally(() => setLoading(false));
 
     return () => controller.abort();
-  }, [user, fetchQuizzes, fetchStudentResults, fetchTeacherResults]);
+  }, [user, fetchQuizzes, fetchResults]);
 
-  /* -------------------------------------------------- */
-  /* LOADING */
-  /* -------------------------------------------------- */
   if (loading) {
     return (
       <div className="dashboard-container">
         <Navbar />
-        <main className="dashboard-main">
-          <div className="dashboard-section">
-            <div className="loading" style={{ textAlign: 'center', padding: '3rem' }}>
-              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⏳</div>
-              <div>Loading dashboard...</div>
-            </div>
-          </div>
+        <main style={{ padding: '100px 20px', textAlign: 'center' }}>
+          <div className="loading-spinner" style={{ margin: '0 auto', width: '50px', height: '50px', border: '5px solid var(--gray-100)', borderTopColor: 'var(--primary)', borderRadius: '50%' }} />
+          <p style={{ marginTop: '20px', color: 'var(--gray-500)', fontWeight: 600 }}>Analyzing your dashboard...</p>
         </main>
       </div>
     );
   }
 
-  /* -------------------------------------------------- */
-  /* DASHBOARD STATS */
-  /* -------------------------------------------------- */
-  const totalQuizzes = quizzes.length;
-  const totalSubmissions = results.length;
-  
-  // Calculate average score
-  const averageScore =
-    results.length > 0
-      ? Math.round(
-          results.reduce(
-            (sum, r) => sum + (r.score / Math.max(1, r.total)) * 100,
-            0
-          ) / results.length
-        )
-      : 0;
-
-  // For teachers: calculate total students who took quizzes
-  const uniqueStudents = user.role === "teacher" 
-    ? new Set(results.map(r => r.student?._id || r.student)).size 
+  const averageScore = results.length > 0
+    ? Math.round(results.reduce((sum, r) => sum + (r.score / Math.max(1, r.total)) * 100, 0) / results.length)
     : 0;
 
-  // For students: calculate completed quizzes
-  const completedQuizzes = user.role === "student"
-    ? results.length
-    : 0;
-
-  // For students: calculate best score
-  const bestScore = user.role === "student" && results.length > 0
-    ? Math.max(...results.map(r => Math.round((r.score / Math.max(1, r.total)) * 100)))
-    : 0;
-
-  /* -------------------------------------------------- */
-  /* RENDER */
-  /* -------------------------------------------------- */
   return (
     <div className="dashboard-container">
       <Navbar />
-      <main className="dashboard-main">
-        
-        {/* --------------------------------------------------
-            PREMIUM HERO SECTION 
-        -------------------------------------------------- */}
-        <section className="dashboard-section hero-pro">
-          <div className="hero-pro-left">
-            <div className="hero-pro-title-row">
-              <div className="hero-pro-icon">
-                <img
-                  src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png"
-                  alt="User icon"
-                  style={{
-                    width: 60,
-                    height: 60,
-                    borderRadius: "18px",
-                    padding: "10px",
-                    background: "linear-gradient(135deg, var(--blue), var(--purple))",
-                  }}
-                />
-              </div>
-              <h2 className="hero-pro-title">
-                Welcome back, {user.name}!
-              </h2>
-            </div>
+      <main className="animate-fade-in">
 
-            <p className="hero-pro-sub">
-              <Rocket size={16} className="inline-icon" /> 
-              {user.role === "teacher" 
-                ? "Manage your quizzes and track student progress"
-                : "Ready to continue your learning journey?"}
+        {/* HERO SECTION */}
+        <section className="hero-pro" style={{ marginBottom: '50px' }}>
+          <div style={{ maxWidth: '650px' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '99px', marginBottom: '24px', fontSize: '14px', fontWeight: 600 }}>
+              <Sparkles size={16} /> <span>Level Up Your Learning</span>
+            </div>
+            <h1 className="hero-pro-title">
+              Welcome back, <span style={{ textDecoration: 'underline', textDecorationColor: 'var(--accent)' }}>{user.name.split(' ')[0]}</span>!
+            </h1>
+            <p className="hero-pro-sub" style={{ opacity: 0.95, fontSize: '19px' }}>
+              {user.role === "teacher"
+                ? "Manage your classroom, track student performance, and create engaging quizzes in seconds."
+                : "You've already completed " + results.length + " challenges. Keep the momentum going and achieve your goals today!"}
             </p>
-
-            {/* BADGES */}
-            <div className="hero-pro-badges">
-              <div className="achievement-card" title="Active participation">
-                <Flame size={20} className="achievement-icon" />
-                <div className="achievement-content">
-                  <span className="achievement-title">
-                    {user.role === "teacher" ? "Active Teacher" : "Active Learner"}
-                  </span>
-                  <span className="achievement-desc">
-                    {user.role === "teacher" 
-                      ? "Managing quizzes effectively" 
-                      : "Consistent quiz participation"}
-                  </span>
-                </div>
-              </div>
-              <div className="achievement-card" title="Achievements growing">
-                <Award size={20} className="achievement-icon" />
-                <div className="achievement-content">
-                  <span className="achievement-title">Achievements Growing</span>
-                  <span className="achievement-desc">
-                    {user.role === "teacher" 
-                      ? "Tracking student progress" 
-                      : "Skills development ongoing"}
-                  </span>
-                </div>
-              </div>
-              <div className="achievement-card" title="Knowledge expanding">
-                <BookOpen size={20} className="achievement-icon" />
-                <div className="achievement-content">
-                  <span className="achievement-title">Knowledge Expanding</span>
-                  <span className="achievement-desc">
-                    {user.role === "teacher" 
-                      ? "Creating educational content" 
-                      : "Continuous learning journey"}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* BUTTONS */}
-            <div className="hero-pro-buttons">
-              {user.role === "teacher" ? (
-                <>
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => navigate("/create-quiz")}
-                  >
-                    <Plus size={18} />
-                    Create Quiz
-                  </button>
-                  <button
-                    className="btn btn-outline"
-                    onClick={() => navigate("/quizzes")}
-                  >
-                    <BookOpen size={18} />
-                    View All Quizzes
-                  </button>
-                </>
-              ) : (
-                <>
-                  {quizzes.length > 0 && (
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => navigate(`/quiz/${quizzes[0]._id}`)}
-                    >
-                      <Rocket size={18} />
-                      Start Quiz
-                    </button>
-                  )}
-                  <button
-                    className="btn btn-outline"
-                    onClick={() => navigate(`/my-results/${r.quiz._id}`)}
-                  >
-                    <BarChart3 size={18} />
-                    My Results
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* RIGHT ILLUSTRATION */}
-          <div className="hero-pro-img-wrap">
-            <img
-              className="hero-pro-img"
-              src="https://cdni.iconscout.com/illustration/premium/thumb/online-student-5790172-4844555.png"
-              alt="Learning illustration"
-              onError={(e) => {
-                e.target.src =
-                  "https://cdni.iconscout.com/illustration/premium/thumb/learning-path-illustration-4567341.png";
-              }}
-            />
-          </div>
-        </section>
-
-        {/* --------------------------------------------------
-            STAT GRID 
-        -------------------------------------------------- */}
-        <section className="dashboard-section">
-          <h2 className="section-heading">
-            <LayoutDashboard size={28} style={{ marginRight: '12px', verticalAlign: 'middle' }} />
-            Overview
-          </h2>
-
-          <div className="stats-grid">
-            {user.role === "teacher" ? (
-              <>
-                <StatCard 
-                  icon={BookOpen} 
-                  value={totalQuizzes} 
-                  label="Total Quizzes"
-                  gradient="rgba(99,102,241,0.1), rgba(99,102,241,0.05)"
-                  onClick={() => navigate("/quizzes")}
-                />
-                <StatCard 
-                  icon={Users} 
-                  value={uniqueStudents} 
-                  label="Active Students"
-                  gradient="rgba(16,185,129,0.1), rgba(16,185,129,0.05)"
-                />
-                <StatCard 
-                  icon={CheckCircle2} 
-                  value={totalSubmissions} 
-                  label="Total Submissions"
-                  gradient="rgba(245,158,11,0.1), rgba(245,158,11,0.05)"
-                />
-                <StatCard 
-                  icon={TrendingUp} 
-                  value={`${averageScore}%`} 
-                  label="Average Score"
-                  gradient="rgba(139,92,246,0.1), rgba(139,92,246,0.05)"
-                />
-              </>
-            ) : (
-              <>
-                <StatCard 
-                  icon={BookOpen} 
-                  value={totalQuizzes} 
-                  label="Available Quizzes"
-                  gradient="rgba(99,102,241,0.1), rgba(99,102,241,0.05)"
-                  onClick={() => navigate("/quizzes")}
-                />
-                <StatCard 
-                  icon={CheckCircle2} 
-                  value={completedQuizzes} 
-                  label="Completed Quizzes"
-                  gradient="rgba(16,185,129,0.1), rgba(16,185,129,0.05)"
-                />
-                <StatCard 
-                  icon={Target} 
-                  value={`${bestScore}%`} 
-                  label="Best Score"
-                  gradient="rgba(245,158,11,0.1), rgba(245,158,11,0.05)"
-                />
-                <StatCard 
-                  icon={TrendingUp} 
-                  value={`${averageScore}%`} 
-                  label="Average Score"
-                  gradient="rgba(139,92,246,0.1), rgba(139,92,246,0.05)"
-                />
-              </>
-            )}
-          </div>
-        </section>
-
-        {/* --------------------------------------------------
-            QUIZ LIST 
-        -------------------------------------------------- */}
-        <section className="dashboard-section">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-            <h2 className="section-heading" style={{ margin: 0 }}>
-              <BookOpen size={28} style={{ marginRight: '12px', verticalAlign: 'middle' }} />
-              {user.role === "teacher" ? "My Quizzes" : "Available Quizzes"}
-            </h2>
-            {user.role === "teacher" && (
+            <div style={{ display: 'flex', gap: '20px' }}>
               <button
-                className="btn btn-primary"
-                onClick={() => navigate("/create-quiz")}
+                className="btn"
+                style={{ background: 'white', color: 'var(--primary)', fontWeight: 800, padding: '14px 28px', borderRadius: '16px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}
+                onClick={() => navigate(user.role === "teacher" ? "/create-quiz" : "/quizzes")}
               >
-                <Plus size={18} />
-                Create New Quiz
+                {user.role === "teacher" ? "Create New Quiz" : "Start New Journey"}
               </button>
-            )}
-          </div>
-
-          {quizzes.length === 0 ? (
-            <EmptyBox
-              icon={BookOpen}
-              title={user.role === "teacher" ? "No quizzes created yet" : "No quizzes available"}
-              subtitle={user.role === "teacher" 
-                ? "Create your first quiz to get started!"
-                : "Your teacher hasn't published anything yet."}
-            />
-          ) : (
-            <div className="quizzes-grid-dashboard">
-              {quizzes.slice(0, 6).map((q) => (
-                <QuizCard
-                  key={q._id}
-                  quiz={q}
-                  onTakeQuiz={(id) => navigate(`/quiz/${id}`)}
-                  isTeacher={user.role === "teacher"}
-                  navigate={navigate}
-                />
-              ))}
-            </div>
-          )}
-
-          {quizzes.length > 6 && (
-            <div style={{ textAlign: 'center', marginTop: '2rem' }}>
               <button
-                className="btn btn-outline"
-                onClick={() => navigate("/quizzes")}
-              >
-                View All Quizzes ({quizzes.length})
-              </button>
-            </div>
-          )}
-        </section>
-
-        {/* --------------------------------------------------
-            RESULTS TABLE
-        -------------------------------------------------- */}
-        <section className="dashboard-section">
-          <h2 className="section-heading">
-            <BarChart3 size={28} style={{ marginRight: '12px', verticalAlign: 'middle' }} />
-            {user.role === "teacher" ? "Recent Submissions" : "My Recent Results"}
-          </h2>
-
-          {results.length === 0 ? (
-            <EmptyBox
-              icon={Award}
-              title={user.role === "teacher" ? "No submissions yet" : "No results yet"}
-              subtitle={user.role === "teacher"
-                ? "Students haven't submitted any quizzes yet."
-                : "Complete quizzes to see your progress here."}
-            />
-          ) : (
-            <div className="table-container">
-              <table>
-                <thead>
-                  <tr>
-                    {user.role === "teacher" && <th>Student</th>}
-                    <th>Quiz</th>
-                    <th>Subject</th>
-                    <th>Score</th>
-                    <th>Percentage</th>
-                    <th>Date</th>
-                    {user.role === "teacher" && <th>Action</th>}
-                  </tr>
-                </thead>
-                <tbody>
-                  {results.slice(0, 10).map((r) => {
-                    const percentage = Math.round((r.score / Math.max(1, r.total)) * 100);
-                    return (
-                      <tr key={r._id}>
-                        {user.role === "teacher" && (
-                          <td>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <div style={{
-                                width: 32,
-                                height: 32,
-                                borderRadius: '50%',
-                                background: 'linear-gradient(135deg, var(--blue), var(--purple))',
-                                color: 'white',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontWeight: 600,
-                                fontSize: '14px'
-                              }}>
-                                {r.student?.name?.charAt(0)?.toUpperCase() || '?'}
-                              </div>
-                              <div>
-                                <div style={{ fontWeight: 600 }}>{r.student?.name || "Unknown"}</div>
-                                <div style={{ fontSize: '12px', color: 'var(--gray-600)' }}>
-                                  {r.student?.email || ""}
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                        )}
-                        <td style={{ fontWeight: 600 }}>{r.quiz?.title || "Unknown Quiz"}</td>
-                        <td>{r.quiz?.subject || "N/A"}</td>
-                        <td>
-                          <span style={{
-                            padding: '4px 12px',
-                            borderRadius: '12px',
-                            background: percentage >= 80 
-                              ? 'rgba(16,185,129,0.1)' 
-                              : percentage >= 60 
-                              ? 'rgba(245,158,11,0.1)' 
-                              : 'rgba(239,68,68,0.1)',
-                            color: percentage >= 80 
-                              ? 'var(--accent-dark)' 
-                              : percentage >= 60 
-                              ? 'var(--warning-dark)' 
-                              : 'var(--error-dark)',
-                            fontWeight: 600
-                          }}>
-                            {r.score}/{r.total}
-                          </span>
-                        </td>
-                        <td>
-                          <span style={{
-                            fontWeight: 700,
-                            color: percentage >= 80 
-                              ? 'var(--accent-dark)' 
-                              : percentage >= 60 
-                              ? 'var(--warning-dark)' 
-                              : 'var(--error-dark)'
-                          }}>
-                            {percentage}%
-                          </span>
-                        </td>
-                        <td>{new Date(r.submittedAt || r.createdAt).toLocaleDateString()}</td>
-                        <td>
-                          <button
-                            className="btn btn-outline"
-                            style={{ padding: '6px 12px', fontSize: '12px' }}
-                            onClick={() => navigate(user.role === "teacher" ? `/results/${r.quiz?._id}` : `/my-results/${r.quiz?._id}`)}
-                          >
-                            View
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {results.length > 10 && user.role === "teacher" && (
-            <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-              <button
-                className="btn btn-outline"
+                className="btn"
+                style={{ background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', fontWeight: 700, padding: '14px 24px', borderRadius: '16px' }}
                 onClick={() => navigate("/results")}
               >
-                View All Results ({results.length})
+                View Analytics
               </button>
             </div>
-          )}
+          </div>
+          <div className="hero-illustration" style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ position: 'relative' }}>
+              <Trophy size={200} style={{ opacity: 0.2, filter: 'drop-shadow(0 0 40px rgba(255,255,255,0.3))' }} />
+              <Award size={100} style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: 'white' }} />
+            </div>
+          </div>
         </section>
+
+        {/* TOP STATS */}
+        <div className="stats-grid" style={{ marginBottom: '60px' }}>
+          <StatCard
+            icon={BookOpen}
+            value={quizzes.length}
+            label={user.role === "teacher" ? "Your Quizzes" : "Available Quizzes"}
+            onClick={() => navigate(user.role === "teacher" ? "/results" : "/quizzes")}
+            color="#6D28D9"
+          />
+          <StatCard
+            icon={user.role === "teacher" ? Users : CheckCircle2}
+            value={user.role === "teacher" ? new Set(results.map(r => r.student?._id)).size : results.length}
+            label={user.role === "teacher" ? "Total Students" : "Quizzes Taken"}
+            color="#06B6D4"
+          />
+          <StatCard
+            icon={Trophy}
+            value={`${averageScore}%`}
+            label="Class Average"
+            color="#F97316"
+          />
+          <StatCard
+            icon={Zap}
+            value={results.filter(r => (r.score / r.total) >= 0.8).length}
+            label="High Performers"
+            color="#10B981"
+          />
+        </div>
+
+        {/* MAIN CONTENT GRID */}
+        <div className="dashboard-main-grid" style={{ display: 'flex', flexDirection: 'column', gap: '60px' }}>
+
+          {/* LEFT COLUMN: QUIZZES */}
+          <section className="quizzes-section">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <div style={{ background: 'var(--primary)', padding: '12px', borderRadius: '16px', color: 'white', boxShadow: '0 8px 16px rgba(109, 40, 217, 0.25)' }}>
+                  <Zap size={24} />
+                </div>
+                <div>
+                  <h2 className="dashboard-section-title" style={{ margin: 0, fontSize: '24px', fontWeight: 800 }}>Explore Challenges</h2>
+                  <p style={{ margin: 0, color: 'var(--gray-500)', fontSize: '14px' }}>Ready for your next learning milestone?</p>
+                </div>
+              </div>
+              <button className="btn" style={{ border: 'none', color: 'var(--primary)', fontWeight: 800, fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={() => navigate(user.role === "teacher" ? "/results" : "/quizzes")}>
+                View All <ArrowRight size={18} />
+              </button>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: user.role === 'teacher' ? 'repeat(auto-fill, minmax(300px, 1fr))' : 'repeat(auto-fill, minmax(360px, 1fr))', gap: '32px' }}>
+              {quizzes.slice(0, 6).map(q => {
+                const hasTaken = results.some(r => String(r.quiz?._id || r.quiz) === String(q._id));
+                return (
+                  <QuizCard key={q._id} quiz={q} onTakeQuiz={id => navigate(`/quiz/${id}`)} isTeacher={user.role === "teacher"} navigate={navigate} hasTaken={hasTaken} />
+                );
+              })}
+              {quizzes.length === 0 && (
+                <div className="glass-card" style={{ gridColumn: '1 / -1', padding: '100px 40px', textAlign: 'center', borderStyle: 'dashed', background: 'rgba(0,0,0,0.02)' }}>
+                  <div style={{ background: 'var(--gray-100)', width: '80px', height: '80px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+                    <BookOpen size={40} color="var(--gray-400)" />
+                  </div>
+                  <h3 style={{ color: 'var(--gray-700)', fontSize: '20px', fontWeight: 800 }}>No quizzes available.</h3>
+                  <p style={{ color: 'var(--gray-500)', maxWidth: '400px', margin: '0 auto' }}>You haven't created any quizzes yet. Click "Create New Quiz" to get started!</p>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* RECENT ACTIVITY SECTION BELOW */}
+          <section className="activity-section">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '32px' }}>
+              <div style={{ background: 'var(--accent)', padding: '12px', borderRadius: '16px', color: 'white', boxShadow: '0 8px 16px rgba(6, 182, 212, 0.25)' }}>
+                <Activity size={24} />
+              </div>
+              <div>
+                <h2 className="dashboard-section-title" style={{ margin: 0, fontSize: '24px', fontWeight: 800 }}>Recent Activity</h2>
+                <p style={{ margin: 0, color: 'var(--gray-500)', fontSize: '14px' }}>Keep track of your latest performances</p>
+              </div>
+            </div>
+
+            <div className="glass-card" style={{ border: '1px solid var(--border)', overflow: 'hidden' }}>
+              {results.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '60px 0' }}>
+                  <p style={{ color: 'var(--gray-400)', fontSize: '15px' }}>No recent activity found.</p>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {results.slice(0, 5).map((r, idx) => (
+                    <div
+                      key={r._id}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '20px',
+                        padding: '24px',
+                        borderBottom: idx === results.slice(0, 5).length - 1 ? 'none' : '1px solid var(--border)',
+                        background: idx % 2 === 0 ? 'transparent' : 'rgba(0,0,0,0.01)'
+                      }}
+                    >
+                      <div style={{
+                        width: '52px',
+                        height: '52px',
+                        borderRadius: '16px',
+                        background: (r.score / r.total) >= 0.8 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(249, 115, 22, 0.1)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: (r.score / r.total) >= 0.8 ? '#10B981' : '#F97316'
+                      }}>
+                        <CheckCircle2 size={28} />
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <h4 style={{ fontSize: '17px', fontWeight: 800, marginBottom: '4px', color: 'var(--gray-900)' }}>
+                          {user.role === "teacher" ? (r.student?.name || "Student") : (r.quiz?.title || "Quiz")}
+                        </h4>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '13px', color: 'var(--gray-500)' }}>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Clock size={14} /> {new Date(r.submittedAt || r.createdAt).toLocaleDateString()}</span>
+                          <span style={{ height: '4px', width: '4px', background: 'var(--gray-300)', borderRadius: '50%' }}></span>
+                          <span style={{ fontWeight: 700, color: (r.score / r.total) >= 0.8 ? 'var(--success)' : 'var(--warning)' }}>
+                            {Math.round((r.score / r.total) * 100)}% Result
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        className="btn btn-outline"
+                        style={{ padding: '8px 16px', fontSize: '13px', borderRadius: '10px' }}
+                        onClick={() => navigate(`/results/${r.quiz?._id || r.quiz}`)}
+                      >
+                        View Details
+                      </button>
+                    </div>
+                  ))}
+                  <div style={{ padding: '24px', background: 'rgba(0,0,0,0.02)', textAlign: 'center', borderTop: '1px solid var(--border)' }}>
+                    <button
+                      className="btn btn-primary"
+                      style={{ padding: '12px 32px', fontSize: '14px', fontWeight: 700, borderRadius: '12px' }}
+                      onClick={() => navigate("/results")}
+                    >
+                      View All Activity Report
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+
+        </div>
 
       </main>
       <Footer />

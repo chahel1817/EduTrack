@@ -57,6 +57,18 @@ const quizSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    allowMultipleAttempts: {
+      type: Boolean,
+      default: false,
+    },
+    startDate: {
+      type: Date,
+      default: null,
+    },
+    endDate: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );

@@ -12,6 +12,7 @@ import {
   ArrowRight,
   Clock,
   FileText,
+  Trophy,
 } from "lucide-react";
 
 const MyResults = () => {
@@ -54,14 +55,19 @@ const MyResults = () => {
       <main className="dashboard-main">
 
         {/* HEADER */}
-        <section className="dashboard-section">
-          <h2 className="section-heading">
-            <BarChart3 size={28} style={{ marginRight: "12px", verticalAlign: "middle" }} />
-            My Test Results
-          </h2>
-          <p style={{ color: "var(--gray-600)", marginTop: "6px" }}>
-            Track your performance and review detailed feedback
-          </p>
+        <section className="dashboard-section hero-pro" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '40px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+            <div className="header-icon" style={{ background: 'rgba(255,255,255,0.2)', width: '64px', height: '64px' }}>
+              <Trophy size={36} color="white" />
+            </div>
+            <div>
+              <h1 className="hero-pro-title" style={{ margin: 0, fontSize: '32px' }}>My Results</h1>
+              <p className="hero-pro-sub" style={{ margin: 0, opacity: 0.9 }}>
+                Track your progress and review your academic performance
+              </p>
+            </div>
+          </div>
+          <BarChart3 size={100} style={{ opacity: 0.15, color: 'white' }} />
         </section>
 
         {/* EMPTY STATE */}
@@ -148,8 +154,8 @@ const MyResults = () => {
                                 percentage >= 80
                                   ? "var(--accent)"
                                   : percentage >= 60
-                                  ? "var(--warning)"
-                                  : "var(--error)",
+                                    ? "var(--warning)"
+                                    : "var(--error)",
                               transition: "width 0.3s ease",
                             }}
                           />
@@ -159,9 +165,9 @@ const MyResults = () => {
                       <div className="quiz-card-actions">
                         <button
                           className="btn btn-outline"
-                         onClick={() =>
-  navigate(`/my-results/${r.quiz?._id || r.quiz}`)
-}
+                          onClick={() =>
+                            navigate(`/my-results/${r.quiz?._id || r.quiz}`)
+                          }
 
                         >
                           View Details

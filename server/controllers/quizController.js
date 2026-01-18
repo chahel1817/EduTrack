@@ -20,13 +20,31 @@ export const createQuiz = async (req, res) => {
       questions,
       timeLimit,
       enableQuestionTimeLimit,
+      allowMultipleAttempts,
+      startDate,
+      endDate,
     } = req.body;
 
-    console.log("Quiz data:", { title, subject, description, questionsCount: questions?.length, timeLimit, enableQuestionTimeLimit });
+    console.log("Quiz data:", {
+      title,
+      subject,
+      description,
+      questionsCount: questions?.length,
+      timeLimit,
+      enableQuestionTimeLimit,
+      allowMultipleAttempts,
+      startDate,
+      endDate
+    });
 
     if (!title || !subject || !questions || questions.length === 0) {
       console.log("❌ Missing required fields");
       return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // Validate dates if provided
+    if (startDate && endDate && new Date(startDate) >= new Date(endDate)) {
+      return res.status(400).json({ message: "End date must be after start date" });
     }
 
     // Validate questions structure
@@ -54,6 +72,9 @@ export const createQuiz = async (req, res) => {
       questions,
       timeLimit,
       enableQuestionTimeLimit,
+      allowMultipleAttempts: allowMultipleAttempts || false,
+      startDate: startDate || null,
+      endDate: endDate || null,
       createdBy: req.user.id,
     });
 
@@ -74,7 +95,7 @@ export const getAllQuizzes = async (req, res) => {
   try {
     console.log("📚 Get All Quizzes - Request received");
     console.log("User:", req.user?.id, "Role:", req.user?.role);
-    
+
     const quizzes = await Quiz.find()
       .populate("createdBy", "name email")
       .sort({ createdAt: -1 });
@@ -119,12 +140,12 @@ export const getQuizById = async (req, res) => {
   } catch (error) {
     console.error("❌ Get Quiz Error:", error);
     console.error("Error stack:", error.stack);
-    
+
     // Handle invalid ObjectId format
     if (error.name === 'CastError') {
       return res.status(400).json({ message: "Invalid quiz ID format" });
     }
-    
+
     return res.status(500).json({ message: "Server error", error: error.message });
   }
 };

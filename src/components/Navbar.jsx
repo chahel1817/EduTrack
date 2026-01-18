@@ -70,10 +70,8 @@ const Navbar = () => {
 
     if (newTheme) {
       document.body.classList.add("dark");
-      console.log("Dark mode enabled");
     } else {
       document.body.classList.remove("dark");
-      console.log("Light mode enabled");
     }
   };
 
@@ -89,13 +87,14 @@ const Navbar = () => {
           <span className="logo-text gradient-text">EduTrack</span>
         </div>
 
-        {/* MOBILE MENU BUTTON */}
+        {/* MOBILE MENU BUTTON (Hidden on Desktop) */}
         <button
           className="mobile-menu-toggle"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle menu"
+          style={{ order: 1 }}
         >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
 
         {/* MOBILE MENU BACKDROP */}
@@ -124,9 +123,8 @@ const Navbar = () => {
           {/* Create Quiz — Teacher only */}
           {user.role === "teacher" && (
             <button
-              className={`navbar-link glow-link ${
-                isActive("/create-quiz") ? "active" : ""
-              }`}
+              className={`navbar-link glow-link ${isActive("/create-quiz") ? "active" : ""
+                }`}
               onClick={() => {
                 navigate("/create-quiz");
                 setMobileMenuOpen(false);
@@ -139,26 +137,24 @@ const Navbar = () => {
 
           {/* Quizzes */}
           <button
-  className={`navbar-link ${
-    isActive("/quizzes") || isActive("/teacher-quizzes") ? "active" : ""
-  }`}
-  onClick={() => {
-    navigate(user.role === "teacher" ? "/results" : "/quizzes");
-    setMobileMenuOpen(false);
-  }}
->
-  <FileEdit size={18} />
-  <span>Quizzes</span>
-</button>
+            className={`navbar-link ${isActive("/quizzes") || isActive("/teacher-quizzes") ? "active" : ""
+              }`}
+            onClick={() => {
+              navigate(user.role === "teacher" ? "/results" : "/quizzes");
+              setMobileMenuOpen(false);
+            }}
+          >
+            <FileEdit size={18} />
+            <span>Quizzes</span>
+          </button>
 
 
           {/* Results */}
           <button
-            className={`navbar-link glow-link ${
-              isActive("/results") || isActive("/my-results")
-                ? "active"
-                : ""
-            }`}
+            className={`navbar-link glow-link ${isActive("/results") || isActive("/my-results")
+              ? "active"
+              : ""
+              }`}
             onClick={() => {
               navigate(user.role === "teacher" ? "/results" : "/my-results");
               setMobileMenuOpen(false);
@@ -185,8 +181,21 @@ const Navbar = () => {
         <div className="navbar-user" style={{ position: "relative" }}>
 
           {/* THEME TOGGLE */}
-          <button className="dark-toggle hover-bounce" onClick={toggleTheme}>
-            {dark ? <Sun size={22} /> : <Moon size={22} />}
+          <button
+            className="dark-toggle hover-bounce"
+            onClick={toggleTheme}
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+              border: '1px solid var(--border)'
+            }}
+          >
+            {dark ? <Sun size={20} className="sun-icon" /> : <Moon size={20} className="moon-icon" />}
           </button>
 
           {/* USER DROPDOWN */}
@@ -209,7 +218,7 @@ const Navbar = () => {
           {menuOpen && (
             <>
               {/* Backdrop to close menu */}
-              <div 
+              <div
                 style={{
                   position: "fixed",
                   top: 0,

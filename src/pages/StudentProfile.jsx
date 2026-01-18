@@ -1,300 +1,133 @@
+
 import { useEffect, useState } from "react";
 import { api } from "../utils/api";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import {
   User,
   Mail,
-  Phone,
-  Calendar,
   Target,
-  BookOpen,
   Award,
   BarChart3,
-  Timer,
   TrendingUp,
   CheckCircle2,
-  Edit,
   Clock,
 } from "lucide-react";
 
 const StudentProfile = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [results, setResults] = useState([]);
-  const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) return;
-
     const fetchData = async () => {
       try {
-        const [resultsRes, quizzesRes] = await Promise.all([
-          api.get("/results/student"),
-          api.get("/quizzes"),
-        ]);
-        setResults(resultsRes.data || []);
-        setQuizzes(quizzesRes.data || []);
+        const res = await api.get("/results/student");
+        setResults(res.data || []);
       } catch (err) {
         console.error("Profile error:", err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [user]);
 
   const totalCompleted = results.length;
-  const avgPercentage =
-    totalCompleted > 0
-      ? Math.round(
-          results.reduce((sum, r) => sum + (r.percentage || 0), 0) / totalCompleted
-        )
-      : 0;
-  const bestScore =
-    totalCompleted > 0
-      ? Math.max(...results.map((r) => r.percentage || 0))
-      : 0;
-  const totalTimeSpent =
-    results.reduce((sum, r) => sum + (r.timeSpent || 0), 0);
+  const avgPercentage = totalCompleted > 0
+    ? Math.round(results.reduce((sum, r) => sum + ((r.score / r.total) * 100), 0) / totalCompleted)
+    : 0;
+  const bestScore = totalCompleted > 0
+    ? Math.max(...results.map(r => Math.round((r.score / r.total) * 100)))
+    : 0;
+
+  if (loading) return null;
 
   return (
     <div className="dashboard-container">
       <Navbar />
-      <main className="dashboard-main">
-        {/* Hero Section */}
-        <section className="dashboard-section hero-pro" style={{ marginBottom: "32px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "24px", flexWrap: "wrap" }}>
-            <div
-              className="profile-avatar"
-              style={{
-                width: 120,
-                height: 120,
-                fontSize: "48px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "rgba(255, 255, 255, 0.2)",
-                border: "3px solid rgba(255, 255, 255, 0.3)",
-              }}
-            >
-              {user?.name?.charAt(0).toUpperCase()}
-            </div>
-
-            <div style={{ flex: 1, minWidth: "250px" }}>
-              <h2 className="hero-pro-title" style={{ marginBottom: "8px" }}>
-                {user.name}
-              </h2>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", marginTop: "16px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", opacity: 0.9 }}>
-                  <Mail size={18} />
-                  <span>{user.email}</span>
-                </div>
-                {user.phone && (
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px", opacity: 0.9 }}>
-                    <Phone size={18} />
-                    <span>{user.phone}</span>
-                  </div>
-                )}
-                {user.age && (
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px", opacity: 0.9 }}>
-                    <Calendar size={18} />
-                    <span>{user.age} years old</span>
-                  </div>
-                )}
-              </div>
-              <div
-                className="profile-role-chip"
-                style={{
-                  marginTop: "12px",
-                  background: "rgba(255, 255, 255, 0.2)",
-                  backdropFilter: "blur(10px)",
-                }}
-              >
-                <User size={16} />
-                {user.role === "student" ? "Student" : "Teacher"}
-              </div>
+      <main>
+        {/* PROFILE HERO */}
+        <section className="profile-hero" style={{ marginBottom: '40px', display: 'flex', alignItems: 'center', gap: '32px' }}>
+          <div className="user-avatar" style={{ width: '100px', height: '100px', fontSize: '40px', border: '4px solid rgba(255,255,255,0.3)' }}>
+            {user.name.charAt(0)}
+          </div>
+          <div>
+            <h1 style={{ color: 'white', marginBottom: '8px', fontSize: '32px' }}>{user.name}</h1>
+            <div style={{ display: 'flex', gap: '16px', color: 'rgba(255,255,255,0.8)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Mail size={16} /> {user.email}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><User size={16} /> {user.role}</div>
             </div>
           </div>
         </section>
 
-        {/* Stats Grid */}
+        {/* STATS GRID */}
+        <div className="stats-grid" style={{ marginBottom: '40px' }}>
+          <div className="stat-card">
+            <div className="stat-icon-wrapper"><CheckCircle2 size={24} /></div>
+            <div className="stat-value">{totalCompleted}</div>
+            <div className="stat-label">Quizzes Completed</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon-wrapper"><TrendingUp size={24} /></div>
+            <div className="stat-value">{avgPercentage}%</div>
+            <div className="stat-label">Average Accuracy</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon-wrapper"><Target size={24} /></div>
+            <div className="stat-value">{bestScore}%</div>
+            <div className="stat-label">Highest Score</div>
+          </div>
+        </div>
+
+        {/* ACHIEVEMENTS */}
         <section className="dashboard-section">
-          <h2 className="section-heading">
-            <BarChart3 size={28} style={{ marginRight: "12px", verticalAlign: "middle" }} />
-            Performance Overview
-          </h2>
-
-          <div className="stats-grid">
-            <div className="stat-card hover-lift">
-              <div className="stat-icon-wrapper">
-                <CheckCircle2 size={28} />
-              </div>
-              <h3 className="stat-value">{totalCompleted}</h3>
-              <p className="stat-label">Quizzes Completed</p>
+          <h2 className="dashboard-section-title">Certifications & Badges</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '20px' }}>
+            <div className="glass-card" style={{ padding: '24px', textAlign: 'center' }}>
+              <Award size={48} color="var(--button)" style={{ marginBottom: '16px' }} />
+              <h3 style={{ fontSize: '18px', fontWeight: 700 }}>Early Adopter</h3>
+              <p style={{ color: 'var(--gray-500)', fontSize: '14px' }}>One of the first 100 students</p>
             </div>
-
-            <div className="stat-card hover-lift">
-              <div className="stat-icon-wrapper">
-                <TrendingUp size={28} />
+            {totalCompleted > 5 && (
+              <div className="glass-card" style={{ padding: '24px', textAlign: 'center' }}>
+                <Award size={48} color="var(--primary)" style={{ marginBottom: '16px' }} />
+                <h3 style={{ fontSize: '18px', fontWeight: 700 }}>Consistent Learner</h3>
+                <p style={{ color: 'var(--gray-500)', fontSize: '14px' }}>Completed over 5 quizzes</p>
               </div>
-              <h3 className="stat-value">{avgPercentage}%</h3>
-              <p className="stat-label">Average Score</p>
-            </div>
-
-            <div className="stat-card hover-lift">
-              <div className="stat-icon-wrapper">
-                <Target size={28} />
-              </div>
-              <h3 className="stat-value">{bestScore}%</h3>
-              <p className="stat-label">Best Score</p>
-            </div>
-
-            <div className="stat-card hover-lift">
-              <div className="stat-icon-wrapper">
-                <Clock size={28} />
-              </div>
-              <h3 className="stat-value">{totalTimeSpent}</h3>
-              <p className="stat-label">Minutes Spent</p>
-            </div>
+            )}
           </div>
         </section>
 
-        {/* Achievements */}
+        {/* RECENT ACTIVITY */}
         <section className="dashboard-section">
-          <h2 className="section-heading">
-            <Award size={28} style={{ marginRight: "12px", verticalAlign: "middle" }} />
-            Achievements
-          </h2>
-
-          {totalCompleted === 0 ? (
-            <div className="empty-state enhanced">
-              <Award size={50} color="var(--primary)" />
-              <h3>No Achievements Yet</h3>
-              <p>Complete quizzes to unlock achievements!</p>
-            </div>
-          ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "20px" }}>
-              {avgPercentage >= 80 && (
-                <div className="stat-card hover-lift" style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: "3rem", marginBottom: "12px" }}>🏆</div>
-                  <h3 style={{ fontSize: "18px", fontWeight: 600, marginBottom: "4px" }}>High Achiever</h3>
-                  <p style={{ fontSize: "14px", color: "var(--gray-600)" }}>Average score above 80%</p>
-                </div>
-              )}
-
-              {totalCompleted >= 5 && (
-                <div className="stat-card hover-lift" style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: "3rem", marginBottom: "12px" }}>🔥</div>
-                  <h3 style={{ fontSize: "18px", fontWeight: 600, marginBottom: "4px" }}>Active Learner</h3>
-                  <p style={{ fontSize: "14px", color: "var(--gray-600)" }}>Completed 5+ quizzes</p>
-                </div>
-              )}
-
-              {bestScore === 100 && (
-                <div className="stat-card hover-lift" style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: "3rem", marginBottom: "12px" }}>💯</div>
-                  <h3 style={{ fontSize: "18px", fontWeight: 600, marginBottom: "4px" }}>Perfect Score</h3>
-                  <p style={{ fontSize: "14px", color: "var(--gray-600)" }}>Achieved 100% on a quiz</p>
-                </div>
-              )}
-
-              <div className="stat-card hover-lift" style={{ textAlign: "center" }}>
-                <div style={{ fontSize: "3rem", marginBottom: "12px" }}>📚</div>
-                <h3 style={{ fontSize: "18px", fontWeight: 600, marginBottom: "4px" }}>Quiz Master</h3>
-                <p style={{ fontSize: "14px", color: "var(--gray-600)" }}>Completed {totalCompleted} quizzes</p>
-              </div>
-            </div>
-          )}
-        </section>
-
-        {/* Recent Activity */}
-        <section className="dashboard-section">
-          <h2 className="section-heading">
-            <BookOpen size={28} style={{ marginRight: "12px", verticalAlign: "middle" }} />
-            Recent Activity
-          </h2>
-
-          {loading ? (
-            <div className="loading">Loading your activity...</div>
-          ) : results.length === 0 ? (
-            <div className="empty-state enhanced">
-              <BookOpen size={50} color="var(--primary)" />
-              <h3>No Quiz Attempts Yet</h3>
-              <p>Start taking quizzes to see your activity here.</p>
-              <button className="btn btn-primary" onClick={() => navigate("/quizzes")} style={{ marginTop: "20px" }}>
-                Browse Quizzes
-              </button>
-            </div>
-          ) : (
-            <div className="table-container">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Quiz</th>
-                    <th>Subject</th>
-                    <th>Score</th>
-                    <th>Percentage</th>
-                    <th>Time Spent</th>
-                    <th>Date</th>
-                    <th>Action</th>
+          <h2 className="dashboard-section-title">Recent Quiz Results</h2>
+          <div className="table-container">
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ background: 'var(--gray-50)', textAlign: 'left' }}>
+                  <th style={{ padding: '16px' }}>Quiz</th>
+                  <th style={{ padding: '16px' }}>Subject</th>
+                  <th style={{ padding: '16px' }}>Score</th>
+                  <th style={{ padding: '16px' }}>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {results.map(r => (
+                  <tr key={r._id} style={{ borderBottom: '1px solid var(--border)' }}>
+                    <td style={{ padding: '16px', fontWeight: 600 }}>{r.quiz?.title || "Quiz"}</td>
+                    <td style={{ padding: '16px' }}>{r.quiz?.subject || "General"}</td>
+                    <td style={{ padding: '16px' }}>
+                      <span style={{ fontWeight: 700, color: 'var(--primary)' }}>{Math.round((r.score / r.total) * 100)}%</span>
+                    </td>
+                    <td style={{ padding: '16px', color: 'var(--gray-500)' }}>{new Date(r.createdAt).toLocaleDateString()}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {results.slice(0, 10).map((r) => {
-                    const percentage = r.percentage || Math.round(((r.score || 0) / Math.max(1, r.total || 1)) * 100);
-                    return (
-                      <tr key={r._id}>
-                        <td style={{ fontWeight: 600 }}>{r.quiz?.title || "Unknown Quiz"}</td>
-                        <td>{r.quiz?.subject || "N/A"}</td>
-                        <td>
-                          <span
-                            style={{
-                              padding: "4px 12px",
-                              borderRadius: "12px",
-                              background:
-                                percentage >= 80
-                                  ? "rgba(16,185,129,0.1)"
-                                  : percentage >= 60
-                                  ? "rgba(245,158,11,0.1)"
-                                  : "rgba(239,68,68,0.1)",
-                              color:
-                                percentage >= 80
-                                  ? "var(--accent-dark)"
-                                  : percentage >= 60
-                                  ? "var(--warning-dark)"
-                                  : "var(--error-dark)",
-                              fontWeight: 600,
-                            }}
-                          >
-                            {r.score}/{r.total}
-                          </span>
-                        </td>
-                        <td style={{ fontWeight: 700, color: percentage >= 80 ? "var(--accent-dark)" : percentage >= 60 ? "var(--warning-dark)" : "var(--error-dark)" }}>
-                          {percentage}%
-                        </td>
-                        <td>{r.timeSpent || 0} min</td>
-                        <td>{new Date(r.submittedAt || r.createdAt).toLocaleDateString()}</td>
-                        <td>
-                          <button
-                            className="btn btn-outline"
-                            style={{ padding: "6px 12px", fontSize: "12px" }}
-                            onClick={() => navigate(`/my-results/${r.quiz?._id}`)}
-                          >
-                            View Details
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
       </main>
       <Footer />

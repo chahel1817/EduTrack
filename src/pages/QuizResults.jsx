@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../utils/api";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { 
+import {
   Users, TrendingUp, Target, Trophy, ArrowLeft, Download,
   Loader2, AlertCircle, FileText, User, Clock,
   CheckCircle2, XCircle, AlertTriangle, BarChart3
@@ -57,47 +57,47 @@ const QuizResults = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   const handleExportCSV = () => {
-  if (!results || results.length === 0) {
-    alert("No results to export");
-    return;
-  }
+    if (!results || results.length === 0) {
+      alert("No results to export");
+      return;
+    }
 
-  const headers = [
-    "Name",
-    "Email",
-    "Score",
-    "Percentage",
-    "Time Spent (min)",
-    "Submitted At",
-  ];
+    const headers = [
+      "Name",
+      "Email",
+      "Score",
+      "Percentage",
+      "Time Spent (min)",
+      "Submitted At",
+    ];
 
-  const rows = results.map(r => [
-    r.student?.name || "",
-    r.student?.email || "",
-    `${r.score}/${r.total}`,
-    `${r.percentage}%`,
-    r.timeSpent,
-    new Date(r.submittedAt).toLocaleString(),
-  ]);
+    const rows = results.map(r => [
+      r.student?.name || "",
+      r.student?.email || "",
+      `${r.score}/${r.total}`,
+      `${r.percentage}%`,
+      r.timeSpent,
+      new Date(r.submittedAt).toLocaleString(),
+    ]);
 
-  const csvContent =
-    [headers, ...rows]
-      .map(row => row.map(value => `"${value}"`).join(","))
-      .join("\n");
+    const csvContent =
+      [headers, ...rows]
+        .map(row => row.map(value => `"${value}"`).join(","))
+        .join("\n");
 
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
 
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `${quiz?.title || "quiz"}-results.csv`;
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${quiz?.title || "quiz"}-results.csv`;
 
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-  URL.revokeObjectURL(url);
-};
+    URL.revokeObjectURL(url);
+  };
 
 
   useEffect(() => {
@@ -156,38 +156,29 @@ const QuizResults = () => {
       <main className="dashboard-main">
         <div className="dashboard-section">
 
-          {/* ✅ HEADER FIXED */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-              gap: 24,
-              marginBottom: 24,
-              flexWrap: "wrap",
-            }}
-          >
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <h2 className="section-heading" style={{ display: "flex", gap: 12 }}>
-                <BarChart3 /> Quiz Results: {quiz.title}
-              </h2>
-              <p style={{ color: isDarkMode ? "rgba(255,255,255,0.7)" : "var(--gray-600)" }}>
-                Subject: {quiz.subject}
-              </p>
-              <p style={{ fontSize: 13, color: isDarkMode ? "rgba(255,255,255,0.6)" : "var(--gray-600)" }}>
-                Total Questions: {quiz.questions?.length || 0}
-              </p>
+          {/* HEADER */}
+          <section className="dashboard-section hero-pro" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '40px', marginBottom: '40px', borderRadius: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+              <div className="header-icon" style={{ background: 'rgba(255,255,255,0.2)', width: '64px', height: '64px' }}>
+                <BarChart3 size={36} color="white" />
+              </div>
+              <div>
+                <h1 className="hero-pro-title" style={{ margin: 0, fontSize: '32px' }}>{quiz.title}</h1>
+                <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                  <span style={{ padding: '4px 12px', background: 'rgba(255,255,255,0.15)', borderRadius: '8px', fontSize: '13px', fontWeight: 600 }}>{quiz.subject}</span>
+                  <span style={{ padding: '4px 12px', background: 'rgba(255,255,255,0.15)', borderRadius: '8px', fontSize: '13px', fontWeight: 600 }}>{quiz.questions?.length || 0} Questions</span>
+                </div>
+              </div>
             </div>
-
-            <div style={{ display: "flex", gap: 8 }}>
-              <button className="btn btn-outline" onClick={() => navigate("/dashboard")}>
-                <ArrowLeft size={16} /> Back
+            <div style={{ display: 'flex', gap: '15px' }}>
+              <button className="btn" style={{ background: 'white', color: 'var(--primary)', fontWeight: 700, borderRadius: '12px' }} onClick={handleExportCSV}>
+                <Download size={18} /> Export Results
               </button>
-              <button className="btn btn-primary" onClick={handleExportCSV}>
-  Export CSV
-</button>
+              <button className="btn" style={{ background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', fontWeight: 700, borderRadius: '12px' }} onClick={() => navigate("/results")}>
+                <ArrowLeft size={18} /> Back
+              </button>
             </div>
-          </div>
+          </section>
 
           {/* TABLE */}
           <table className="enhanced-table">

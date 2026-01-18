@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -8,7 +9,9 @@ import {
   Lock,
   User,
   Loader2,
-  Sparkles
+  Sparkles,
+  ArrowRight,
+  Presentation
 } from "lucide-react";
 
 const Signup = () => {
@@ -22,7 +25,6 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  /* ---------------- SUBMIT ---------------- */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -60,13 +62,13 @@ const Signup = () => {
   return (
     <div className="auth-page">
       <div className="auth-container">
-        <div className="glass-card signup-card animate-fade-in">
+        <div className="glass-card auth-card animate-fade-in">
 
           {/* HEADER */}
           <div className="auth-header">
-            <div className="auth-icon-wrapper">
-              <GraduationCap size={56} className="auth-main-icon" />
-              <Sparkles size={18} className="auth-sparkle-icon" />
+            <div className="auth-icon-wrapper" style={{ marginBottom: '20px' }}>
+              <GraduationCap size={64} className="auth-main-icon" />
+              <Sparkles size={24} className="auth-sparkle-icon" />
             </div>
 
             <h1 className="auth-title">Create Account</h1>
@@ -75,15 +77,17 @@ const Signup = () => {
             </p>
           </div>
 
+
           {/* ROLE SELECT */}
-          <div className="role-tabs-wrapper">
+          <div className="role-tabs-wrapper" style={{ marginBottom: '32px' }}>
             <div className="role-tabs">
               <button
                 type="button"
                 className={`role-tab ${role === "student" ? "active" : ""}`}
                 onClick={() => setRole("student")}
               >
-                🎓 Student
+                <User size={18} />
+                <span>Student</span>
               </button>
 
               <button
@@ -91,7 +95,8 @@ const Signup = () => {
                 className={`role-tab ${role === "teacher" ? "active" : ""}`}
                 onClick={() => setRole("teacher")}
               >
-                👨‍🏫 Teacher
+                <Presentation size={18} />
+                <span>Teacher</span>
               </button>
             </div>
           </div>
@@ -100,54 +105,70 @@ const Signup = () => {
           {error && <div className="auth-error">{error}</div>}
 
           {/* FORM */}
-          <form className="auth-form" onSubmit={handleSubmit}>
-            <input
-              className="auth-input"
-              type="text"
-              placeholder="Full name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+          <form className="auth-form" onSubmit={handleSubmit} style={{ marginTop: '10px' }}>
+            <div className="auth-input-group auth-input-wrapper">
+              <User className="auth-input-icon" size={20} />
+              <input
+                className="auth-input"
+                type="text"
+                placeholder="Full name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
 
-            <input
-              className="auth-input"
-              type="email"
-              placeholder="Email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+            <div className="auth-input-group auth-input-wrapper">
+              <Mail className="auth-input-icon" size={20} />
+              <input
+                className="auth-input"
+                type="email"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
 
-            <input
-              className="auth-input"
-              type="password"
-              placeholder="Password (min 6 chars)"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="auth-input-group auth-input-wrapper">
+              <Lock className="auth-input-icon" size={20} />
+              <input
+                className="auth-input"
+                type="password"
+                placeholder="Password (min 6 chars)"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
 
             <button
               type="submit"
               className="auth-btn glow-btn"
               disabled={loading}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '12px' }}
             >
               {loading ? (
                 <>
                   <Loader2 size={18} className="loading-spinner" />
-                  Creating account...
+                  <span>Creating account...</span>
                 </>
               ) : (
                 <>
-                  <UserPlus size={18} />
-                  Sign Up
+                  <span>Create Account</span>
+                  <ArrowRight size={20} />
                 </>
               )}
             </button>
           </form>
 
           {/* FOOTER */}
-          <Link to="/login" className="auth-text-link">
-            Already have an account? Login
-          </Link>
+          <div style={{ marginTop: '32px', textAlign: 'center', color: 'var(--gray-500)', fontSize: '15px' }}>
+            Already have an account?{" "}
+            <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 700, textDecoration: 'none' }}>
+              Login Instead
+            </Link>
+          </div>
 
         </div>
       </div>
