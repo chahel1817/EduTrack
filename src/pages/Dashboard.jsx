@@ -44,10 +44,13 @@ const StatCard = ({ icon: Icon, value, label, onClick, color }) => (
 /* ------------------------------------------------------
    QUIZ CARD COMPONENT
 ------------------------------------------------------ */
-const QuizCard = ({ quiz, onTakeQuiz, isTeacher, navigate, hasTaken }) => {
-  const now = new Date();
-  const isExpired = quiz.endDate && now > new Date(quiz.endDate);
-  const isUpcoming = quiz.startDate && now < new Date(quiz.startDate);
+const QuizCard = ({ quiz, onTakeQuiz, isTeacher, navigate, hasTaken, now: passedNow }) => {
+  const currentNow = passedNow || new Date().getTime();
+  const quizStart = quiz.startDate ? new Date(quiz.startDate).getTime() : 0;
+  const quizEnd = quiz.endDate ? new Date(quiz.endDate).getTime() : 0;
+
+  const isExpired = quizEnd > 0 && currentNow >= quizEnd;
+  const isUpcoming = quizStart > 0 && currentNow < quizStart;
   const isActive = !isExpired && !isUpcoming;
 
   return (
@@ -129,15 +132,30 @@ const QuizCard = ({ quiz, onTakeQuiz, isTeacher, navigate, hasTaken }) => {
           {quiz.description || "Challenge yourself with this quiz and master the concepts of " + quiz.subject + "."}
         </p>
 
-        {isUpcoming && (
-          <p style={{ margin: '8px 0 0', fontSize: '12px', color: 'var(--accent)', fontWeight: 600 }}>
-            Starts: {new Date(quiz.startDate).toLocaleString()}
-          </p>
-        )}
-        {isExpired && !hasTaken && (
-          <p style={{ margin: '8px 0 0', fontSize: '12px', color: 'var(--gray-400)', fontWeight: 600 }}>
-            Closed: {new Date(quiz.endDate).toLocaleString()}
-          </p>
+        {(isUpcoming || isExpired || quiz.startDate || quiz.endDate) && (
+          <div style={{
+            marginTop: '12px',
+            padding: '12px',
+            background: 'var(--gray-50)',
+            borderRadius: '12px',
+            border: '1px solid var(--border)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '4px'
+          }}>
+            <div style={{ fontSize: '12px', color: 'var(--gray-500)', display: 'flex', justifyContent: 'space-between' }}>
+              <span>Starts:</span>
+              <span style={{ fontWeight: 600, color: 'var(--gray-700)' }}>
+                {quiz.startDate ? new Date(quiz.startDate).toLocaleString() : "Now"}
+              </span>
+            </div>
+            <div style={{ fontSize: '12px', color: 'var(--gray-500)', display: 'flex', justifyContent: 'space-between' }}>
+              <span>Ends:</span>
+              <span style={{ fontWeight: 600, color: isExpired ? 'var(--error)' : 'var(--gray-700)' }}>
+                {quiz.endDate ? new Date(quiz.endDate).toLocaleString() : "Never"}
+              </span>
+            </div>
+          </div>
         )}
       </div>
 
@@ -178,6 +196,13 @@ export default function Dashboard() {
   const [quizzes, setQuizzes] = useState([]);
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [now, setNow] = useState(new Date().getTime());
+
+  // Auto-refresh 'now' to update expiration status every 2 seconds for live-feel
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date().getTime()), 2000);
+    return () => clearInterval(interval);
+  }, []);
 
   const fetchQuizzes = useCallback(async (signal) => {
     try {
@@ -324,7 +349,7 @@ export default function Dashboard() {
               {quizzes.slice(0, 6).map(q => {
                 const hasTaken = results.some(r => String(r.quiz?._id || r.quiz) === String(q._id));
                 return (
-                  <QuizCard key={q._id} quiz={q} onTakeQuiz={id => navigate(`/quiz/${id}`)} isTeacher={user.role === "teacher"} navigate={navigate} hasTaken={hasTaken} />
+                  <QuizCard key={q._id} quiz={q} onTakeQuiz={id => navigate(`/quiz/${id}`)} isTeacher={user.role === "teacher"} navigate={navigate} hasTaken={hasTaken} now={now} />
                 );
               })}
               {quizzes.length === 0 && (
@@ -371,25 +396,51 @@ export default function Dashboard() {
                       }}
                     >
                       <div style={{
-                        width: '52px',
+                        width: '70px',
                         height: '52px',
                         borderRadius: '16px',
-                        background: (r.score / r.total) >= 0.8 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(249, 115, 22, 0.1)',
+                        background: 'rgba(109, 40, 217, 0.1)',
                         display: 'flex',
+                        flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: (r.score / r.total) >= 0.8 ? '#10B981' : '#F97316'
+                        color: 'var(--primary)',
+                        fontSize: '9px',
+                        fontWeight: 900,
+                        textAlign: 'center',
+                        padding: '4px',
+                        lineHeight: 1.1,
+                        flexShrink: 0
                       }}>
-                        <CheckCircle2 size={28} />
+                        <div style={{ fontSize: '14px' }}><BookOpen size={20} /></div>
+                        <span style={{
+                          width: '100%',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {r.quiz?.subject?.toUpperCase() || "QUIZ"}
+                        </span>
                       </div>
-                      <div style={{ flex: 1 }}>
-                        <h4 style={{ fontSize: '17px', fontWeight: 800, marginBottom: '4px', color: 'var(--gray-900)' }}>
+                      <div style={{ flex: 1, textAlign: 'left', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                        <h4 style={{
+                          fontSize: '18px',
+                          fontWeight: 800,
+                          marginBottom: '6px',
+                          color: 'var(--gray-900)',
+                          letterSpacing: '-0.01em'
+                        }}>
                           {user.role === "teacher" ? (r.student?.name || "Student") : (r.quiz?.title || "Quiz")}
                         </h4>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '13px', color: 'var(--gray-500)' }}>
-                          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Clock size={14} /> {new Date(r.submittedAt || r.createdAt).toLocaleDateString()}</span>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <Clock size={14} /> {new Date(r.submittedAt || r.createdAt).toLocaleDateString()}
+                          </span>
                           <span style={{ height: '4px', width: '4px', background: 'var(--gray-300)', borderRadius: '50%' }}></span>
-                          <span style={{ fontWeight: 700, color: (r.score / r.total) >= 0.8 ? 'var(--success)' : 'var(--warning)' }}>
+                          <span style={{
+                            fontWeight: 700,
+                            color: (r.score / r.total) >= 0.8 ? 'var(--success)' : (r.score / r.total) >= 0.5 ? 'var(--warning)' : 'var(--error)'
+                          }}>
                             {Math.round((r.score / r.total) * 100)}% Result
                           </span>
                         </div>

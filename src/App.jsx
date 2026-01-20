@@ -17,6 +17,7 @@ import QuizResults from "./pages/QuizResults";
 import QuizResultsList from "./pages/QuizResultsList";
 import StudentResults from "./pages/StudentResults";
 import MyResults from "./pages/MyResults";
+import Analytics from "./pages/Analytics";
 import StudentProfile from "./pages/StudentProfile";
 import FAQs from "./pages/FAQs"; // ✅ FAQ IMPORT
 import ScrollToTop from "./components/ScrollToTop";
@@ -66,8 +67,8 @@ export default function App() {
 
           {/* ---------- PUBLIC ---------- */}
           <Route path="/login" element={<Login />} />
-<Route path="/forgot-password" element={<ForgotPassword />} />
-<Route path="/verify-otp" element={<VerifyOTP />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/verify-otp" element={<VerifyOTP />} />
 
           <Route path="/signup" element={<Signup />} />
 
@@ -81,7 +82,7 @@ export default function App() {
           <Route path="/privacy" element={<Privacy />} />
 
           <Route path="/docs" element={<Documentation />} />
-<Route path="/tutorials" element={<Tutorials />} />
+          <Route path="/tutorials" element={<Tutorials />} />
 
 
           {/* ---------- PROTECTED (COMMON) ---------- */}
@@ -122,36 +123,44 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute roles={["student"]}>
+                <Analytics />
+              </ProtectedRoute>
+            }
+          />
 
 
           {/* ---------- TEACHER ONLY ---------- */}
-         {/* ---------- TEACHER ONLY ---------- */}
-<Route
-  path="/create-quiz"
-  element={
-    <ProtectedRoute roles={["teacher"]}>
-      <CreateQuiz />
-    </ProtectedRoute>
-  }
-/>
+          {/* ---------- TEACHER ONLY ---------- */}
+          <Route
+            path="/create-quiz"
+            element={
+              <ProtectedRoute roles={["teacher"]}>
+                <CreateQuiz />
+              </ProtectedRoute>
+            }
+          />
 
-<Route
-  path="/create/quiz/questions"
-  element={
-    <ProtectedRoute roles={["teacher"]}>
-      <CreateQuizQuestions />
-    </ProtectedRoute>
-  }
-/>
+          <Route
+            path="/create/quiz/questions"
+            element={
+              <ProtectedRoute roles={["teacher"]}>
+                <CreateQuizQuestions />
+              </ProtectedRoute>
+            }
+          />
 
-<Route
-  path="/quiz-success"
-  element={
-    <ProtectedRoute roles={["teacher"]}>
-      <QuizSuccess />
-    </ProtectedRoute>
-  }
-/>
+          <Route
+            path="/quiz-success"
+            element={
+              <ProtectedRoute roles={["teacher"]}>
+                <QuizSuccess />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="/results/:id"
@@ -173,7 +182,7 @@ export default function App() {
             }
           />
 
-      
+
 
           {/* Quizzes Page */}
           <Route

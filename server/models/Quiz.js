@@ -22,6 +22,10 @@ const questionSchema = new mongoose.Schema({
     type: Number, // seconds (optional per question)
     default: null,
   },
+  category: {
+    type: String,
+    default: "General",
+  },
 });
 
 const quizSchema = new mongoose.Schema(
@@ -52,6 +56,10 @@ const quizSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    questionTimeLimit: {
+      type: Number, // seconds (default for all questions)
+      default: null,
+    },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -61,13 +69,9 @@ const quizSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    startDate: {
-      type: Date,
-      default: null,
-    },
-    endDate: {
-      type: Date,
-      default: null,
+    allowBack: {
+      type: Boolean,
+      default: true,
     },
   },
   { timestamps: true }

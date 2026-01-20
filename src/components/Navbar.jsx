@@ -15,6 +15,7 @@ import {
   Menu,
   X,
   MessageSquare,
+  PieChart
 } from "lucide-react";
 
 const Navbar = () => {
@@ -163,6 +164,20 @@ const Navbar = () => {
             <BarChart3 size={18} />
             <span>Results</span>
           </button>
+
+          {/* Analytics - Student only */}
+          {user.role === "student" && (
+            <button
+              className={`navbar-link glow-link ${isActive("/analytics") ? "active" : ""}`}
+              onClick={() => {
+                navigate("/analytics");
+                setMobileMenuOpen(false);
+              }}
+            >
+              <PieChart size={18} />
+              <span>Analytics</span>
+            </button>
+          )}
 
           {/* Feedback */}
           <button

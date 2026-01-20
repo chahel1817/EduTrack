@@ -52,7 +52,7 @@ export const getResultsByQuiz = async (req, res) => {
   try {
     console.log("📊 Get Results By Quiz - Request received");
     console.log("User:", req.user?.id, "Role:", req.user?.role);
-    
+
     // Only teachers can view quiz results
     if (req.user.role !== "teacher") {
       console.log("❌ Access denied - Not a teacher");
@@ -72,23 +72,23 @@ export const getResultsByQuiz = async (req, res) => {
       console.log("❌ Quiz not found:", id);
       return res.status(404).json({ message: "Quiz not found" });
     }
-    
+
     console.log("Quiz found:", quiz.title);
     console.log("Quiz createdBy:", quiz.createdBy);
     console.log("User ID:", req.user.id);
-    
+
     // Check ownership - handle both ObjectId and string comparisons
     const createdById = quiz.createdBy?._id?.toString() || quiz.createdBy?.toString();
     const userId = req.user.id?.toString() || req.user._id?.toString();
-    
+
     console.log("CreatedBy ID:", createdById);
     console.log("User ID:", userId);
     console.log("Match:", createdById === userId);
-    
+
     if (createdById !== userId) {
       console.log("❌ Unauthorized - Quiz doesn't belong to teacher");
-      return res.status(403).json({ 
-        message: "Unauthorized. You can only view results for quizzes you created." 
+      return res.status(403).json({
+        message: "Unauthorized. You can only view results for quizzes you created."
       });
     }
 
@@ -110,13 +110,13 @@ export const getResultsByQuiz = async (req, res) => {
 -------------------------------------------------------- */
 export const getStudentResults = async (req, res) => {
   try {
-   console.log("👤 Student ID:", req.user.id);
+    console.log("👤 Student ID:", req.user.id);
 
-const results = await Result.find({ student: req.user.id })
-  .populate("quiz", "title subject")
-  .sort({ createdAt: -1 });
+    const results = await Result.find({ student: req.user.id })
+      .populate("quiz", "title subject")
+      .sort({ createdAt: -1 });
 
-console.log("📊 Student results found:", results.length);
+    console.log("📊 Student results found:", results.length);
 
     return res.json(results);
   } catch (error) {
@@ -135,26 +135,58 @@ export const getAllResults = async (req, res) => {
     }
 
     const results = await Result.find()
-  .populate({
-    path: "quiz",
-    select: "title subject createdBy", // 🔥 createdBy is REQUIRED
-  })
-  .populate("student", "name email")
-  .sort({ createdAt: -1 });
+      .populate({
+        path: "quiz",
+        select: "title subject createdBy", // 🔥 createdBy is REQUIRED
+      })
+      .populate("student", "name email")
+      .sort({ createdAt: -1 });
 
-// 🔐 Filter ONLY quizzes created by this teacher
-const teacherResults = results.filter(
-  (r) => String(r.quiz?.createdBy) === String(req.user.id)
-);
+    // 🔐 Filter ONLY quizzes created by this teacher
+    const teacherResults = results.filter(
+      (r) => String(r.quiz?.createdBy) === String(req.user.id)
+    );
 
-console.log("👨‍🏫 Teacher ID:", req.user.id);
-console.log("📊 Total results in DB:", results.length);
-console.log("✅ Teacher results found:", teacherResults.length);
+    console.log("👨‍🏫 Teacher ID:", req.user.id);
+    console.log("📊 Total results in DB:", results.length);
+    console.log("✅ Teacher results found:", teacherResults.length);
 
-return res.json(teacherResults);
+    return res.json(teacherResults);
 
   } catch (error) {
     console.error("Get All Results Error:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+/* --------------------------------------------------------
+   GET ANALYTICS (Skill Breakdown)
+-------------------------------------------------------- */
+export const getAnalytics = async (req, res) => {
+  try {
+    const results = await Result.find({ student: req.user.id })
+      .populate("quiz");
+
+    const skillMap = {};
+
+    results.forEach(result => {
+      result.answers.forEach((answer) => {
+        const questionData = result.quiz.questions.id(answer.question);
+        if (questionData) {
+          const cat = questionData.category || "General";
+          if (!skillMap[cat]) {
+            skillMap[cat] = { correct: 0, total: 0 };
+          }
+          skillMap[cat].total++;
+          if (answer.isCorrect) {
+            skillMap[cat].correct++;
+          }
+        }
+      });
+    });
+
+    return res.json(skillMap);
+  } catch (error) {
+    console.error("Get Analytics Error:", error);
     return res.status(500).json({ message: "Server error" });
   }
 };

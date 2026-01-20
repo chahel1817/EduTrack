@@ -101,6 +101,41 @@ router.post(
 );
 
 /* --------------------------------------------------------
+   GET ANALYTICS (Skill Breakdown)
+-------------------------------------------------------- */
+router.get("/analytics", authenticate, authorize(["student"]), async (req, res) => {
+  try {
+    const results = await Result.find({ student: req.user.id })
+      .populate("quiz");
+
+    const skillMap = {};
+
+    results.forEach(result => {
+      if (result.quiz && result.quiz.questions) {
+        result.answers.forEach((answer) => {
+          const questionData = result.quiz.questions.id(answer.question);
+          if (questionData) {
+            const cat = questionData.category || "General";
+            if (!skillMap[cat]) {
+              skillMap[cat] = { correct: 0, total: 0 };
+            }
+            skillMap[cat].total++;
+            if (answer.isCorrect) {
+              skillMap[cat].correct++;
+            }
+          }
+        });
+      }
+    });
+
+    return res.json(skillMap);
+  } catch (error) {
+    console.error("Get Analytics Error:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
+/* --------------------------------------------------------
    GET STUDENT'S OWN RESULTS
 -------------------------------------------------------- */
 router.get("/student", authenticate, authorize(["student"]), async (req, res) => {

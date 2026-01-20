@@ -42,6 +42,7 @@ const TakeQuiz = () => {
   const [questionTimeLeft, setQuestionTimeLeft] = useState(30);
   const [quizTimeLeft, setQuizTimeLeft] = useState(null);
   const [quizTimeLimit, setQuizTimeLimit] = useState(null);
+  const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
 
   /* ---------------- DARK MODE ---------------- */
   useEffect(() => {
@@ -127,30 +128,29 @@ const TakeQuiz = () => {
   useEffect(() => {
     if (!quiz || submitted || !quiz.enableQuestionTimeLimit) return;
 
-    setQuestionStartTime(Date.now());
-    setQuestionTimeLeft(
-      quiz.questions[currentQuestion]?.timeLimit || 30
-    );
+    // Reset question time left when question changes
+    const limit = quiz.questions[currentQuestion]?.timeLimit || quiz.questionTimeLimit || 30;
+    setQuestionTimeLeft(limit);
+
+    // Flag to prevent double-skipping
+    let alreadyJumped = false;
 
     const interval = setInterval(() => {
-      const elapsed = Math.floor(
-        (Date.now() - questionStartTime) / 1000
-      );
-      const limit =
-        quiz.questions[currentQuestion]?.timeLimit || 30;
-
-      const remaining = limit - elapsed;
-
-      if (remaining <= 0) {
-        clearInterval(interval);
-        if (currentQuestion < quiz.questions.length - 1) {
-          setCurrentQuestion(q => q + 1);
-        } else {
-          handleSubmit();
+      setQuestionTimeLeft((prev) => {
+        if (prev <= 1) {
+          if (!alreadyJumped) {
+            alreadyJumped = true;
+            clearInterval(interval);
+            if (currentQuestion < quiz.questions.length - 1) {
+              setCurrentQuestion(q => q + 1);
+            } else {
+              handleSubmit();
+            }
+          }
+          return 0;
         }
-      } else {
-        setQuestionTimeLeft(remaining);
-      }
+        return prev - 1;
+      });
     }, 1000);
 
     return () => clearInterval(interval);
@@ -188,12 +188,19 @@ const TakeQuiz = () => {
   const handleNext = () => {
     if (currentQuestion < quiz.questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const handlePrevious = () => {
     if (currentQuestion > 0) {
+      // If quiz has allowBack: false, we shouldn't allow going back
+      // If enableQuestionTimeLimit is true, we also usually don't allow going back
+      if (quiz.allowBack === false || quiz.enableQuestionTimeLimit) {
+        return;
+      }
       setCurrentQuestion(currentQuestion - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -207,6 +214,7 @@ const TakeQuiz = () => {
 
     setSubmitting(true);
     setSubmitError(null);
+    setShowSubmitConfirm(false);
 
     const finalTimeSpent = Math.floor(
       (Date.now() - startTime) / 1000
@@ -252,6 +260,15 @@ const TakeQuiz = () => {
       );
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const confirmSubmit = () => {
+    const answeredCount = Object.keys(answers).length;
+    if (answeredCount < quiz.questions.length) {
+      setShowSubmitConfirm(true);
+    } else {
+      handleSubmit();
     }
   };
 
@@ -579,7 +596,23 @@ const TakeQuiz = () => {
                 <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '1px' }}>
                   Question {currentQuestion + 1} of {quiz.questions.length}
                 </span>
-                <h2 style={{ fontSize: '24px', fontWeight: 800, marginTop: '10px', lineHeight: 1.4 }}>
+                {quiz.enableQuestionTimeLimit && (
+                  <div style={{
+                    float: 'right',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '6px 12px',
+                    background: questionTimeLeft < 10 ? 'rgba(239, 68, 68, 0.1)' : 'rgba(109, 40, 217, 0.1)',
+                    borderRadius: '8px',
+                    color: questionTimeLeft < 10 ? 'var(--error)' : 'var(--primary)',
+                    fontWeight: 800
+                  }}>
+                    <Clock size={16} />
+                    <span>{questionTimeLeft}s remaining</span>
+                  </div>
+                )}
+                <h2 style={{ fontSize: '28px', fontWeight: 800, marginTop: '20px', lineHeight: 1.3, color: 'var(--gray-900)' }}>
                   {question.question}
                 </h2>
               </div>
@@ -618,32 +651,50 @@ const TakeQuiz = () => {
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '40px', paddingTop: '30px', borderTop: '1px solid var(--border)' }}>
                 <button
                   onClick={handlePrevious}
-                  disabled={currentQuestion === 0}
+                  disabled={currentQuestion === 0 || quiz.allowBack === false || quiz.enableQuestionTimeLimit}
                   className="btn btn-outline"
-                  style={{ padding: '12px 24px', borderRadius: '12px' }}
+                  style={{
+                    padding: '12px 24px',
+                    borderRadius: '12px',
+                    opacity: (currentQuestion === 0 || quiz.allowBack === false || quiz.enableQuestionTimeLimit) ? 0.3 : 1,
+                    cursor: (currentQuestion === 0 || quiz.allowBack === false || quiz.enableQuestionTimeLimit) ? 'not-allowed' : 'pointer',
+                    display: quiz.allowBack === false ? 'none' : 'flex'
+                  }}
                 >
                   <ChevronLeft size={20} /> Previous
                 </button>
 
-                {currentQuestion === quiz.questions.length - 1 ? (
-                  <button
-                    onClick={handleSubmit}
-                    disabled={submitting}
-                    className="btn btn-primary"
-                    style={{ padding: '14px 32px', borderRadius: '12px', background: 'var(--success)', border: 'none', boxShadow: '0 10px 20px rgba(16,185,129,0.2)' }}
-                  >
-                    {submitting ? <Loader2 size={18} className="animate-spin" /> : <><Send size={18} /> Finish Quiz</>}
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleNext}
-                    disabled={answers[currentQuestion] === undefined}
-                    className="btn btn-primary"
-                    style={{ padding: '12px 32px', borderRadius: '12px' }}
-                  >
-                    Next Question <ChevronRight size={20} />
-                  </button>
-                )}
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  {currentQuestion < quiz.questions.length - 1 && (
+                    <button
+                      onClick={confirmSubmit}
+                      className="btn btn-outline"
+                      style={{ padding: '12px 24px', borderRadius: '12px', color: 'var(--error)', borderColor: 'var(--error)' }}
+                    >
+                      <Send size={18} /> Submit Early
+                    </button>
+                  )}
+
+                  {currentQuestion === quiz.questions.length - 1 ? (
+                    <button
+                      onClick={handleSubmit}
+                      disabled={submitting}
+                      className="btn btn-primary"
+                      style={{ padding: '14px 32px', borderRadius: '12px', background: 'var(--success)', border: 'none', boxShadow: '0 10px 20px rgba(16,185,129,0.2)' }}
+                    >
+                      {submitting ? <Loader2 size={18} className="animate-spin" /> : <><Send size={18} /> Finish Quiz</>}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleNext}
+                      disabled={answers[currentQuestion] === undefined}
+                      className="btn btn-primary"
+                      style={{ padding: '12px 32px', borderRadius: '12px' }}
+                    >
+                      Next Question <ChevronRight size={20} />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -654,7 +705,13 @@ const TakeQuiz = () => {
                 {quiz.questions.map((_, i) => (
                   <button
                     key={i}
-                    onClick={() => setCurrentQuestion(i)}
+                    onClick={() => {
+                      if (quiz.allowBack === false && i < currentQuestion) return;
+                      if (quiz.enableQuestionTimeLimit && i < currentQuestion) return;
+                      setCurrentQuestion(i);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    disabled={(quiz.allowBack === false && i < currentQuestion) || (quiz.enableQuestionTimeLimit && i < currentQuestion)}
                     style={{
                       width: '100%',
                       aspectRatio: '1',
@@ -662,10 +719,11 @@ const TakeQuiz = () => {
                       border: 'none',
                       fontSize: '14px',
                       fontWeight: 700,
-                      cursor: 'pointer',
+                      cursor: ((quiz.allowBack === false || quiz.enableQuestionTimeLimit) && i < currentQuestion) ? 'not-allowed' : 'pointer',
                       transition: 'all 0.2s',
-                      background: currentQuestion === i ? 'var(--primary)' : answers[i] !== undefined ? 'var(--gray-200)' : 'var(--gray-100)',
-                      color: currentQuestion === i ? 'white' : answers[i] !== undefined ? 'var(--gray-700)' : 'var(--gray-400)'
+                      background: currentQuestion === i ? 'var(--primary)' : answers[i] !== undefined ? 'var(--success)' : 'var(--gray-100)',
+                      color: currentQuestion === i ? 'white' : answers[i] !== undefined ? 'white' : 'var(--gray-400)',
+                      opacity: ((quiz.allowBack === false || quiz.enableQuestionTimeLimit) && i < currentQuestion) ? 0.3 : 1
                     }}
                   >
                     {i + 1}
@@ -693,6 +751,59 @@ const TakeQuiz = () => {
         </div>
       </main>
       <Footer />
+
+      {/* CONFIRM SUBMISSION DIALOG */}
+      {showSubmitConfirm && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.6)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          backdropFilter: 'blur(4px)'
+        }}>
+          <div className="glass-card" style={{ padding: '32px', maxWidth: '400px', textAlign: 'center' }}>
+            <div style={{
+              width: '64px',
+              height: '64px',
+              background: 'rgba(239, 68, 68, 0.1)',
+              color: 'var(--error)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px'
+            }}>
+              <AlertCircle size={32} />
+            </div>
+            <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '12px' }}>Submit Early?</h3>
+            <p style={{ color: 'var(--gray-500)', marginBottom: '24px', lineHeight: 1.5 }}>
+              Are you sure you want to submit early? There are still questions left.
+            </p>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                className="btn btn-outline"
+                style={{ flex: 1, padding: '12px' }}
+                onClick={() => setShowSubmitConfirm(false)}
+              >
+                Go Back
+              </button>
+              <button
+                className="btn btn-primary"
+                style={{ flex: 1, padding: '12px', background: 'var(--error)', border: 'none' }}
+                onClick={handleSubmit}
+              >
+                Yes, Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

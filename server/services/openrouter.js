@@ -2,30 +2,37 @@ import fetch from "node-fetch";
 
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 
-export const generateQuizWithAI = async ({ topic, difficulty, totalQuestions }) => {
+export const generateQuizWithAI = async ({ topic, difficulty, totalQuestions, content = null }) => {
   console.log("🔍 Checking API key...");
-  console.log("API key exists:", !!process.env.OPENROUTER_API_KEY);
-  console.log("API key starts with:", process.env.OPENROUTER_API_KEY ? process.env.OPENROUTER_API_KEY.substring(0, 10) + "..." : "NOT SET");
 
   if (!process.env.OPENROUTER_API_KEY) {
     throw new Error("OPENROUTER_API_KEY missing from environment");
   }
 
-  const prompt = `Generate ${totalQuestions} ${difficulty} level multiple-choice questions on "${topic}".
+  let prompt = "";
+  if (content) {
+    prompt = `Content for Quiz:
+    "${content.substring(0, 8000)}"
 
-Return ONLY valid JSON in this format:
-{
-  "questions": [
-    {
-      "question": "What is 2 + 2?",
-      "options": ["3", "4", "5", "6"],
-      "correctAnswer": 1
-    }
-  ]
-}`;
+    Generate ${totalQuestions} ${difficulty} level multiple-choice questions based on the content above.
+    
+    Format requirements:
+    1. Respond with a JSON object containing a "questions" array.
+    2. Each question must have: "question", "options" (array of 4), "correctAnswer" (0-3 index), and "category" (a specific skill or sub-topic found in the text).
+    3. Ensure questions are accurate and directly based on the provided text.`;
+  } else {
+    prompt = `Topic: "${topic}"
+    Generate ${totalQuestions} ${difficulty} level multiple-choice questions on this topic.
+    
+    Format requirements:
+    1. Respond with a JSON object containing a "questions" array.
+    2. Each question must have: "question", "options" (array of 4), "correctAnswer" (0-3 index), and "category" (a sub-topic).`;
+  }
 
-  console.log("📤 Making request to OpenRouter...");
-  console.log("Model: anthropic/claude-3-haiku");
+  console.log("� AI Prompt Length:", prompt.length);
+
+  console.log("�📤 Making request to OpenRouter...");
+  console.log("Model: openai/gpt-3.5-turbo");
   console.log("Topic:", topic, "Difficulty:", difficulty, "Questions:", totalQuestions);
 
   try {
@@ -40,11 +47,11 @@ Return ONLY valid JSON in this format:
       body: JSON.stringify({
         model: "openai/gpt-3.5-turbo",
         messages: [
-          { role: "system", content: "You are a quiz generator. Always respond with valid JSON only. No explanations, no markdown, just pure JSON." },
+          { role: "system", content: "You are an expert quiz generator. You take content and turn it into high-quality multiple choice questions. You always respond with ONLY valid JSON." },
           { role: "user", content: prompt },
         ],
-        temperature: 0.3,
-        max_tokens: 2000,
+        temperature: 0.5,
+        max_tokens: 3000,
       }),
     });
 
@@ -59,7 +66,6 @@ Return ONLY valid JSON in this format:
     }
 
     const data = await response.json();
-    console.log("📦 Full API response:", JSON.stringify(data, null, 2));
 
     const rawText = data?.choices?.[0]?.message?.content;
 

@@ -33,8 +33,12 @@ const Signup = () => {
       return;
     }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
+    const hasUpper = /[A-Z]/.test(password);
+    const lowerCount = (password.match(/[a-z]/g) || []).length;
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    if (password.length < 8 || !hasUpper || lowerCount < 3 || !hasSpecial) {
+      setError("Please meet all password requirements");
       return;
     }
 
@@ -135,11 +139,31 @@ const Signup = () => {
               <input
                 className="auth-input"
                 type="password"
-                placeholder="Password (min 6 chars)"
+                placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+            </div>
+
+            {/* PASSWORD REQUIREMENTS */}
+            <div className="password-checklist">
+              <div className={`checklist-item ${password.length >= 8 ? 'met' : ''}`}>
+                <div className="dot"></div>
+                <span>At least 8 characters</span>
+              </div>
+              <div className={`checklist-item ${/[A-Z]/.test(password) ? 'met' : ''}`}>
+                <div className="dot"></div>
+                <span>At least 1 uppercase letter</span>
+              </div>
+              <div className={`checklist-item ${(password.match(/[a-z]/g) || []).length >= 3 ? 'met' : ''}`}>
+                <div className="dot"></div>
+                <span>At least 3 lowercase letters</span>
+              </div>
+              <div className={`checklist-item ${/[!@#$%^&*(),.?":{}|<>]/.test(password) ? 'met' : ''}`}>
+                <div className="dot"></div>
+                <span>At least 1 special character</span>
+              </div>
             </div>
 
             <button
