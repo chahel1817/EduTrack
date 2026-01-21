@@ -390,7 +390,7 @@ const CreateQuizQuestions = () => {
                         <input
                           type="range"
                           min="1"
-                          max="20"
+                          max="50"
                           value={totalQuestions}
                           onChange={(e) => setTotalQuestions(Number(e.target.value))}
                           className="flex-1 accent-primary"

@@ -22,6 +22,12 @@ const userSchema = new mongoose.Schema(
 
     age: { type: Number, default: null },
     phone: { type: String, default: "" },
+    photo: { type: String, default: "" },
+    linkedin: { type: String, default: "" },
+    github: { type: String, default: "" },
+    location: { type: String, default: "" },
+    skills: { type: [String], default: [] },
+    bio: { type: String, default: "" },
 
     /* OTP RESET */
     resetOTP: { type: String, default: null },

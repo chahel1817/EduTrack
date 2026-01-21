@@ -80,8 +80,25 @@ router.post(
       const result = new Result(resultData);
       await result.save();
 
-      await result.populate("quiz", "title subject");
+      await result.populate("quiz", "title subject createdBy");
       await result.populate("student", "name email");
+
+      // Notify the teacher
+      const teacherId = result.quiz.createdBy.toString();
+      req.io.to(teacherId).emit("notification", {
+        type: "result",
+        message: `${result.student.name} just completed the "${result.quiz.title}" quiz!`,
+        data: { quizId: result.quiz._id, score: result.score }
+      });
+
+      // Special notification for student if certified
+      if (result.percentage >= 80) {
+        req.io.to(req.user.id).emit("notification", {
+          type: "certification",
+          message: `Congratulations! You've earned a certificate for "${result.quiz.title}"!`,
+          data: { quizId: result.quiz._id }
+        });
+      }
 
       return res.status(201).json({
         _id: result._id,

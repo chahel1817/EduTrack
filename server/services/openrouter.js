@@ -125,3 +125,41 @@ export const generateQuizWithAI = async ({ topic, difficulty, totalQuestions, co
     throw error;
   }
 };
+
+export const explainQuestionWithAI = async ({ question, selectedOption, correctOption, context }) => {
+  if (!process.env.OPENROUTER_API_KEY) {
+    throw new Error("OPENROUTER_API_KEY missing");
+  }
+
+  const prompt = `Context: This is a quiz about "${context}".
+  Question: "${question}"
+  The student selected: "${selectedOption}"
+  The correct answer is: "${correctOption}"
+  
+  Explain why the correct answer is right and why the student's answer was wrong (if they were different). Keep the explanation encouraging, professional, and easy to understand for a student. Max 3-4 sentences.`;
+
+  try {
+    const response = await fetch(OPENROUTER_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "openai/gpt-3.5-turbo",
+        messages: [
+          { role: "system", content: "You are an encouraging AI tutor. You explain concepts clearly to students." },
+          { role: "user", content: prompt },
+        ],
+        temperature: 0.7,
+        max_tokens: 500,
+      }),
+    });
+
+    const data = await response.json();
+    return data?.choices?.[0]?.message?.content || "Sorry, I couldn't generate an explanation right now.";
+  } catch (error) {
+    console.error("Explain AI Error:", error);
+    return "Failed to fetch explanation from AI Tutor.";
+  }
+};

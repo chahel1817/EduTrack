@@ -100,6 +100,12 @@ export const login = async (req, res) => {
       role: user.role,
       age: user.age,
       phone: user.phone,
+      photo: user.photo,
+      linkedin: user.linkedin,
+      github: user.github,
+      location: user.location,
+      skills: user.skills,
+      bio: user.bio,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };
@@ -240,6 +246,12 @@ export const verifyOTP = async (req, res) => {
       role: user.role,
       age: user.age,
       phone: user.phone,
+      photo: user.photo,
+      linkedin: user.linkedin,
+      github: user.github,
+      location: user.location,
+      skills: user.skills,
+      bio: user.bio,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };
@@ -253,5 +265,57 @@ export const verifyOTP = async (req, res) => {
     return res.status(500).json({
       message: "Server error",
     });
+  }
+};
+
+/* --------------------------------------------------------
+   UPDATE PROFILE CONTROLLER
+-------------------------------------------------------- */
+export const updateProfile = async (req, res) => {
+  try {
+    const { name, age, phone, photo, linkedin, github, location, skills, bio } = req.body;
+
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (name) user.name = name.trim();
+    if (age !== undefined) user.age = age;
+    if (phone !== undefined) user.phone = phone;
+    if (photo !== undefined) user.photo = photo;
+    if (linkedin !== undefined) user.linkedin = linkedin;
+    if (github !== undefined) user.github = github;
+    if (location !== undefined) user.location = location;
+    if (skills !== undefined) user.skills = skills;
+    if (bio !== undefined) user.bio = bio;
+
+    await user.save();
+
+    const safeUser = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      age: user.age,
+      phone: user.phone,
+      photo: user.photo,
+      linkedin: user.linkedin,
+      github: user.github,
+      location: user.location,
+      skills: user.skills,
+      bio: user.bio,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+
+    return res.json({
+      message: "Profile updated successfully",
+      user: safeUser,
+    });
+  } catch (error) {
+    console.error("Update Profile Error:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 };

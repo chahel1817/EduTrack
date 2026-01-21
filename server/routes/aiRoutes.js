@@ -1,5 +1,5 @@
 import express from "express";
-import { generateQuizWithAI } from "../services/openrouter.js";
+import { generateQuizWithAI, explainQuestionWithAI } from "../services/openrouter.js";
 import { authenticate } from "../middleware/authMiddleware.js";
 import multer from "multer";
 
@@ -114,6 +114,20 @@ router.post("/generate-from-pdf", authenticate, upload.single("pdf"), async (req
       message: "Failed to generate questions from PDF",
       error: err.message
     });
+  }
+});
+
+/**
+ * POST /api/ai/explain
+ * Get AI tutor explanation for quiz results
+ */
+router.post("/explain", authenticate, async (req, res) => {
+  try {
+    const { question, selectedOption, correctOption, context } = req.body;
+    const explanation = await explainQuestionWithAI({ question, selectedOption, correctOption, context });
+    res.json({ explanation });
+  } catch (err) {
+    res.status(500).json({ message: "Explanation failed" });
   }
 });
 

@@ -61,6 +61,13 @@ router.post(
       await quiz.save();
       await quiz.populate("createdBy", "name email role");
 
+      // Notify all users about new quiz
+      req.io.emit("notification", {
+        type: "new_quiz",
+        message: `New Quiz Alert: "${quiz.title}" has been published by ${quiz.createdBy.name}!`,
+        data: { quizId: quiz._id, subject: quiz.subject, createdBy: req.user.id }
+      });
+
       res.status(201).json({
         _id: quiz._id,
         id: quiz._id,

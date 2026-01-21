@@ -7,6 +7,8 @@ dotenv.config({ path: "./.env" });
 
 import express from "express";
 import cors from "cors";
+import { createServer } from "http";
+import { Server } from "socket.io";
 import connectDB from "./config/db.js";
 
 import authRoutes from "./routes/authRoutes.js";
@@ -40,6 +42,37 @@ console.log("🤖 OPENROUTER_API_KEY:", process.env.OPENROUTER_API_KEY ? "LOADED
 connectDB();
 
 const app = express();
+const httpServer = createServer(app);
+
+/**
+ * ✅ Socket.io Setup
+ */
+const io = new Server(httpServer, {
+  cors: {
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  },
+});
+
+// Middleware to attach io to req
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
+io.on("connection", (socket) => {
+  console.log(`🔌 User connected: ${socket.id}`);
+
+  socket.on("join", (userId) => {
+    socket.join(userId);
+    console.log(`👤 User ${userId} joined their notification room`);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("🔌 User disconnected");
+  });
+});
 
 /**
  * ✅ Middlewares
@@ -100,6 +133,8 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`EduTrack server running on http://localhost:${PORT}`);
 });
+
+export { io };

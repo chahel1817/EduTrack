@@ -71,6 +71,11 @@ const TakeQuiz = () => {
       console.log('Fetching quiz with ID:', id);
       const res = await api.get(`/quizzes/${id}`);
       console.log('Quiz fetched successfully:', res.data);
+      console.log('⚙️ Settings:', {
+        limit: res.data.timeLimit,
+        enableQTimer: res.data.enableQuestionTimeLimit,
+        qLimit: res.data.questionTimeLimit
+      });
 
       if (!res.data) {
         console.error('Quiz data is null');
@@ -79,10 +84,12 @@ const TakeQuiz = () => {
       }
 
       setQuiz(res.data);
-      setStartTime(Date.now());
+      // Only set start time if not already set (prevents reset on re-renders if logic changes)
+      if (!startTime) setStartTime(Date.now());
 
       if (res.data.timeLimit) {
         const quizLimit = res.data.timeLimit * 60;
+        console.log(`⏱️ Setting Total Timer: ${res.data.timeLimit} mins -> ${quizLimit} seconds`);
         setQuizTimeLimit(quizLimit);
         setQuizTimeLeft(quizLimit);
       }
@@ -158,15 +165,23 @@ const TakeQuiz = () => {
 
   /* ---------------- QUIZ TIMER ---------------- */
   useEffect(() => {
-    if (!quizTimeLimit || submitted || !startTime) return;
+    // Safety check: ensure we have valid numbers
+    if (!quizTimeLimit || !startTime || submitted) return;
+
+    console.log(`🕒 Timer Running: Limit=${quizTimeLimit}s, Start=${new Date(startTime).toLocaleTimeString()}`);
 
     const interval = setInterval(() => {
-      const elapsed = Math.floor(
-        (Date.now() - startTime) / 1000
-      );
+      const now = Date.now();
+      const elapsed = Math.floor((now - startTime) / 1000);
       const remaining = quizTimeLimit - elapsed;
 
+      // Debug log every 30 seconds
+      if (remaining % 30 === 0) {
+        console.log(`⏳ Time Remaining: ${remaining}s`);
+      }
+
       if (remaining <= 0) {
+        console.warn("⚠️ Timer Expired! Submitting quiz...", { remaining, limit: quizTimeLimit, elapsed });
         clearInterval(interval);
         handleSubmit();
       } else {

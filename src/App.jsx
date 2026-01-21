@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { NotificationProvider } from "./context/NotificationContext";
 
 /* Pages */
 import Login from "./pages/Login";
@@ -60,207 +61,208 @@ function ProtectedRoute({ children, roles }) {
 export default function App() {
   return (
     <AuthProvider>
-      <Router>
-        <ScrollToTop />
+      <NotificationProvider>
+        <Router>
+          <ScrollToTop />
 
-        <Routes>
+          <Routes>
 
-          {/* ---------- PUBLIC ---------- */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/verify-otp" element={<VerifyOTP />} />
+            {/* ---------- PUBLIC ---------- */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/verify-otp" element={<VerifyOTP />} />
 
-          <Route path="/signup" element={<Signup />} />
-
-
-          {/* ---------- PUBLIC INFO PAGES ---------- */}
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/feedback" element={<Feedback />} />
-          <Route path="/help" element={<Help />} />
-          <Route path="/faqs" element={<FAQs />} /> {/* ✅ FAQ ROUTE ADDED */}
-          <Route path="/about" element={<About />} />
-          <Route path="/privacy" element={<Privacy />} />
-
-          <Route path="/docs" element={<Documentation />} />
-          <Route path="/tutorials" element={<Tutorials />} />
+            <Route path="/signup" element={<Signup />} />
 
 
-          {/* ---------- PROTECTED (COMMON) ---------- */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
+            {/* ---------- PUBLIC INFO PAGES ---------- */}
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/feedback" element={<Feedback />} />
+            <Route path="/help" element={<Help />} />
+            <Route path="/faqs" element={<FAQs />} /> {/* ✅ FAQ ROUTE ADDED */}
+            <Route path="/about" element={<About />} />
+            <Route path="/privacy" element={<Privacy />} />
 
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <StudentProfile />
-              </ProtectedRoute>
-            }
-          />
+            <Route path="/docs" element={<Documentation />} />
+            <Route path="/tutorials" element={<Tutorials />} />
 
 
-          <Route
-            path="/quiz/:id"
-            element={
-              <ProtectedRoute>
-                <TakeQuiz />
-              </ProtectedRoute>
-            }
-          />
+            {/* ---------- PROTECTED (COMMON) ---------- */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* ---------- STUDENT ONLY ---------- */}
-          <Route
-            path="/my-results"
-            element={
-              <ProtectedRoute roles={["student"]}>
-                <MyResults />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/analytics"
-            element={
-              <ProtectedRoute roles={["student"]}>
-                <Analytics />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <StudentProfile />
+                </ProtectedRoute>
+              }
+            />
 
 
-          {/* ---------- TEACHER ONLY ---------- */}
-          {/* ---------- TEACHER ONLY ---------- */}
-          <Route
-            path="/create-quiz"
-            element={
-              <ProtectedRoute roles={["teacher"]}>
-                <CreateQuiz />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/quiz/:id"
+              element={
+                <ProtectedRoute>
+                  <TakeQuiz />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/create/quiz/questions"
-            element={
-              <ProtectedRoute roles={["teacher"]}>
-                <CreateQuizQuestions />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/quiz-success"
-            element={
-              <ProtectedRoute roles={["teacher"]}>
-                <QuizSuccess />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/results/:id"
-            element={
-              <ProtectedRoute roles={["teacher"]}>
-                <QuizResults />
-              </ProtectedRoute>
-            }
-          />
+            {/* ---------- STUDENT ONLY ---------- */}
+            <Route
+              path="/my-results"
+              element={
+                <ProtectedRoute roles={["student"]}>
+                  <MyResults />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/analytics"
+              element={
+                <ProtectedRoute roles={["student"]}>
+                  <Analytics />
+                </ProtectedRoute>
+              }
+            />
 
 
-          {/* Student-only */}
-          <Route
-            path="/my-results/:id"
-            element={
-              <ProtectedRoute roles={["student"]}>
-                <StudentResults />
-              </ProtectedRoute>
-            }
-          />
+            {/* ---------- TEACHER ONLY ---------- */}
+            <Route
+              path="/create-quiz"
+              element={
+                <ProtectedRoute roles={["teacher"]}>
+                  <CreateQuiz />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/create/quiz/questions"
+              element={
+                <ProtectedRoute roles={["teacher"]}>
+                  <CreateQuizQuestions />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/quiz-success"
+              element={
+                <ProtectedRoute roles={["teacher"]}>
+                  <QuizSuccess />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/results/:id"
+              element={
+                <ProtectedRoute roles={["teacher"]}>
+                  <QuizResults />
+                </ProtectedRoute>
+              }
+            />
+
+
+            {/* Student-only */}
+            <Route
+              path="/my-results/:id"
+              element={
+                <ProtectedRoute roles={["student"]}>
+                  <StudentResults />
+                </ProtectedRoute>
+              }
+            />
 
 
 
-          {/* Quizzes Page */}
-          <Route
-            path="/quizzes"
-            element={
-              <ProtectedRoute>
-                <Quizzes />
-              </ProtectedRoute>
-            }
-          />
+            {/* Quizzes Page */}
+            <Route
+              path="/quizzes"
+              element={
+                <ProtectedRoute>
+                  <Quizzes />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Help Page */}
-          <Route
-            path="/help"
-            element={
-              <ProtectedRoute>
-                <Help />
-              </ProtectedRoute>
-            }
-          />
+            {/* Help Page */}
+            <Route
+              path="/help"
+              element={
+                <ProtectedRoute>
+                  <Help />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Contact Page */}
-          <Route
-            path="/contact"
-            element={
-              <ProtectedRoute>
-                <Contact />
-              </ProtectedRoute>
-            }
-          />
+            {/* Contact Page */}
+            <Route
+              path="/contact"
+              element={
+                <ProtectedRoute>
+                  <Contact />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* About Page */}
-          <Route
-            path="/about"
-            element={
-              <ProtectedRoute>
-                <About />
-              </ProtectedRoute>
-            }
-          />
+            {/* About Page */}
+            <Route
+              path="/about"
+              element={
+                <ProtectedRoute>
+                  <About />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Privacy Page */}
-          <Route
-            path="/privacy"
-            element={
-              <ProtectedRoute>
-                <Privacy />
-              </ProtectedRoute>
-            }
-          />
+            {/* Privacy Page */}
+            <Route
+              path="/privacy"
+              element={
+                <ProtectedRoute>
+                  <Privacy />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Teacher Results Page - List all quizzes with results */}
-          <Route
-            path="/results"
-            element={
-              <ProtectedRoute roles={["teacher"]}>
-                <QuizResultsList />
-              </ProtectedRoute>
-            }
-          />
+            {/* Teacher Results Page - List all quizzes with results */}
+            <Route
+              path="/results"
+              element={
+                <ProtectedRoute roles={["teacher"]}>
+                  <QuizResultsList />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Leaderboard Page */}
-          <Route
-            path="/leaderboard/:quizId"
-            element={
-              <ProtectedRoute>
-                <Leaderboard />
-              </ProtectedRoute>
-            }
-          />
+            {/* Leaderboard Page */}
+            <Route
+              path="/leaderboard/:quizId"
+              element={
+                <ProtectedRoute>
+                  <Leaderboard />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Redirects */}
+            {/* Redirects */}
 
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
 
-        </Routes>
-      </Router>
+          </Routes>
+        </Router>
+      </NotificationProvider>
     </AuthProvider>
   );
 }

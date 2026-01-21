@@ -74,27 +74,28 @@ const CreateQuiz = () => {
                 Design your <span className="gradient-text">Masterpiece</span> quiz.
               </h1>
 
-              <p className="text-gray-500 text-lg mb-10 leading-relaxed">
+              <p className="text-gray-500 text-lg mb-12 leading-relaxed">
                 Transform your knowledge into an interactive challenge. Set the rules, define the pace, and watch your students excel.
               </p>
 
-              <div className="space-y-8">
+              <div className="space-y-10">
                 <div className="flex items-start gap-4">
                   <div className="w-8 h-8 rounded-full bg-green-500/10 text-green-600 flex items-center justify-center flex-shrink-0 mt-1">
                     <ArrowRight size={16} />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-800 dark:text-gray-200">Global Settings</h4>
-                    <p className="text-sm text-gray-500">Define timers, subject categories, and attempt rules.</p>
+                    <h4 className="font-bold text-gray-800 dark:text-gray-200 text-lg mb-1">Global Settings</h4>
+                    <p className="text-sm text-gray-500 leading-relaxed">Define timers, subject categories, and attempt rules to structure your assessment perfectly.</p>
                   </div>
                 </div>
+
                 <div className="flex items-start gap-4">
                   <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 mt-1">
                     <ArrowRight size={16} />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-800 dark:text-gray-200">AI Assistance</h4>
-                    <p className="text-sm text-gray-500">Enable modern AI to forge questions in seconds on the next step.</p>
+                    <h4 className="font-bold text-gray-800 dark:text-gray-200 text-lg mb-1">AI Assistance</h4>
+                    <p className="text-sm text-gray-500 leading-relaxed">Enable modern AI to forge questions in seconds on the next step. Our neural networks can generate queries from any topic or PDF source.</p>
                   </div>
                 </div>
               </div>
@@ -151,108 +152,84 @@ const CreateQuiz = () => {
                   {/* SIMPLE TIMER PANEL */}
                   <div className="bg-gray-50 dark:bg-white/5 rounded-[40px] p-8 md:p-12 border border-gray-100 dark:border-white/10 space-y-12">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 items-stretch">
+
                       {/* DURATION CARD */}
-                      <div className="bg-white/70 dark:bg-black/30 rounded-[34px] p-7 md:p-8 border border-gray-100 dark:border-white/10 shadow-sm flex flex-col justify-between text-left">
-                        <div>
-                          <h4 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-widest mb-1 flex items-center gap-2">
-                            <Clock size={16} className="text-primary" />
-                            Quiz Duration
+                      <div className="bg-white/70 dark:bg-black/30 rounded-[34px] p-8 border border-gray-100 dark:border-white/10 shadow-sm flex flex-col h-full">
+                        <div className="mb-6">
+                          <h4 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-widest mb-2 flex items-center gap-2">
+                            <Clock size={18} className="text-primary" />
+                            Total Duration
                           </h4>
-                          <p className="text-xs font-bold text-gray-400 dark:text-gray-500">Total time for the entire quiz.</p>
+                          <p className="text-xs font-bold text-gray-400 dark:text-gray-500">Overall time limit for the quiz in minutes.</p>
                         </div>
 
-                        <div className="mt-6 flex items-center gap-4">
-                          <div className="relative">
+                        <div className="mt-auto flex items-center justify-between gap-6 p-4 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/5">
+                          <div className="flex-1">
                             <input
                               type="number"
                               inputMode="numeric"
-                              className="w-28 h-20 text-4xl font-black text-primary bg-white dark:bg-black/40 rounded-3xl border-2 border-gray-100 dark:border-white/10 focus:border-primary text-center outline-none transition-all shadow-sm"
+                              className="w-full text-3xl font-black text-primary bg-transparent text-center outline-none"
                               min="1"
                               max="300"
                               value={quiz.timeLimit}
                               onChange={(e) => setQuiz({ ...quiz, timeLimit: clampNumber(e.target.value, 1, 300) })}
                             />
-                          </div>
-
-                          <div className="min-w-0">
-                            <div className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-widest leading-tight">
-                              Minutes
-                            </div>
-                            <div className="text-xs font-bold text-gray-400 dark:text-gray-500 leading-tight">
-                              Recommended: 10–60
-                            </div>
+                            <div className="text-[10px] font-black uppercase text-gray-400 text-center tracking-widest mt-1">Minutes</div>
                           </div>
                         </div>
                       </div>
 
                       {/* PER-QUESTION CARD */}
-                      <div className="bg-white/70 dark:bg-black/30 rounded-[34px] p-7 md:p-8 border border-gray-100 dark:border-white/10 shadow-sm flex flex-col justify-between text-left">
-                        <div>
-                          <h4 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-widest mb-1 flex items-center gap-2">
-                            <Zap size={16} className="text-primary" />
-                            Per-Question Timer
+                      <div className="bg-white/70 dark:bg-black/30 rounded-[34px] p-8 border border-gray-100 dark:border-white/10 shadow-sm flex flex-col h-full">
+                        <div className="mb-6">
+                          <h4 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-widest mb-2 flex items-center gap-2">
+                            <Zap size={18} className="text-primary" />
+                            Question Pace
                           </h4>
-                          <p className="text-xs font-bold text-gray-400 dark:text-gray-500">Limit time allowed for each question.</p>
+                          <p className="text-xs font-bold text-gray-400 dark:text-gray-500">Enforce a strict time limit per question.</p>
                         </div>
 
-                        <button
-                          type="button"
-                          aria-pressed={quiz.enableQuestionTimeLimit}
-                          onClick={() =>
-                            setQuiz({
-                              ...quiz,
-                              enableQuestionTimeLimit: !quiz.enableQuestionTimeLimit,
-                              questionTimeLimit: !quiz.enableQuestionTimeLimit ? 30 : null,
-                            })
-                          }
-                          className={`mt-6 w-full h-20 px-6 rounded-3xl flex items-center justify-between gap-4 transition-all border-2 shadow-sm ${quiz.enableQuestionTimeLimit
-                              ? "bg-primary border-primary text-white shadow-lg shadow-primary/20"
-                              : "bg-white dark:bg-black/40 border-gray-100 dark:border-white/10 text-gray-500 dark:text-gray-300 hover:border-gray-200 dark:hover:border-white/20"
-                            }`}
-                        >
-                          <div className="flex items-center gap-4 min-w-0">
-                            <div
-                              className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${quiz.enableQuestionTimeLimit ? "bg-white/15" : "bg-gray-50 dark:bg-white/5"
-                                }`}
-                            >
-                              <Zap size={18} className={quiz.enableQuestionTimeLimit ? "text-white" : "text-primary"} />
-                            </div>
-                            <div className="min-w-0">
-                              <div className="font-black uppercase tracking-widest leading-tight text-gray-800 dark:text-gray-50">
-                                {quiz.enableQuestionTimeLimit ? "Active" : "Disabled"}
-                              </div>
-                              <div className={`text-xs font-bold leading-tight ${quiz.enableQuestionTimeLimit ? "text-white/80" : "text-gray-500 dark:text-gray-400"}`}>
-                                {quiz.enableQuestionTimeLimit ? `${quiz.questionTimeLimit ?? 30}s per question` : "Use overall duration only"}
-                              </div>
+                        <div className="mt-auto space-y-4">
+                          {/* TOGGLE SWITCH */}
+                          <div
+                            onClick={() =>
+                              setQuiz({
+                                ...quiz,
+                                enableQuestionTimeLimit: !quiz.enableQuestionTimeLimit,
+                                questionTimeLimit: !quiz.enableQuestionTimeLimit ? 30 : null,
+                              })
+                            }
+                            className={`p-4 rounded-3xl border flex items-center justify-between cursor-pointer transition-all ${quiz.enableQuestionTimeLimit ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20' : 'bg-gray-100 dark:bg-white/5 border-transparent text-gray-400'}`}
+                          >
+                            <span className="font-black text-xs uppercase tracking-widest pl-2">
+                              {quiz.enableQuestionTimeLimit ? 'Enabled' : 'Disabled'}
+                            </span>
+                            <div className={`w-10 h-6 rounded-full relative transition-all ${quiz.enableQuestionTimeLimit ? 'bg-white/30' : 'bg-gray-300 dark:bg-white/10'}`}>
+                              <div className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow-sm transition-all ${quiz.enableQuestionTimeLimit ? 'left-5' : 'left-1'}`} />
                             </div>
                           </div>
 
-                          <div className={`w-12 h-7 rounded-full relative flex-shrink-0 ${quiz.enableQuestionTimeLimit ? "bg-white/25" : "bg-gray-100 dark:bg-white/10"}`}>
-                            <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all ${quiz.enableQuestionTimeLimit ? "left-6" : "left-1"}`} />
-                          </div>
-                        </button>
+                          {/* SLIDER (IF ENABLED) */}
+                          {quiz.enableQuestionTimeLimit && (
+                            <div className="animate-fade-in pt-2">
+                              <div className="flex justify-between items-center mb-2">
+                                <span className="text-[10px] uppercase font-black tracking-widest text-primary">Limit</span>
+                                <span className="text-sm font-black text-primary">{quiz.questionTimeLimit}s</span>
+                              </div>
+                              <input
+                                type="range"
+                                min="5"
+                                max="120"
+                                step="5"
+                                className="w-full h-2 bg-gray-200 dark:bg-white/10 rounded-full appearance-none cursor-pointer accent-primary"
+                                value={quiz.questionTimeLimit ?? 30}
+                                onChange={(e) => setQuiz({ ...quiz, questionTimeLimit: clampNumber(e.target.value, 5, 120) })}
+                              />
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-
-                    {quiz.enableQuestionTimeLimit && (
-                      <div className="bg-white/70 dark:bg-black/30 rounded-[30px] p-8 border border-gray-100 dark:border-white/10 space-y-6 text-left shadow-sm">
-                        <div className="flex items-center justify-between gap-6">
-                          <span className="text-[10px] font-black uppercase text-primary tracking-[0.4em]">
-                            Pace: {quiz.questionTimeLimit}s / question
-                          </span>
-                          <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase italic">Pace Control</span>
-                        </div>
-                        <input
-                          type="range"
-                          min="5"
-                          max="180"
-                          step="5"
-                          className="w-full accent-primary h-2 bg-gray-100 dark:bg-white/10 rounded-full appearance-none cursor-pointer"
-                          value={quiz.questionTimeLimit ?? 30}
-                          onChange={(e) => setQuiz({ ...quiz, questionTimeLimit: clampNumber(e.target.value, 5, 180) })}
-                        />
-                      </div>
-                    )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div

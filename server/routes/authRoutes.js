@@ -9,6 +9,7 @@ import { authenticate } from "../middleware/authMiddleware.js";
 import {
   forgotPassword,
   verifyOTP,
+  updateProfile,
 } from "../controllers/authController.js";
 
 const router = express.Router();
@@ -101,6 +102,12 @@ router.post(
           role: user.role,
           age: user.age,
           phone: user.phone,
+          photo: user.photo,
+          linkedin: user.linkedin,
+          github: user.github,
+          location: user.location,
+          skills: user.skills,
+          bio: user.bio,
           createdAt: user.createdAt,
           updatedAt: user.updatedAt,
         },
@@ -127,7 +134,7 @@ router.post("/verify-otp", verifyOTP);
 -------------------------------------------------------- */
 router.get("/me", authenticate, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("name email role age phone createdAt updatedAt");
+    const user = await User.findById(req.user.id).select("name email role age phone photo linkedin github location skills bio createdAt updatedAt");
     if (!user) return res.status(404).json({ message: "User not found" });
 
     res.json({
@@ -137,6 +144,12 @@ router.get("/me", authenticate, async (req, res) => {
       role: user.role,
       age: user.age,
       phone: user.phone,
+      photo: user.photo,
+      linkedin: user.linkedin,
+      github: user.github,
+      location: user.location,
+      skills: user.skills,
+      bio: user.bio,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     });
@@ -151,7 +164,7 @@ router.get("/me", authenticate, async (req, res) => {
 -------------------------------------------------------- */
 router.get("/profile", authenticate, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("name email role age phone createdAt updatedAt");
+    const user = await User.findById(req.user.id).select("name email role age phone photo linkedin github location skills bio createdAt updatedAt");
     if (!user) return res.status(404).json({ message: "User not found" });
     res.json(user);
   } catch (error) {
@@ -159,5 +172,7 @@ router.get("/profile", authenticate, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+router.put("/profile", authenticate, updateProfile);
 
 export default router;

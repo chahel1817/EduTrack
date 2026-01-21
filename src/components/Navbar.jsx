@@ -1,6 +1,7 @@
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useNotifications } from "../context/NotificationContext";
 
 /* LUCIDE ICONS */
 import {
@@ -15,17 +16,21 @@ import {
   Menu,
   X,
   MessageSquare,
-  PieChart
+  PieChart,
+  Bell,
+  Trash2
 } from "lucide-react";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const { notifications, clearNotifications } = useNotifications();
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dark, setDark] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
 
   /* -------------------------
       PREVENT BODY SCROLL WHEN MOBILE MENU IS OPEN
@@ -193,7 +198,120 @@ const Navbar = () => {
         </div>
 
         {/* RIGHT SIDE: THEME + USER */}
-        <div className="navbar-user" style={{ position: "relative" }}>
+        <div className="navbar-user" style={{ position: "relative", gap: '15px' }}>
+
+          {/* NOTIFICATION BELL */}
+          <div style={{ position: 'relative' }}>
+            <button
+              className="dark-toggle hover-bounce"
+              onClick={() => { setNotifOpen(!notifOpen); setMenuOpen(false); }}
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+                border: '1px solid var(--border)',
+                position: 'relative'
+              }}
+            >
+              <Bell size={20} className={notifications.length > 0 ? "animate-bounce" : ""} />
+              {notifications.length > 0 && (
+                <span style={{
+                  position: 'absolute',
+                  top: '-5px',
+                  right: '-5px',
+                  background: 'var(--error)',
+                  color: 'white',
+                  fontSize: '10px',
+                  borderRadius: '50%',
+                  width: '18px',
+                  height: '18px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 800,
+                  border: '2px solid var(--card-bg)'
+                }}>
+                  {notifications.length}
+                </span>
+              )}
+            </button>
+
+            {notifOpen && (
+              <>
+                <div style={{ position: 'fixed', inset: 0, zIndex: 998 }} onClick={() => setNotifOpen(false)} />
+                <div className="dropdown-menu glass-dropdown" style={{
+                  position: "absolute",
+                  top: "120%",
+                  right: 0,
+                  width: '320px',
+                  zIndex: 999,
+                  padding: '15px',
+                  maxHeight: '400px',
+                  overflowY: 'auto'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px', paddingBottom: '10px', borderBottom: '1px solid var(--border)' }}>
+                    <span style={{ fontWeight: 800, fontSize: '14px' }}>Notifications</span>
+                    <button
+                      onClick={clearNotifications}
+                      style={{ background: 'transparent', border: 'none', color: 'var(--error)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 600 }}
+                    >
+                      <Trash2 size={14} /> Clear
+                    </button>
+                  </div>
+                  {notifications.filter(n => !(n.type === 'new_quiz' && n.data?.createdBy === user._id)).length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '20px', color: 'var(--gray-500)', fontSize: '13px' }}>
+                      No new notifications
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {notifications
+                        .filter(n => !(n.type === 'new_quiz' && n.data?.createdBy === user._id))
+                        .map((n, i) => (
+                          <div key={i} style={{
+                            padding: '12px',
+                            borderRadius: '10px',
+                            background: 'var(--gray-50)',
+                            fontSize: '13px',
+                            borderLeft: `4px solid ${n.type === 'certification' ? 'var(--success)' : 'var(--primary)'}`,
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                          }}>
+                            <p style={{ margin: '0 0 8px 0', color: 'var(--gray-700)', fontWeight: 600 }}>{n.message}</p>
+
+                            {n.type === 'new_quiz' && user.role === 'student' && (
+                              <button
+                                onClick={() => { navigate(`/quiz/${n.data.quizId}`); setNotifOpen(false); }}
+                                className="btn btn-primary"
+                                style={{ padding: '6px 12px', fontSize: '11px', borderRadius: '8px', width: 'auto', display: 'inline-flex', gap: '6px' }}
+                              >
+                                <GraduationCap size={14} /> Attempt Quiz
+                              </button>
+                            )}
+
+                            {n.type === 'result' && user.role === 'teacher' && (
+                              <button
+                                onClick={() => { navigate(`/results/${n.data.quizId}`); setNotifOpen(false); }}
+                                className="btn btn-outline"
+                                style={{ padding: '6px 12px', fontSize: '11px', borderRadius: '8px', width: 'auto' }}
+                              >
+                                View Result
+                              </button>
+                            )}
+
+                            <div style={{ marginTop: '8px' }}>
+                              <small style={{ color: 'var(--gray-400)', fontSize: '10px' }}>Just now</small>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
 
           {/* THEME TOGGLE */}
           <button
