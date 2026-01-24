@@ -4,7 +4,7 @@ import axios from "axios";
    AXIOS INSTANCE
 -------------------------------------------------- */
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
+  baseURL: import.meta.env.VITE_API_URL || "http://127.0.0.1:5000/api",
   timeout: 120000,
 });
 
@@ -32,8 +32,22 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Ignore aborted requests (by AbortController)
+    if (axios.isCancel(error) || error.code === "ERR_CANCELED" || error.message === "canceled") {
+      return Promise.reject(error);
+    }
+
     if (!error.response) {
       console.error("❌ Network error or server down");
+      console.error("Details:", {
+        message: error.message,
+        code: error.code,
+        config: error.config ? {
+          url: error.config.url,
+          method: error.config.method,
+          baseURL: error.config.baseURL
+        } : "No config"
+      });
       return Promise.reject(error);
     }
 

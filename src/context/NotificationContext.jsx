@@ -12,10 +12,17 @@ export const NotificationProvider = ({ children }) => {
     useEffect(() => {
         if (!user) return;
 
-        const newSocket = io(import.meta.env.VITE_API_URL || "http://localhost:5000");
+        const userId = user._id || user.id;
+        if (!userId) return;
+
+        const socketUrl = import.meta.env.VITE_API_URL
+            ? new URL(import.meta.env.VITE_API_URL).origin
+            : "http://127.0.0.1:5000";
+
+        const newSocket = io(socketUrl);
         setSocket(newSocket);
 
-        newSocket.emit("join", user._id);
+        newSocket.emit("join", userId);
 
         newSocket.on("notification", (data) => {
             setNotifications((prev) => [data, ...prev]);
