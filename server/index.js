@@ -59,16 +59,7 @@ const allowedOrigins = [
 
 const io = new Server(httpServer, {
   cors: {
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.some(o => origin.startsWith(o))) {
-        callback(null, true);
-      } else {
-        console.warn(`⚠️ Origin ${origin} not allowed by CORS`);
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
+    origin: "*", // Allow all origins for Socket.io temporarily
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   },
