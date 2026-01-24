@@ -22,7 +22,13 @@ router.post(
   [
     body("name").trim().isLength({ min: 2 }).withMessage("Name must be at least 2 characters"),
     body("email").isEmail().normalizeEmail().withMessage("Invalid email address"),
-    body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
+    body("password")
+      .isLength({ min: 8 })
+      .withMessage("Password must be at least 8 characters")
+      .matches(/[A-Z]/)
+      .withMessage("Password must contain at least one uppercase letter")
+      .matches(/[!@#$%^&*(),.?\":{}|<>]/)
+      .withMessage("Password must contain at least one special character"),
     body("role").optional().isIn(["student", "teacher"]).withMessage("Role must be student or teacher"),
   ],
   async (req, res) => {
