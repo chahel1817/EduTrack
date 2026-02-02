@@ -1,28 +1,30 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 /**
- * ✅ Send Email using Gmail SMTP (RECOMMENDED)
+ * ✅ Send Email using Resend API
  */
 const sendEmail = async ({ to, subject, text, html }) => {
   try {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    const info = await transporter.sendMail({
-      from: `"EduTrack" <${process.env.EMAIL_USER}>`,
+    const { data, error } = await resend.emails.send({
+      from: process.env.EMAIL_FROM || "onboarding@resend.dev",
       to,
       subject,
-      text,
-      html,
+      text, // Plain text version
+      html: html || text, // HTML version (fallback to text if html not provided)
     });
 
-    console.log("✅ Email sent:", info.messageId);
-    return info;
+    if (error) {
+      console.error("❌ Resend Error:", error);
+      throw new Error(error.message);
+    }
+
+    console.log("✅ Email sent successfully:", data.id);
+    return data;
   } catch (error) {
     console.error("❌ Email send failed:", error.message);
     throw error;
