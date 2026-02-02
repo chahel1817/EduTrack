@@ -46,57 +46,76 @@ const VerifyOTP = () => {
 
   return (
     <div className="auth-page">
-      <div className="auth-container">
-        <div className="glass-card auth-card animate-fade-in">
+      <div className="auth-split-layout">
+
+        {/* LEFT SIDE: FORM */}
+        <div className="auth-left">
           <div className="auth-header">
-            <div className="auth-icon-wrapper" style={{ marginBottom: '20px' }}>
-              <ShieldCheck size={64} className="auth-main-icon" />
-            </div>
             <h1 className="auth-title">Verify OTP</h1>
             <p className="auth-subtitle">
-              Enter the 6-digit code sent to <br />
+              Enter the code sent to <br />
               <strong style={{ color: 'var(--primary)' }}>{email}</strong>
             </p>
           </div>
 
-          {error && <div className="auth-error">{error}</div>}
+          <div className="auth-container">
+            {error && <div className="auth-error">{error}</div>}
 
-          <div className="auth-form" style={{ marginTop: '32px' }}>
-            <div className="auth-input-group auth-input-wrapper">
-              <Key className="auth-input-icon" size={20} />
-              <input
-                className="auth-input"
-                placeholder="Enter 6-digit OTP"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                maxLength={6}
-                style={{ textAlign: 'center', letterSpacing: '4px', fontSize: '20px' }}
-              />
+            <div className="auth-form">
+              <div style={{ marginBottom: '24px' }}>
+                <div className="auth-input-group auth-input-wrapper">
+                  <Key className="auth-input-icon" size={18} />
+                  <input
+                    className="auth-input"
+                    placeholder="— — — — — —"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    maxLength={6}
+                    style={{ textAlign: 'center', letterSpacing: '8px', fontSize: '24px', fontWeight: 700, fontFamily: 'monospace' }}
+                  />
+                </div>
+              </div>
+
+              <button
+                className="auth-btn glow-btn"
+                onClick={handleVerifyOTP}
+                disabled={loading}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '16px' }}
+              >
+                {loading ? (
+                  <Loader2 className="loading-spinner" />
+                ) : (
+                  <>
+                    <span>Verify & Login</span>
+                    <ShieldCheck size={18} />
+                  </>
+                )}
+              </button>
             </div>
 
-            <button
-              className="auth-btn glow-btn"
-              onClick={handleVerifyOTP}
-              disabled={loading}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '10px' }}
-            >
-              {loading ? (
-                <Loader2 className="loading-spinner" />
-              ) : (
-                <>
-                  <span>Verify Account</span>
-                </>
-              )}
-            </button>
+            <div style={{ textAlign: 'center' }}>
+              <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--gray-500)', fontSize: '14px', textDecoration: 'none', fontWeight: 600 }}>
+                <ArrowLeft size={16} />
+                Back to Login
+              </Link>
+            </div>
           </div>
 
-          <div style={{ marginTop: '32px', textAlign: 'center' }}>
-            <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--gray-500)', fontSize: '15px', textDecoration: 'none', fontWeight: 600 }}>
-              <ArrowLeft size={16} />
-              Back to Login
-            </Link>
+          <div className="auth-footer-mini">
+            <span className="auth-footer-link">© 2025 EduTrack</span>
+            <Link to="/help" className="auth-footer-link">Help</Link>
           </div>
         </div>
+
+        {/* RIGHT SIDE: VISUAL */}
+        <div className="auth-right">
+          <img
+            src="/src/assets/login-illustration.png"
+            alt="Study Illustration"
+            className="auth-illustration"
+          />
+        </div>
+
       </div>
     </div>
   );

@@ -65,136 +65,122 @@ const Signup = () => {
 
   return (
     <div className="auth-page">
-      <div className="auth-container">
-        <div className="glass-card auth-card animate-fade-in">
+      <div className="auth-split-layout">
 
-          {/* HEADER */}
+        {/* LEFT SIDE: FORM */}
+        <div className="auth-left">
           <div className="auth-header">
-            <div className="auth-icon-wrapper" style={{ marginBottom: '20px' }}>
-              <GraduationCap size={64} className="auth-main-icon" />
-              <Sparkles size={24} className="auth-sparkle-icon" />
-            </div>
-
             <h1 className="auth-title">Create Account</h1>
-            <p className="auth-subtitle">
-              Join EduTrack and start learning smarter
-            </p>
+            <p className="auth-subtitle">Join EduTrack today.</p>
           </div>
 
+          <div className="auth-container">
+            {/* ROLE SELECT */}
+            <div className="role-tabs-wrapper" style={{ marginBottom: '24px' }}>
+              <div className="role-tabs">
+                <button
+                  type="button"
+                  className={`role-tab ${role === "student" ? "active" : ""}`}
+                  onClick={() => setRole("student")}
+                >
+                  <User size={18} />
+                  <span>Student</span>
+                </button>
 
-          {/* ROLE SELECT */}
-          <div className="role-tabs-wrapper" style={{ marginBottom: '32px' }}>
-            <div className="role-tabs">
-              <button
-                type="button"
-                className={`role-tab ${role === "student" ? "active" : ""}`}
-                onClick={() => setRole("student")}
-              >
-                <User size={18} />
-                <span>Student</span>
-              </button>
-
-              <button
-                type="button"
-                className={`role-tab ${role === "teacher" ? "active" : ""}`}
-                onClick={() => setRole("teacher")}
-              >
-                <Presentation size={18} />
-                <span>Teacher</span>
-              </button>
+                <button
+                  type="button"
+                  className={`role-tab ${role === "teacher" ? "active" : ""}`}
+                  onClick={() => setRole("teacher")}
+                >
+                  <Presentation size={18} />
+                  <span>Teacher</span>
+                </button>
+              </div>
             </div>
+
+            {error && <div className="auth-error">{error}</div>}
+
+            <form className="auth-form" onSubmit={handleSubmit}>
+              <div style={{ marginBottom: '16px' }}>
+                <div className="auth-input-group auth-input-wrapper">
+                  <User className="auth-input-icon" size={18} />
+                  <input
+                    className="auth-input"
+                    type="text"
+                    placeholder="Full Name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '16px' }}>
+                <div className="auth-input-group auth-input-wrapper">
+                  <Mail className="auth-input-icon" size={18} />
+                  <input
+                    className="auth-input"
+                    type="email"
+                    placeholder="Email Address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '16px' }}>
+                <div className="auth-input-group auth-input-wrapper">
+                  <Lock className="auth-input-icon" size={18} />
+                  <input
+                    className="auth-input"
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="password-checklist" style={{ margin: '0 0 24px 0' }}>
+                <div className={`checklist-item ${password.length >= 8 ? 'met' : ''}`}>
+                  <div className="dot"></div><span>8+ chars</span>
+                </div>
+                <div className={`checklist-item ${/[A-Z]/.test(password) ? 'met' : ''}`}>
+                  <div className="dot"></div><span>Uppercase</span>
+                </div>
+                <div className={`checklist-item ${/[!@#$%^&*(),.?":{}|<>]/.test(password) ? 'met' : ''}`}>
+                  <div className="dot"></div><span>Symbol</span>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '16px' }}>
+                <button type="submit" className="auth-btn glow-btn" disabled={loading} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                  {loading ? <Loader2 className="loading-spinner" /> : "Sign Up"}
+                </button>
+                <Link to="/login" className="auth-btn" style={{ flex: 1, background: 'transparent', color: 'var(--primary)', border: '1px solid var(--primary)', boxShadow: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', textDecoration: 'none' }}>
+                  Login
+                </Link>
+              </div>
+            </form>
           </div>
 
-          {/* ERROR */}
-          {error && <div className="auth-error">{error}</div>}
-
-          {/* FORM */}
-          <form className="auth-form" onSubmit={handleSubmit} style={{ marginTop: '10px' }}>
-            <div className="auth-input-group auth-input-wrapper">
-              <User className="auth-input-icon" size={20} />
-              <input
-                className="auth-input"
-                type="text"
-                placeholder="Full name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="auth-input-group auth-input-wrapper">
-              <Mail className="auth-input-icon" size={20} />
-              <input
-                className="auth-input"
-                type="email"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="auth-input-group auth-input-wrapper">
-              <Lock className="auth-input-icon" size={20} />
-              <input
-                className="auth-input"
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-
-            {/* PASSWORD REQUIREMENTS */}
-            <div className="password-checklist">
-              <div className={`checklist-item ${password.length >= 8 ? 'met' : ''}`}>
-                <div className="dot"></div>
-                <span>At least 8 characters</span>
-              </div>
-              <div className={`checklist-item ${/[A-Z]/.test(password) ? 'met' : ''}`}>
-                <div className="dot"></div>
-                <span>At least 1 uppercase letter</span>
-              </div>
-              <div className={`checklist-item ${(password.match(/[a-z]/g) || []).length >= 3 ? 'met' : ''}`}>
-                <div className="dot"></div>
-                <span>At least 3 lowercase letters</span>
-              </div>
-              <div className={`checklist-item ${/[!@#$%^&*(),.?":{}|<>]/.test(password) ? 'met' : ''}`}>
-                <div className="dot"></div>
-                <span>At least 1 special character</span>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="auth-btn glow-btn"
-              disabled={loading}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '12px' }}
-            >
-              {loading ? (
-                <>
-                  <Loader2 size={18} className="loading-spinner" />
-                  <span>Creating account...</span>
-                </>
-              ) : (
-                <>
-                  <span>Create Account</span>
-                  <ArrowRight size={20} />
-                </>
-              )}
-            </button>
-          </form>
-
-          {/* FOOTER */}
-          <div style={{ marginTop: '32px', textAlign: 'center', color: 'var(--gray-500)', fontSize: '15px' }}>
-            Already have an account?{" "}
-            <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 700, textDecoration: 'none' }}>
-              Login Instead
-            </Link>
+          <div className="auth-footer-mini">
+            <span className="auth-footer-link">© 2025 EduTrack</span>
+            <Link to="/privacy" className="auth-footer-link">Privacy</Link>
           </div>
-
         </div>
+
+        {/* RIGHT SIDE: VISUAL */}
+        <div className="auth-right">
+          <img
+            src="/src/assets/login-illustration.png"
+            alt="Study Illustration"
+            className="auth-illustration"
+          />
+        </div>
+
       </div>
     </div>
   );

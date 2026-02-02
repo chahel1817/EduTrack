@@ -36,69 +36,88 @@ const Login = () => {
 
   return (
     <div className="auth-page">
-      <div className="auth-container">
-        <div className="glass-card auth-card animate-fade-in">
+      <div className="auth-split-layout">
 
+        {/* LEFT SIDE: FORM */}
+        <div className="auth-left">
           <div className="auth-header">
-            <div className="auth-icon-wrapper" style={{ marginBottom: '20px' }}>
-              <GraduationCap size={64} className="auth-main-icon" />
-              <Sparkles size={24} className="auth-sparkle-icon" />
-            </div>
-            <h1 className="auth-title">Welcome Back</h1>
-            <p className="auth-subtitle">Sign in to continue your learning journey</p>
+            <h1 className="auth-title">EduTrack</h1>
+            <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px' }}>Welcome Back</h2>
+            <p className="auth-subtitle">Please, login to your account.</p>
           </div>
 
-          {error && <div className="auth-error">{error}</div>}
+          <div className="auth-container">
+            {error && <div className="auth-error">{error}</div>}
 
-          <form className="auth-form" onSubmit={handleLogin} style={{ marginTop: '30px' }}>
-            <div className="auth-input-group auth-input-wrapper">
-              <Mail className="auth-input-icon" size={20} />
-              <input
-                className="auth-input"
-                type="email"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
+            <form className="auth-form" onSubmit={handleLogin}>
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--gray-500)', marginBottom: '8px' }}>Email Address</label>
+                <div className="auth-input-group auth-input-wrapper">
+                  <Mail className="auth-input-icon" size={18} />
+                  <input
+                    className="auth-input"
+                    type="email"
+                    placeholder="student@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
 
-            <div className="auth-input-group auth-input-wrapper">
-              <Lock className="auth-input-icon" size={20} />
-              <input
-                className="auth-input"
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--gray-500)', marginBottom: '8px' }}>Password</label>
+                <div className="auth-input-group auth-input-wrapper">
+                  <Lock className="auth-input-icon" size={18} />
+                  <input
+                    className="auth-input"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
 
-            <div style={{ textAlign: 'right', marginBottom: '24px' }}>
-              <Link to="/forgot-password" style={{ fontSize: '14px', color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>
-                Forgot password?
-              </Link>
-            </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'var(--gray-500)', cursor: 'pointer' }}>
+                  <input type="checkbox" style={{ accentColor: 'var(--primary)' }} />
+                  Remember Me
+                </label>
+                <Link to="/forgot-password" style={{ fontSize: '13px', color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>
+                  Forgot Password?
+                </Link>
+              </div>
 
-            <button className="auth-btn glow-btn" disabled={loading} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-              {loading ? <Loader2 className="loading-spinner" /> : (
-                <>
-                  <span>Sign In</span>
-                  <ArrowRight size={20} />
-                </>
-              )}
-            </button>
-          </form>
-
-          <div style={{ marginTop: '32px', textAlign: 'center', color: 'var(--gray-500)', fontSize: '15px' }}>
-            Don’t have an account?{" "}
-            <Link to="/signup" style={{ color: 'var(--primary)', fontWeight: 700, textDecoration: 'none' }}>
-              Create Free Account
-            </Link>
+              <div style={{ display: 'flex', gap: '16px' }}>
+                <button type="submit" className="auth-btn glow-btn" disabled={loading} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                  {loading ? <Loader2 className="loading-spinner" /> : "Login"}
+                </button>
+                <Link to="/signup" className="auth-btn" style={{ flex: 1, background: 'transparent', color: 'var(--primary)', border: '1px solid var(--primary)', boxShadow: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', textDecoration: 'none' }}>
+                  Sign Up
+                </Link>
+              </div>
+            </form>
           </div>
 
+          <div className="auth-footer-mini">
+            <span className="auth-footer-link">© 2025 EduTrack</span>
+            <Link to="/help" className="auth-footer-link">Help</Link>
+            <Link to="/privacy" className="auth-footer-link">Privacy</Link>
+            <Link to="/terms" className="auth-footer-link">Terms</Link>
+          </div>
         </div>
+
+        {/* RIGHT SIDE: VISUAL */}
+        <div className="auth-right">
+          <img
+            src="/src/assets/login-illustration.png"
+            alt="Study Illustration"
+            className="auth-illustration"
+          />
+        </div>
+
       </div>
     </div>
   );

@@ -34,51 +34,67 @@ const ForgotPassword = () => {
 
   return (
     <div className="auth-page">
-      <div className="auth-container">
-        <div className="glass-card auth-card animate-fade-in">
+      <div className="auth-split-layout">
+
+        {/* LEFT SIDE: FORM */}
+        <div className="auth-left">
           <div className="auth-header">
-            <div className="auth-icon-wrapper" style={{ marginBottom: '20px' }}>
-              <Mail size={64} className="auth-main-icon" />
-              <Sparkles size={24} className="auth-sparkle-icon" />
-            </div>
             <h1 className="auth-title">Reset Password</h1>
-            <p className="auth-subtitle">
-              We'll send you a login OTP to reset your password.
-            </p>
+            <p className="auth-subtitle">We'll send you an OTP.</p>
           </div>
 
-          {error && <div className="auth-error">{error}</div>}
+          <div className="auth-container">
+            {error && <div className="auth-error">{error}</div>}
 
-          <form className="auth-form" onSubmit={handleSendOTP} style={{ marginTop: '32px' }}>
-            <div className="auth-input-group auth-input-wrapper">
-              <Mail className="auth-input-icon" size={20} />
-              <input
-                className="auth-input"
-                type="email"
-                placeholder="Enter registered email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+            <form className="auth-form" onSubmit={handleSendOTP}>
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--gray-500)', marginBottom: '8px' }}>Registered Email</label>
+                <div className="auth-input-group auth-input-wrapper">
+                  <Mail className="auth-input-icon" size={18} />
+                  <input
+                    className="auth-input"
+                    type="email"
+                    placeholder="student@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <button className="auth-btn glow-btn" disabled={loading} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '16px' }}>
+                {loading ? <Loader2 className="loading-spinner" /> : (
+                  <>
+                    <span>Send OTP</span>
+                    <Send size={18} />
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div style={{ textAlign: 'center' }}>
+              <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--gray-500)', fontSize: '14px', textDecoration: 'none', fontWeight: 600 }}>
+                <ArrowLeft size={16} />
+                Back to Login
+              </Link>
             </div>
+          </div>
 
-            <button className="auth-btn glow-btn" disabled={loading} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '10px' }}>
-              {loading ? <Loader2 className="loading-spinner" /> : (
-                <>
-                  <span>Send OTP</span>
-                  <Send size={18} />
-                </>
-              )}
-            </button>
-          </form>
-
-          <div style={{ marginTop: '32px', textAlign: 'center' }}>
-            <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--gray-500)', fontSize: '15px', textDecoration: 'none', fontWeight: 600 }}>
-              <ArrowLeft size={16} />
-              Back to Login
-            </Link>
+          <div className="auth-footer-mini">
+            <span className="auth-footer-link">© 2025 EduTrack</span>
+            <Link to="/help" className="auth-footer-link">Help</Link>
           </div>
         </div>
+
+        {/* RIGHT SIDE: VISUAL */}
+        <div className="auth-right">
+          <img
+            src="/src/assets/login-illustration.png"
+            alt="Study Illustration"
+            className="auth-illustration"
+          />
+        </div>
+
       </div>
     </div>
   );
