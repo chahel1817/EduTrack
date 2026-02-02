@@ -5,6 +5,8 @@ import { api } from "../utils/api";
 import { useAuth } from "../context/AuthContext";
 import { Key, Loader2, ShieldCheck, ArrowLeft } from "lucide-react";
 
+import loginIllustration from "../assets/login-illustration.png";
+
 const VerifyOTP = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -110,7 +112,7 @@ const VerifyOTP = () => {
         {/* RIGHT SIDE: VISUAL */}
         <div className="auth-right">
           <img
-            src="/src/assets/login-illustration.png"
+            src={loginIllustration}
             alt="Study Illustration"
             className="auth-illustration"
           />

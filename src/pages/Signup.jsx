@@ -14,6 +14,8 @@ import {
   Presentation
 } from "lucide-react";
 
+import loginIllustration from "../assets/login-illustration.png";
+
 const Signup = () => {
   const navigate = useNavigate();
   const { signup } = useAuth();
@@ -175,7 +177,7 @@ const Signup = () => {
         {/* RIGHT SIDE: VISUAL */}
         <div className="auth-right">
           <img
-            src="/src/assets/login-illustration.png"
+            src={loginIllustration}
             alt="Study Illustration"
             className="auth-illustration"
           />

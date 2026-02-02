@@ -11,6 +11,8 @@ import {
   ArrowRight
 } from "lucide-react";
 
+import loginIllustration from "../assets/login-illustration.png";
+
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -112,7 +114,7 @@ const Login = () => {
         {/* RIGHT SIDE: VISUAL */}
         <div className="auth-right">
           <img
-            src="/src/assets/login-illustration.png"
+            src={loginIllustration}
             alt="Study Illustration"
             className="auth-illustration"
           />

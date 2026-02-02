@@ -4,6 +4,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { api } from "../utils/api";
 import { Mail, Loader2, Sparkles, ArrowLeft, Send } from "lucide-react";
 
+import loginIllustration from "../assets/login-illustration.png";
+
 const ForgotPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -89,7 +91,7 @@ const ForgotPassword = () => {
         {/* RIGHT SIDE: VISUAL */}
         <div className="auth-right">
           <img
-            src="/src/assets/login-illustration.png"
+            src={loginIllustration}
             alt="Study Illustration"
             className="auth-illustration"
           />
