@@ -20,7 +20,8 @@ import {
   ArrowRight,
   Trophy,
   Activity,
-  Zap
+  Zap,
+  Loader2
 } from "lucide-react";
 
 /* ------------------------------------------------------
@@ -210,7 +211,7 @@ export default function Dashboard() {
       setQuizzes(res.data || []);
     } catch (err) {
       if (err.code === "ERR_CANCELED") return;
-      console.error("Failed to fetch quizzes:", err);
+      if (import.meta.env.MODE !== "production") console.error("Quiz fetch error:", err.message);
     }
   }, [user]);
 
@@ -221,7 +222,7 @@ export default function Dashboard() {
       setResults(res.data || []);
     } catch (err) {
       if (err.code === "ERR_CANCELED") return;
-      console.error("Failed to fetch results:", err);
+      if (import.meta.env.MODE !== "production") console.error("Result fetch error:", err.message);
     }
   }, [user]);
 
@@ -240,9 +241,25 @@ export default function Dashboard() {
     return (
       <div className="dashboard-container">
         <Navbar />
-        <main style={{ padding: '100px 20px', textAlign: 'center' }}>
-          <div className="loading-spinner" style={{ margin: '0 auto', width: '50px', height: '50px', border: '5px solid var(--gray-100)', borderTopColor: 'var(--primary)', borderRadius: '50%' }} />
-          <p style={{ marginTop: '20px', color: 'var(--gray-500)', fontWeight: 600 }}>Analyzing your dashboard...</p>
+        <main className="animate-fade-in" style={{ padding: '40px 20px' }}>
+          {/* Skeleton Hero */}
+          <div className="hero-pro" style={{ marginBottom: '50px', background: 'var(--gray-100)', color: 'transparent', height: '250px', position: 'relative', overflow: 'hidden' }}>
+            <div className="shimmer-sweep"></div>
+          </div>
+
+          {/* Skeleton Grid */}
+          <div className="stats-grid" style={{ marginBottom: '60px' }}>
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="stat-card" style={{ background: 'var(--gray-50)', height: '120px', position: 'relative', overflow: 'hidden' }}>
+                <div className="shimmer-sweep"></div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ textAlign: 'center', marginTop: '-20px' }}>
+            <Loader2 className="loading-spinner" style={{ margin: '0 auto', color: 'var(--primary)' }} size={40} />
+            <p style={{ marginTop: '20px', color: 'var(--gray-500)', fontWeight: 600 }}>Syncing your latest progress...</p>
+          </div>
         </main>
       </div>
     );
@@ -467,6 +484,9 @@ export default function Dashboard() {
               )}
             </div>
           </section>
+
+          {/* EXTRA SPACING FOR FOOTER ALIGNMENT */}
+          <div style={{ height: '80px' }}></div>
 
         </div>
 

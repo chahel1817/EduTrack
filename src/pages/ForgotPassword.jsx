@@ -29,13 +29,17 @@ const ForgotPassword = () => {
       navigate("/verify-otp", { state: { email } });
     } catch (err) {
       setError(err.response?.data?.message || "Failed to send OTP");
-    } finally {
-      setLoading(false);
+      setLoading(false); // Only set to false on error
     }
   };
 
   return (
     <div className="auth-page">
+      {/* Dynamic Background Elements */}
+      <div className="auth-bg-shape shape-1"></div>
+      <div className="auth-bg-shape shape-2"></div>
+      <div className="auth-bg-shape shape-3"></div>
+
       <div className="auth-split-layout">
 
         {/* LEFT SIDE: FORM */}
@@ -85,6 +89,8 @@ const ForgotPassword = () => {
           <div className="auth-footer-mini">
             <span className="auth-footer-link">© 2025 EduTrack</span>
             <Link to="/help" className="auth-footer-link">Help</Link>
+            <Link to="/privacy" className="auth-footer-link">Privacy</Link>
+            <Link to="/terms" className="auth-footer-link">Terms</Link>
           </div>
         </div>
 

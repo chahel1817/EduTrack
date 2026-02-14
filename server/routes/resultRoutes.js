@@ -130,7 +130,9 @@ router.get("/analytics", authenticate, authorize(["student"]), async (req, res) 
     results.forEach(result => {
       if (result.quiz && result.quiz.questions) {
         result.answers.forEach((answer) => {
-          const questionData = result.quiz.questions.id(answer.question);
+          const questionData = result.quiz.questions.find(
+            (q) => String(q._id) === String(answer.question)
+          );
           if (questionData) {
             const cat = questionData.category || "General";
             if (!skillMap[cat]) {
@@ -161,22 +163,31 @@ router.get("/student", authenticate, authorize(["student"]), async (req, res) =>
       .populate("quiz") // full quiz needed for student review
       .sort({ createdAt: -1 });
 
-    const formattedResults = results.map((r) => ({
-      _id: r._id,
-      quiz: r.quiz,
-      score: r.score,
-      total: r.total,
-      percentage: r.percentage,
-      timeSpent: r.timeSpent,
-      submittedAt: r.createdAt,
-      createdAt: r.createdAt,
-      answers: r.answers.map(a => ({
-        questionIndex: r.quiz.questions.findIndex(q => q._id.equals(a.question)),
-        selectedAnswer: a.selectedAnswer,
-        isCorrect: a.isCorrect,
-        points: a.points,
-      })),
-    }));
+    const formattedResults = results
+      .filter((r) => r && r.quiz) // ✅ Safety first
+      .map((r) => {
+        const resultObj = r.toObject ? r.toObject() : r;
+        const quizObj = resultObj.quiz;
+
+        return {
+          _id: resultObj._id,
+          quiz: quizObj,
+          score: resultObj.score,
+          total: resultObj.total,
+          percentage: resultObj.percentage,
+          timeSpent: resultObj.timeSpent,
+          submittedAt: resultObj.createdAt,
+          createdAt: resultObj.createdAt,
+          answers: (resultObj.answers || []).map((a) => ({
+            questionIndex: (quizObj && quizObj.questions)
+              ? quizObj.questions.findIndex((q) => String(q._id || q) === String(a.question))
+              : -1,
+            selectedAnswer: a.selectedAnswer,
+            isCorrect: a.isCorrect,
+            points: a.points,
+          })),
+        };
+      });
 
     return res.json(formattedResults);
   } catch (error) {
@@ -203,6 +214,7 @@ router.get("/all", authenticate, authorize(["teacher"]), async (req, res) => {
     const teacherResults = results.filter(
       (r) =>
         r.quiz &&
+        r.quiz.createdBy &&
         String(r.quiz.createdBy._id || r.quiz.createdBy) === String(req.user.id)
     );
 

@@ -55,18 +55,23 @@ const Signup = () => {
         role
       });
 
+      // Navigate to login
       navigate("/login");
     } catch (err) {
       setError(
         err.response?.data?.message || "Signup failed"
       );
-    } finally {
-      setLoading(false);
+      setLoading(false); // Only set to false on error
     }
   };
 
   return (
     <div className="auth-page">
+      {/* Dynamic Background Elements */}
+      <div className="auth-bg-shape shape-1"></div>
+      <div className="auth-bg-shape shape-2"></div>
+      <div className="auth-bg-shape shape-3"></div>
+
       <div className="auth-split-layout">
 
         {/* LEFT SIDE: FORM */}
@@ -159,7 +164,17 @@ const Signup = () => {
 
               <div style={{ display: 'flex', gap: '16px' }}>
                 <button type="submit" className="auth-btn glow-btn" disabled={loading} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                  {loading ? <Loader2 className="loading-spinner" /> : "Sign Up"}
+                  {loading ? (
+                    <>
+                      <Loader2 className="loading-spinner" size={18} />
+                      <span>Creating Account...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Sign Up</span>
+                      <ArrowRight size={18} />
+                    </>
+                  )}
                 </button>
                 <Link to="/login" className="auth-btn" style={{ flex: 1, background: 'transparent', color: 'var(--primary)', border: '1px solid var(--primary)', boxShadow: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', textDecoration: 'none' }}>
                   Login
@@ -170,7 +185,9 @@ const Signup = () => {
 
           <div className="auth-footer-mini">
             <span className="auth-footer-link">© 2025 EduTrack</span>
+            <Link to="/help" className="auth-footer-link">Help</Link>
             <Link to="/privacy" className="auth-footer-link">Privacy</Link>
+            <Link to="/terms" className="auth-footer-link">Terms</Link>
           </div>
         </div>
 

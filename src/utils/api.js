@@ -38,16 +38,9 @@ api.interceptors.response.use(
     }
 
     if (!error.response) {
-      console.error("❌ Network error or server down");
-      console.error("Details:", {
-        message: error.message,
-        code: error.code,
-        config: error.config ? {
-          url: error.config.url,
-          method: error.config.method,
-          baseURL: error.config.baseURL
-        } : "No config"
-      });
+      if (import.meta.env.MODE !== 'production') {
+        console.error("Network error:", error.message);
+      }
       return Promise.reject(error);
     }
 
@@ -67,7 +60,10 @@ api.interceptors.response.use(
 
     // Server error
     if (status >= 500) {
-      console.error("🔥 Server error:", error.response.data);
+      // Log server errors minimally if not in production
+      if (import.meta.env.MODE !== 'production') {
+        console.error("API Server Error:", error.response.data);
+      }
     }
 
     return Promise.reject(error);

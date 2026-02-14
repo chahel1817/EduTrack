@@ -28,16 +28,22 @@ const Login = () => {
       setLoading(true);
       setError("");
       await login({ email, password });
+      // We don't setLoading(false) here because we want to keep the spinner 
+      // visible until the dashboard actually loads (navigation completes)
       navigate("/dashboard");
     } catch (err) {
       setError("Invalid email or password");
-    } finally {
-      setLoading(false);
+      setLoading(false); // Only set to false on error
     }
   };
 
   return (
     <div className="auth-page">
+      {/* Dynamic Background Elements */}
+      <div className="auth-bg-shape shape-1"></div>
+      <div className="auth-bg-shape shape-2"></div>
+      <div className="auth-bg-shape shape-3"></div>
+
       <div className="auth-split-layout">
 
         {/* LEFT SIDE: FORM */}
@@ -94,7 +100,17 @@ const Login = () => {
 
               <div style={{ display: 'flex', gap: '16px' }}>
                 <button type="submit" className="auth-btn glow-btn" disabled={loading} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                  {loading ? <Loader2 className="loading-spinner" /> : "Login"}
+                  {loading ? (
+                    <>
+                      <Loader2 className="loading-spinner" size={18} />
+                      <span>Logging in...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Login</span>
+                      <ArrowRight size={18} />
+                    </>
+                  )}
                 </button>
                 <Link to="/signup" className="auth-btn" style={{ flex: 1, background: 'transparent', color: 'var(--primary)', border: '1px solid var(--primary)', boxShadow: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', textDecoration: 'none' }}>
                   Sign Up
