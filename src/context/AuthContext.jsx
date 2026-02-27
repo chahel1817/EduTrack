@@ -12,21 +12,21 @@ export const AuthProvider = ({ children }) => {
 
   /* ---------------- LOAD USER ON APP START ---------------- */
   useEffect(() => {
-  const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-  if (!token) {
-    setLoading(false);
-    return;
-  }
+    if (!token) {
+      setLoading(false);
+      return;
+    }
 
-  api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-  api
-    .get("/auth/me")
-    .then((res) => setUser(res.data))
-    .catch(logout)
-    .finally(() => setLoading(false));
-}, []);
+    api
+      .get("/auth/me")
+      .then((res) => setUser(res.data))
+      .catch(logout)
+      .finally(() => setLoading(false));
+  }, []);
 
 
 
@@ -55,10 +55,16 @@ export const AuthProvider = ({ children }) => {
   };
 
   /* ---------------- LOGOUT ---------------- */
-  const logout = () => {
-    localStorage.removeItem("token");
-    delete api.defaults.headers.common["Authorization"];
-    setUser(null);
+  const logout = async () => {
+    try {
+      await api.post("/auth/logout");
+    } catch (err) {
+      console.warn("Server-side logout failed or already logged out");
+    } finally {
+      localStorage.removeItem("token");
+      delete api.defaults.headers.common["Authorization"];
+      setUser(null);
+    }
   };
 
   return (

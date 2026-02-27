@@ -1,193 +1,271 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { Mail, User, FileText, MessageCircle, Send, CheckCircle } from "lucide-react";
-import axios from "../api/axios";
+import {
+  Mail, User, FileText, MessageCircle, Send, CheckCircle,
+  Bug, Zap, Heart, HelpCircle, Star, ArrowLeft, RefreshCw
+} from "lucide-react";
+import { api } from "../utils/api";
+import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
 const Feedback = () => {
+  const { user } = useAuth();
+
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
+    name: user?.name || '',
+    email: user?.email || '',
+    userId: user?._id || null,
+    category: 'other',
+    rating: 5,
     subject: '',
     message: ''
   });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [hoverRating, setHoverRating] = useState(0);
+
+  // Sync with user data if it loads late
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.name,
+        email: user.email,
+        userId: user._id
+      }));
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const setCategory = (cat) => {
+    setFormData(prev => ({ ...prev, category: cat }));
+  };
+
+  const setRating = (val) => {
+    setFormData(prev => ({ ...prev, rating: val }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    if (isSubmitting) return;
 
+    setIsSubmitting(true);
     try {
-      const response = await axios.post('/api/feedback', formData);
-      if (response.status === 201) {
+      const response = await api.post('/feedback', formData);
+      if (response.data.success) {
         setIsSuccess(true);
-        setFormData({
-          name: '',
-          email: '',
+        setFormData(prev => ({
+          ...prev,
           subject: '',
-          message: ''
-        });
+          message: '',
+          category: 'other',
+          rating: 5
+        }));
       }
     } catch (error) {
       console.error('Error submitting feedback:', error);
-      alert('Failed to submit feedback. Please try again.');
+      alert(error.response?.data?.message || 'Failed to submit feedback. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const categories = [
+    { id: 'bug', label: 'Report Bug', icon: Bug },
+    { id: 'feature', label: 'New Feature', icon: Zap },
+    { id: 'praise', label: 'Praise', icon: Heart },
+    { id: 'help', label: 'Need Help', icon: HelpCircle },
+    { id: 'other', label: 'Other', icon: MessageCircle },
+  ];
+
   return (
-    <div className="dashboard-container">
+    <div className="fdb2-page">
       <Navbar />
 
-      <main className="dashboard-main">
-        <div className="dashboard-section">
+      <header className="fdb2-hero">
+        <div className="fdb2-orb fdb2-orb-1" style={{ position: 'absolute', top: '-100px', left: '10%', width: '300px', height: '300px', background: 'rgba(124, 58, 237, 0.15)', filter: 'blur(80px)', borderRadius: '50%' }} />
+        <h1 className="fdb2-hero-title">Help us build EduTrack</h1>
+        <p className="fdb2-hero-sub">
+          Your feedback directly shapes the future of our AI-powered learning platform.
+        </p>
+      </header>
 
-          {/* HEADER */}
-          <section className="dashboard-section hero-pro" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '40px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-              <div className="header-icon" style={{ background: 'rgba(255,255,255,0.2)', width: '60px', height: '60px' }}>
-                <FileText size={32} color="white" />
+      <main className="fdb2-container">
+
+        {/* LEFT: FORM CARD */}
+        <div className="fdb2-card">
+          {isSuccess ? (
+            <div className="fdb2-success animate-fade-in">
+              <div className="fdb2-success-icon">
+                <CheckCircle size={40} />
               </div>
-              <div>
-                <h1 className="hero-pro-title" style={{ margin: 0, fontSize: '32px' }}>Feedback</h1>
-                <p className="hero-pro-sub" style={{ margin: 0, opacity: 0.9 }}>
-                  Your feedback helps us build a better learning experience.
-                </p>
-              </div>
-            </div>
-            <MessageCircle size={80} style={{ opacity: 0.2, color: 'white' }} />
-          </section>
-
-          {/* FORM CARD */}
-          <div className="glass-card contact-form-card" style={{ maxWidth: '700px', margin: '0 auto', padding: '40px', border: '1px solid var(--border)' }}>
-
-            <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-              <h2 style={{ fontSize: '28px', fontWeight: 800, marginBottom: '10px' }}>We'd love to hear from you</h2>
-              <p style={{ color: 'var(--gray-500)', fontSize: '16px' }}>
-                Share your thoughts, report issues, or suggest new features.
+              <h2 style={{ fontSize: '32px', fontWeight: 900, marginBottom: '16px' }}>Message Received!</h2>
+              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '17px', marginBottom: '40px' }}>
+                Thank you for your valuable feedback. Our team will review it shortly.
               </p>
-            </div>
-
-            {isSuccess ? (
-              <div className="success-message animate-fade-in" style={{
-                textAlign: 'center',
-                padding: '50px 30px',
-                background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(34, 197, 94, 0.1))',
-                border: '1px solid rgba(16, 185, 129, 0.2)',
-                borderRadius: '24px',
-                color: '#10B981'
-              }}>
-                <CheckCircle size={80} style={{ margin: '0 auto 24px', color: '#10B981' }} />
-                <h3 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '12px' }}>Feedback Received!</h3>
-                <p style={{ fontSize: '17px', opacity: 0.9 }}>Thank you for helping us improve EduTrack.</p>
-                <button className="btn btn-primary" style={{ marginTop: '24px', padding: '12px 30px' }} onClick={() => setIsSuccess(false)}>Send Another</button>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center' }}>
+                <button className="fdb2-submit-btn" style={{ width: 'auto', padding: '16px 40px' }} onClick={() => setIsSuccess(false)}>
+                  <RefreshCw size={18} />
+                  <span>Send More Feedback</span>
+                </button>
+                <Link to="/dashboard" className="fdb2-submit-btn" style={{ width: 'auto', padding: '16px 40px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <ArrowLeft size={18} />
+                  <span>Back to Dashboard</span>
+                </Link>
               </div>
-            ) : (
-              <form className="contact-form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit}>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-                  {/* NAME */}
-                  <div className="form-group">
-                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: '700', fontSize: '14px', color: 'var(--gray-600)' }}>
-                      Full Name
-                    </label>
-                    <div style={{ position: 'relative' }}>
-                      <User size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--primary)' }} />
-                      <input
-                        type="text"
-                        name="name"
-                        className="input-field"
-                        style={{ width: '100%', paddingLeft: '45px' }}
-                        placeholder="John Doe"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                      />
+              <div className="fdb2-form-group" style={{ marginBottom: '36px' }}>
+                <label className="fdb2-label" style={{ fontWeight: 800, fontSize: '16px', color: '#7C3AED', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                  What kind of feedback is this?
+                </label>
+                <div className="fdb2-categories" style={{ marginTop: '16px' }}>
+                  {categories.map((cat) => (
+                    <div
+                      key={cat.id}
+                      className={`fdb2-cat-btn ${formData.category === cat.id ? 'fdb2-cat-btn--active' : ''}`}
+                      onClick={() => setCategory(cat.id)}
+                    >
+                      <cat.icon size={22} className="fdb2-cat-icon" />
+                      <span style={{ fontSize: '11px', fontWeight: 700 }}>{cat.label}</span>
                     </div>
-                  </div>
-
-                  {/* EMAIL */}
-                  <div className="form-group">
-                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: '700', fontSize: '14px', color: 'var(--gray-600)' }}>
-                      Email Address
-                    </label>
-                    <div style={{ position: 'relative' }}>
-                      <Mail size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--primary)' }} />
-                      <input
-                        type="email"
-                        name="email"
-                        className="input-field"
-                        style={{ width: '100%', paddingLeft: '45px' }}
-                        placeholder="john@example.com"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
-                  </div>
+                  ))}
                 </div>
+              </div>
 
-                {/* SUBJECT */}
-                <div className="form-group">
-                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: '700', fontSize: '14px', color: 'var(--gray-600)' }}>
-                    Subject
-                  </label>
-                  <div style={{ position: 'relative' }}>
-                    <FileText size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--primary)' }} />
+              <div className="fdb2-form-group" style={{ marginBottom: '36px' }}>
+                <label className="fdb2-label">Overall Satisfaction</label>
+                <div className="fdb2-rating-row" style={{ marginTop: '12px' }}>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      size={36}
+                      className={`fdb2-star ${(hoverRating || formData.rating) >= star ? 'fdb2-star--active' : ''}`}
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      onClick={() => setRating(star)}
+                    />
+                  ))}
+                  <span style={{ marginLeft: '16px', fontSize: '16px', fontWeight: 800, color: '#FBBF24', opacity: 0.9 }}>
+                    {formData.rating} / 5
+                  </span>
+                </div>
+              </div>
+
+              <div className="fdb2-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
+                <div className="fdb2-form-group" style={{ margin: 0 }}>
+                  <label className="fdb2-label">Locked Name</label>
+                  <div className="fdb2-input-wrap">
+                    <User className="fdb2-input-icon" size={17} />
                     <input
-                      type="text"
-                      name="subject"
-                      className="input-field"
-                      style={{ width: '100%', paddingLeft: '45px' }}
-                      placeholder="Feedback subject"
-                      value={formData.subject}
+                      className={`fdb2-input ${user ? 'fdb2-input--readonly' : ''}`}
+                      name="name"
+                      placeholder="Enter your name"
+                      value={formData.name}
                       onChange={handleChange}
                       required
+                      readOnly={!!user}
+                      title={user ? "Name is fixed for your account" : ""}
                     />
                   </div>
                 </div>
+                <div className="fdb2-form-group" style={{ margin: 0 }}>
+                  <label className="fdb2-label">Locked Email</label>
+                  <div className="fdb2-input-wrap">
+                    <Mail className="fdb2-input-icon" size={17} />
+                    <input
+                      type="email"
+                      className={`fdb2-input ${user ? 'fdb2-input--readonly' : ''}`}
+                      name="email"
+                      placeholder="Enter your email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      readOnly={!!user}
+                      title={user ? "Email is fixed for your account" : ""}
+                    />
+                  </div>
+                </div>
+              </div>
 
-                {/* MESSAGE */}
-                <div className="form-group">
-                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: '700', fontSize: '14px', color: 'var(--gray-600)' }}>
-                    Your Message
-                  </label>
-                  <textarea
-                    name="message"
-                    className="input-field"
-                    style={{ width: '100%', minHeight: '150px' }}
-                    placeholder="Tell us what's on your mind..."
-                    value={formData.message}
+              <div className="fdb2-form-group">
+                <label className="fdb2-label">Subject</label>
+                <div className="fdb2-input-wrap">
+                  <FileText className="fdb2-input-icon" size={17} />
+                  <input
+                    className="fdb2-input"
+                    name="subject"
+                    placeholder="Short summary (e.g., Question about Quiz)"
+                    value={formData.subject}
                     onChange={handleChange}
-                    rows={6}
                     required
                   />
                 </div>
+              </div>
 
-                {/* SUBMIT */}
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  disabled={isSubmitting}
-                  style={{ width: '100%', marginTop: '10px', padding: '16px', fontSize: '16px', fontWeight: 800, borderRadius: '16px', boxShadow: '0 10px 20px rgba(109, 40, 217, 0.2)' }}
-                >
-                  {isSubmitting ? "Sending Thoughts..." : "Send Message"}
-                  <Send size={20} />
+              <div className="fdb2-form-group">
+                <label className="fdb2-label">Details</label>
+                <textarea
+                  className="fdb2-input fdb2-textarea"
+                  name="message"
+                  placeholder="Share details about your experience..."
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="fdb2-submit-wrap" style={{ marginTop: '40px' }}>
+                <button type="submit" className="fdb2-submit-btn" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <div className="auth2-btn-spinner" style={{ width: '24px', height: '24px' }} />
+                  ) : (
+                    <>
+                      <span style={{ fontSize: '18px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1px' }}>Push 10/10 Feedback</span>
+                      <Send size={22} className="fdb2-btn-icon" />
+                    </>
+                  )}
                 </button>
-              </form>
-            )}
-          </div>
+              </div>
+            </form>
+          )}
         </div>
+
+        {/* RIGHT: SIDEBAR */}
+        <aside className="fdb2-sidebar">
+          <div className="fdb2-sidebar-card">
+            <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '16px' }}>Share Your Thoughts</h3>
+            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', lineHeight: 1.6, marginBottom: '24px' }}>
+              We're building EduTrack for you. Every suggestion or bug report helps us create a better learning platform for the community.
+            </p>
+
+            <div className="fdb2-faq-item">
+              <div className="fdb2-faq-q">Found a bug?</div>
+              <div className="fdb2-faq-a">Provide details about what happened and how to reproduce it. Screenshots help too!</div>
+            </div>
+
+            <div className="fdb2-faq-item">
+              <div className="fdb2-faq-q">New Feature Idea?</div>
+              <div className="fdb2-faq-a">Explain how it would help you or others. We love innovative ideas!</div>
+            </div>
+
+            <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#7C3AED', fontWeight: 700 }}>
+                <Heart size={16} fill="#7C3AED" />
+                <span>Made for Learners</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
       </main>
 
       <Footer />

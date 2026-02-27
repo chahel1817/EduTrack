@@ -97,6 +97,8 @@ app.use(
   })
 );
 
+import errorMiddleware from "./middleware/errorMiddleware.js";
+
 /**
  * ✅ Routes
  */
@@ -131,15 +133,9 @@ app.get("/api/health", (req, res) => {
 });
 
 /**
- * ✅ BETTER ERROR HANDLER (IMPORTANT)
+ * ✅ Global Error Handler (Unified)
  */
-app.use((err, req, res, next) => {
-  console.error("SERVER ERROR:", err.message);
-
-  res.status(err.status || 500).json({
-    message: err.message || "Internal server error",
-  });
-});
+app.use(errorMiddleware);
 
 const PORT = process.env.PORT || 5000;
 
