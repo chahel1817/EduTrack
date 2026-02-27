@@ -3,6 +3,10 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import User from "../models/User.js";
 import sendEmail from "../utils/sendEmail.js";
+import redis from "../config/redis.js";
+
+// Cache TTL in seconds (1 hour default)
+const USER_CACHE_TTL = 3600;
 
 /* --------------------------------------------------------
    SIGNUP CONTROLLER
@@ -30,7 +34,7 @@ export const signup = async (req, res) => {
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 8);
 
     // Create user
     await User.create({
@@ -110,6 +114,13 @@ export const login = async (req, res) => {
       updatedAt: user.updatedAt,
     };
 
+    // --- CACHE USER PROFILE IN REDIS ---
+    try {
+      await redis.set(`user:${user._id}`, JSON.stringify(safeUser), 'EX', USER_CACHE_TTL);
+    } catch (err) {
+      console.warn('⚠️ Could not cache user to Redis:', err.message);
+    }
+
     return res.json({
       token,
       user: safeUser,
@@ -127,12 +138,32 @@ export const login = async (req, res) => {
 -------------------------------------------------------- */
 export const getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("-password");
+    const userId = req.user.id;
+
+    // 1. Try fetching from Redis first
+    try {
+      const cachedUser = await redis.get(`user:${userId}`);
+      if (cachedUser) {
+        return res.json(JSON.parse(cachedUser));
+      }
+    } catch (err) {
+      console.warn('⚠️ Redis GET error in getProfile:', err.message);
+    }
+
+    // 2. Fall back to MongoDB
+    const user = await User.findById(userId).select("-password");
 
     if (!user) {
       return res.status(404).json({
         message: "User not found",
       });
+    }
+
+    // 3. Cache the fetched user in Redis
+    try {
+      await redis.set(`user:${userId}`, JSON.stringify(user), 'EX', USER_CACHE_TTL);
+    } catch (err) {
+      console.warn('⚠️ Redis SET error in getProfile:', err.message);
     }
 
     return res.json(user);
@@ -256,6 +287,13 @@ export const verifyOTP = async (req, res) => {
       updatedAt: user.updatedAt,
     };
 
+    // --- CACHE USER PROFILE IN REDIS ---
+    try {
+      await redis.set(`user:${user._id}`, JSON.stringify(safeUser), 'EX', USER_CACHE_TTL);
+    } catch (err) {
+      console.warn('⚠️ Could not cache user to Redis after OTP verification:', err.message);
+    }
+
     return res.json({
       token,
       user: safeUser,
@@ -309,6 +347,15 @@ export const updateProfile = async (req, res) => {
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };
+
+    // --- INVALIDATE REDIS CACHE ---
+    try {
+      await redis.del(`user:${user._id}`);
+      // Re-cache updated user (Optional, but better for performance)
+      await redis.set(`user:${user._id}`, JSON.stringify(safeUser), 'EX', USER_CACHE_TTL);
+    } catch (err) {
+      console.warn('⚠️ Redis Invalidation error in updateProfile:', err.message);
+    }
 
     return res.json({
       message: "Profile updated successfully",

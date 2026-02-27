@@ -19,6 +19,7 @@
     "edutrack": "file:..",
     "express": "^4.18.2",
     "express-validator": "^7.0.1",
+    "ioredis": "^5.9.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^9.0.1",
     "multer": "^2.0.2",
