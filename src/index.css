@@ -8121,6 +8121,18 @@ input[type="number"]::-webkit-outer-spin-button {
     box-shadow: 0 4px 24px rgba(109, 40, 217, 0.6), 0 0 40px rgba(6, 182, 212, 0.2);
   }
 }
+
+/* OTP input special style */
+.auth2-otp-input {
+  text-align: center;
+  letter-spacing: 10px;
+  font-size: 22px;
+  font-weight: 700;
+  font-family: 'Outfit', 'Courier New', monospace;
+  padding-left: 42px;
+  padding-right: 14px;
+}
+
 /* ────────────────────────────────────────────────────────
    FEEDBACK 2.0 PREMIUM STYLES
 ──────────────────────────────────────────────────────── */
@@ -8142,7 +8154,7 @@ input[type="number"]::-webkit-outer-spin-button {
 .fdb2-hero-title {
   font-size: clamp(32px, 5vw, 48px);
   font-weight: 900;
-  background: linear-gradient(135deg, #fff 30%, rgba(255,255,255,0.6) 100%);
+  background: linear-gradient(135deg, #fff 30%, rgba(255, 255, 255, 0.6) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 16px;
@@ -8369,7 +8381,8 @@ input[type="number"]::-webkit-outer-spin-button {
 
 /* ── Refining Feedback 2.0 colors and contrast ── */
 .fdb2-page {
-  background: #0b0b18 !important; /* Force darker background */
+  background: #0b0b18 !important;
+  /* Force darker background */
   overflow-x: hidden;
 }
 
@@ -8378,12 +8391,15 @@ input[type="number"]::-webkit-outer-spin-button {
   font-weight: 800;
 }
 
-.fdb2-sidebar-card p, .fdb2-faq-a {
-  color: rgba(255, 255, 255, 0.75) !important; /* Brighter sidebar text */
+.fdb2-sidebar-card p,
+.fdb2-faq-a {
+  color: rgba(255, 255, 255, 0.75) !important;
+  /* Brighter sidebar text */
 }
 
 .fdb2-faq-q {
-  color: #7C3AED !important; /* Make questions stand out more */
+  color: #7C3AED !important;
+  /* Make questions stand out more */
 }
 
 /* Locked input state */
@@ -8423,11 +8439,12 @@ input[type="number"]::-webkit-outer-spin-button {
 /* Premium gradient for card titles */
 .fdb2-card h2 {
   color: #fff;
-  text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 /* ── Ensuring full-page dark coverage ── */
-html, body {
+html,
+body {
   background-color: #0b0b18 !important;
 }
 
@@ -8439,13 +8456,14 @@ html, body {
 }
 
 .fdb2-container {
-  flex: 1; /* Pushes footer down */
+  flex: 1;
+  /* Pushes footer down */
   padding-bottom: 60px;
 }
 
 /* Sidebar fixes for the "Not Good" part */
 .fdb2-sidebar-card {
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
 .fdb2-faq-item:not(:last-child) {
@@ -8465,7 +8483,7 @@ html, body {
   text-transform: capitalize;
   letter-spacing: -2px !important;
   line-height: 1.1;
-  background: linear-gradient(to right, #ffffff 40%, rgba(255,255,255,0.4)) !important;
+  background: linear-gradient(to right, #ffffff 40%, rgba(255, 255, 255, 0.4)) !important;
   -webkit-background-clip: text !important;
 }
 
@@ -8499,7 +8517,8 @@ html, body {
 }
 
 .fdb2-input {
-  border-width: 2px !important; /* Slightly thicker borders for better visibility */
+  border-width: 2px !important;
+  /* Slightly thicker borders for better visibility */
 }
 
 .fdb2-sidebar-card h3 {
@@ -8521,7 +8540,8 @@ html, body {
 
 /* ── Final Visual Contrast Polish ── */
 .fdb2-label {
-  color: #e5e7eb !important; /* Brighter, crisp label text */
+  color: #e5e7eb !important;
+  /* Brighter, crisp label text */
   margin-bottom: 10px !important;
 }
 
@@ -8580,7 +8600,8 @@ html, body {
 }
 
 .fdb2-container {
-  flex-grow: 1; /* This will push footer to the absolute bottom */
+  flex-grow: 1;
+  /* This will push footer to the absolute bottom */
   box-sizing: border-box;
 }
 
@@ -8591,7 +8612,8 @@ Footer {
 
 /* ── Final Contrast Upgrades ── */
 .fdb2-input-icon {
-  color: #a78bfa !important; /* Brighter purple icons */
+  color: #a78bfa !important;
+  /* Brighter purple icons */
   opacity: 1 !important;
 }
 
@@ -8602,13 +8624,15 @@ Footer {
 
 .fdb2-input--readonly {
   background: rgba(255, 255, 255, 0.05) !important;
-  color: #fff !important; /* Force high visibility */
-  filter: grayscale(0.5); /* Signal locked state with a subtle gray tint */
+  color: #fff !important;
+  /* Force high visibility */
+  filter: grayscale(0.5);
+  /* Signal locked state with a subtle gray tint */
   opacity: 0.9 !important;
 }
 
 .fdb2-input {
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
 }
 
 /* ── Active icon vibrancy ── */

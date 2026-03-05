@@ -1,16 +1,22 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { api } from "../utils/api";
-import { Mail, Loader2, Sparkles, ArrowLeft, Send } from "lucide-react";
+import { Mail, Send, BookOpen, Key, Shield, Zap } from "lucide-react";
 
-import loginIllustration from "../assets/login-illustration.png";
+import AuthInput from "../components/common/AuthInput";
+import AuthButton from "../components/common/AuthButton";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 50);
+    return () => clearTimeout(t);
+  }, []);
 
   const handleSendOTP = async (e) => {
     e.preventDefault();
@@ -23,86 +29,90 @@ const ForgotPassword = () => {
     try {
       setLoading(true);
       setError("");
-
       await api.post("/auth/forgot-password", { email });
-
       navigate("/verify-otp", { state: { email } });
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to send OTP");
-      setLoading(false); // Only set to false on error
+      setError(err.response?.data?.message || "Failed to send OTP. Please try again.");
+      setLoading(false);
     }
   };
 
+  const features = [
+    { icon: Key, text: "Secure OTP Reset" },
+    { icon: Shield, text: "Verified by Email" },
+    { icon: Zap, text: "Instant Delivery" },
+  ];
+
   return (
-    <div className="auth-page">
-      {/* Dynamic Background Elements */}
-      <div className="auth-bg-shape shape-1"></div>
-      <div className="auth-bg-shape shape-2"></div>
-      <div className="auth-bg-shape shape-3"></div>
+    <div className="auth2-page">
+      <div className="auth2-orb auth2-orb-1" />
+      <div className="auth2-orb auth2-orb-2" />
+      <div className="auth2-orb auth2-orb-3" />
 
-      <div className="auth-split-layout">
+      <div className={`auth2-wrapper${mounted ? " auth2-wrapper--visible" : ""}`}>
 
-        {/* LEFT SIDE: FORM */}
-        <div className="auth-left">
-          <div className="auth-header">
-            <h1 className="auth-title">Reset Password</h1>
-            <p className="auth-subtitle">We'll send you an OTP.</p>
-          </div>
-
-          <div className="auth-container">
-            {error && <div className="auth-error">{error}</div>}
-
-            <form className="auth-form" onSubmit={handleSendOTP}>
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--gray-500)', marginBottom: '8px' }}>Registered Email</label>
-                <div className="auth-input-group auth-input-wrapper">
-                  <Mail className="auth-input-icon" size={18} />
-                  <input
-                    className="auth-input"
-                    type="email"
-                    placeholder="student@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
+        {/* LEFT: Brand Panel */}
+        <div className="auth2-panel auth2-panel--brand">
+          <div className="auth2-brand-inner">
+            <div className="auth2-logo"><BookOpen size={28} /></div>
+            <h1 className="auth2-brand-name">EduTrack</h1>
+            <p className="auth2-brand-tagline">Reset your password securely and get back to learning.</p>
+            <div className="auth2-features">
+              {features.map(({ icon: Icon, text }) => (
+                <div className="auth2-feature-item" key={text}>
+                  <div className="auth2-feature-icon"><Icon size={16} /></div>
+                  <span>{text}</span>
                 </div>
-              </div>
-
-              <button className="auth-btn glow-btn" disabled={loading} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '16px' }}>
-                {loading ? <Loader2 className="loading-spinner" /> : (
-                  <>
-                    <span>Send OTP</span>
-                    <Send size={18} />
-                  </>
-                )}
-              </button>
-            </form>
-
-            <div style={{ textAlign: 'center' }}>
-              <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--gray-500)', fontSize: '14px', textDecoration: 'none', fontWeight: 600 }}>
-                <ArrowLeft size={16} />
-                Back to Login
-              </Link>
+              ))}
+            </div>
+            <div className="auth2-brand-art">
+              <div className="auth2-art-ring auth2-art-ring-1" /><div className="auth2-art-ring auth2-art-ring-2" /><div className="auth2-art-ring auth2-art-ring-3" /><div className="auth2-art-dot" />
             </div>
           </div>
+        </div>
 
-          <div className="auth-footer-mini">
-            <span className="auth-footer-link">© 2025 EduTrack</span>
-            <Link to="/help" className="auth-footer-link">Help</Link>
-            <Link to="/privacy" className="auth-footer-link">Privacy</Link>
-            <Link to="/terms" className="auth-footer-link">Terms</Link>
+        {/* RIGHT: Form Panel */}
+        <div className="auth2-panel auth2-panel--form">
+          <div className="auth2-form-inner">
+            <div className="auth2-mobile-logo">
+              <div className="auth2-logo auth2-logo--sm"><BookOpen size={20} /></div>
+              <span className="auth2-brand-name auth2-brand-name--sm">EduTrack</span>
+            </div>
+
+            <div className="auth2-form-header">
+              <h2 className="auth2-form-title">Reset Password</h2>
+              <p className="auth2-form-subtitle">Enter your email and we'll send you a 6-digit OTP</p>
+            </div>
+
+            {error && <div className="auth2-error"><span>{error}</span></div>}
+
+            <form className="auth2-form" onSubmit={handleSendOTP} noValidate>
+              <AuthInput
+                id="forgot-email"
+                label="Registered Email"
+                icon={Mail}
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                required
+              />
+
+              <AuthButton loading={loading} id="forgot-submit-btn">
+                <span>Send OTP</span>
+                <Send size={18} />
+              </AuthButton>
+            </form>
+
+            <p className="auth2-switch-text">
+              Remember your password?{" "}
+              <Link to="/login" className="auth2-switch-link">Back to Login</Link>
+            </p>
+
+            <p className="auth2-footer-copy">© 2025 EduTrack · <Link to="/privacy" className="auth2-footer-small-link">Privacy</Link> · <Link to="/terms" className="auth2-footer-small-link">Terms</Link></p>
           </div>
         </div>
-
-        {/* RIGHT SIDE: VISUAL */}
-        <div className="auth-right">
-          <img
-            src={loginIllustration}
-            alt="Study Illustration"
-            className="auth-illustration"
-          />
-        </div>
-
       </div>
     </div>
   );
