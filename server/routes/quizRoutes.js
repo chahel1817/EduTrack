@@ -120,6 +120,42 @@ router.get("/", authenticate, async (req, res) => {
 });
 
 /* --------------------------------------------------------
+   GET TEACHER'S QUIZZES  ✅ Must be BEFORE /:id wildcard
+-------------------------------------------------------- */
+router.get(
+  "/teacher/my-quizzes",
+  authenticate,
+  authorize(["teacher"]),
+  async (req, res) => {
+    try {
+      const quizzes = await Quiz.find({ createdBy: req.user.id })
+        .populate("createdBy", "name email role")
+        .sort({ createdAt: -1 });
+
+      res.json(
+        quizzes.map((quiz) => ({
+          _id: quiz._id,
+          id: quiz._id,
+          title: quiz.title,
+          subject: quiz.subject,
+          description: quiz.description,
+          timeLimit: quiz.timeLimit,
+          enableQuestionTimeLimit: quiz.enableQuestionTimeLimit,
+          createdAt: quiz.createdAt,
+          updatedAt: quiz.updatedAt,
+          createdBy: quiz.createdBy,
+          questionsCount: quiz.questions.length,
+          totalPoints: quiz.questions.reduce((s, q) => s + q.points, 0),
+        }))
+      );
+    } catch (error) {
+      console.error("Get Teacher Quizzes Error:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
+
+/* --------------------------------------------------------
    GET QUIZ BY ID (Authenticated)
 -------------------------------------------------------- */
 router.get("/:id", authenticate, async (req, res) => {
@@ -214,42 +250,6 @@ router.delete(
       res.json({ message: "Quiz deleted successfully" });
     } catch (error) {
       console.error("Delete Quiz Error:", error);
-      res.status(500).json({ message: "Server error" });
-    }
-  }
-);
-
-/* --------------------------------------------------------
-   GET TEACHER'S QUIZZES
--------------------------------------------------------- */
-router.get(
-  "/teacher/my-quizzes",
-  authenticate,
-  authorize(["teacher"]),
-  async (req, res) => {
-    try {
-      const quizzes = await Quiz.find({ createdBy: req.user.id })
-        .populate("createdBy", "name email role")
-        .sort({ createdAt: -1 });
-
-      res.json(
-        quizzes.map((quiz) => ({
-          _id: quiz._id,
-          id: quiz._id,
-          title: quiz.title,
-          subject: quiz.subject,
-          description: quiz.description,
-          timeLimit: quiz.timeLimit,
-          enableQuestionTimeLimit: quiz.enableQuestionTimeLimit,
-          createdAt: quiz.createdAt,
-          updatedAt: quiz.updatedAt,
-          createdBy: quiz.createdBy,
-          questionsCount: quiz.questions.length,
-          totalPoints: quiz.questions.reduce((s, q) => s + q.points, 0),
-        }))
-      );
-    } catch (error) {
-      console.error("Get Teacher Quizzes Error:", error);
       res.status(500).json({ message: "Server error" });
     }
   }
