@@ -16,6 +16,7 @@ import {
   Zap,
   Globe
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const faqsData = [
   {
@@ -57,6 +58,7 @@ const faqsData = [
 ];
 
 const FAQs = () => {
+  const navigate = useNavigate();
   const [openIndex, setOpenIndex] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -197,30 +199,29 @@ const FAQs = () => {
           <section className="glass-card" style={{
             padding: '80px 60px',
             borderRadius: '48px',
-            background: 'var(--black)',
-            color: 'white',
             textAlign: 'center',
             marginBottom: '100px',
             position: 'relative',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            background: 'var(--card-bg)'
           }}>
             <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '300px', height: '300px', background: 'var(--primary)', borderRadius: '50%', filter: 'blur(100px)', opacity: 0.1 }}></div>
             <div style={{ position: 'relative', zIndex: 1 }}>
               <Zap size={48} fill="var(--primary)" style={{ color: 'var(--primary)', marginBottom: '24px' }} />
-              <h2 style={{ fontSize: '36px', fontWeight: 900, marginBottom: '16px' }}>Still have questions?</h2>
-              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '18px', maxWidth: '600px', margin: '0 auto 48px' }}>
+              <h2 style={{ fontSize: '36px', fontWeight: 900, marginBottom: '16px', color: 'var(--text-color)' }}>Still have questions?</h2>
+              <p style={{ color: 'var(--gray-500)', fontSize: '18px', maxWidth: '600px', margin: '0 auto 48px' }}>
                 If you can't find what you're looking for, our support team is ready to help.
               </p>
-              <button className="btn" onClick={() => window.location.href = '/contact'} style={{
-                background: 'white',
-                color: 'var(--black)',
+              <button className="btn" onClick={() => navigate('/contact')} style={{
+                background: 'var(--primary)',
+                color: 'white',
                 fontWeight: 900,
                 padding: '20px 48px',
                 borderRadius: '20px',
                 fontSize: '16px',
                 border: 'none',
                 cursor: 'pointer',
-                boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
+                boxShadow: '0 20px 40px rgba(109, 40, 217, 0.3)'
               }}>
                 Contact Support
               </button>

@@ -146,7 +146,7 @@ const Privacy = () => {
           </div>
 
           {/* DETAILED USER RIGHTS */}
-          <section className="glass-card" style={{ padding: '80px', borderRadius: '48px', background: 'var(--gray-950)', color: 'white', marginBottom: '100px', position: 'relative', overflow: 'hidden' }}>
+          <section style={{ padding: '80px', borderRadius: '48px', background: 'var(--gray-950)', color: 'white', marginBottom: '100px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: '400px', height: '400px', background: 'var(--accent)', borderRadius: '50%', filter: 'blur(150px)', opacity: 0.1 }}></div>
             <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ textAlign: 'center', marginBottom: '60px' }}>
@@ -169,19 +169,6 @@ const Privacy = () => {
             </div>
           </section>
 
-          {/* CONTACT CTA */}
-          <section style={{ textAlign: 'center', marginBottom: '120px' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', padding: '16px 32px', background: 'var(--gray-50)', borderRadius: '24px', border: '1px solid var(--border)' }}>
-              <Mail size={24} className="text-primary" />
-              <div style={{ textAlign: 'left' }}>
-                <p style={{ margin: 0, fontSize: '13px', fontWeight: 900, color: 'var(--gray-400)', textTransform: 'uppercase' }}>Privacy Officer</p>
-                <p style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: 'var(--gray-900)' }}>privacy@edutrack.io</p>
-              </div>
-              <button className="btn" onClick={() => window.location.href = '/contact'} style={{ marginLeft: '24px', padding: '12px 24px', background: 'var(--primary)', color: 'white', borderRadius: '14px', fontSize: '14px', fontWeight: 800, border: 'none' }}>
-                Contact Us
-              </button>
-            </div>
-          </section>
 
         </div>
       </main>

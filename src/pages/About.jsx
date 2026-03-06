@@ -147,17 +147,17 @@ const About = () => {
           <section className="glass-card" style={{
             padding: '100px 60px',
             borderRadius: '48px',
-            background: 'var(--black)',
-            color: 'white',
+            background: 'var(--card-bg)',
+
             textAlign: 'center',
             marginBottom: '100px',
             position: 'relative',
             overflow: 'hidden',
-            border: '1px solid rgba(255,255,255,0.05)'
+            border: '1px solid var(--border)'
           }}>
             <div style={{ position: 'absolute', top: '-20%', left: '-10%', width: '400px', height: '400px', background: 'var(--primary)', borderRadius: '50%', filter: 'blur(150px)', opacity: 0.1 }}></div>
-            <h2 style={{ fontSize: '48px', fontWeight: 900, marginBottom: '24px', letterSpacing: '-0.04em' }}>Ready to level up your learning?</h2>
-            <p style={{ color: 'rgba(255,255,255,0.6)', maxWidth: '700px', margin: '0 auto 48px', fontSize: '20px', lineHeight: 1.6 }}>
+            <h2 style={{ fontSize: '48px', fontWeight: 900, marginBottom: '24px', letterSpacing: '-0.04em', color: 'var(--gray-900)' }}>Ready to level up your learning?</h2>
+            <p style={{ color: 'var(--gray-500)', maxWidth: '700px', margin: '0 auto 48px', fontSize: '20px', lineHeight: 1.6 }}>
               Join learners and teachers using EduTrack to practice more effectively and improve results.
             </p>
             <button className="btn" onClick={() => navigate('/signup')} style={{ background: 'var(--primary)', color: 'white', fontWeight: 900, padding: '24px 72px', borderRadius: '24px', border: 'none', fontSize: '20px', boxShadow: '0 20px 40px rgba(109, 40, 217, 0.4)', cursor: 'pointer' }}>

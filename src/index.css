@@ -87,6 +87,7 @@ body.dark {
 :root {
   --primary: #6D28D9;
   --primary-hover: #5B21B6;
+  --secondary: #7C3AED;
   --accent: #06B6D4;
   --accent-hover: #0891B2;
   --button: #F97316;
@@ -104,6 +105,7 @@ body.dark {
   --gray-700: #334155;
   --gray-800: #1E293B;
   --gray-900: #0F172A;
+  --gray-950: #020617;
 
   /* Semantic Colors */
   --success: #10B981;
@@ -150,6 +152,7 @@ body.dark {
   --gray-700: #E2E8F0;
   --gray-800: #F1F5F9;
   --gray-900: #F8FAFC;
+  --gray-950: #020617;
 
   --card-bg: #0F172A;
   --navbar-bg: rgba(2, 6, 23, 0.9);
@@ -6571,7 +6574,7 @@ body.dark h6 {
 }
 
 body.dark p,
-body.dark span {
+body.dark span:not(.btn) {
   color: rgba(255, 255, 255, 0.9) !important;
 }
 
@@ -6621,11 +6624,11 @@ body.dark summary:hover {
 }
 
 /* Ensure links are visible */
-body.dark a {
+body.dark a:not(.btn) {
   color: var(--primary) !important;
 }
 
-body.dark a:hover {
+body.dark a:not(.btn):hover {
   color: var(--accent) !important;
 }
 
@@ -9351,7 +9354,7 @@ body:not(.dark) .fdb2-sidebar-footer {
   border-top: 1px solid #e2e8f0 !important;
 }
 
-body:not(.dark) .fdb2-sidebar-footer > div {
+body:not(.dark) .fdb2-sidebar-footer>div {
   color: var(--primary) !important;
   background: rgba(109, 40, 217, 0.08) !important;
   border: 1px solid rgba(109, 40, 217, 0.18) !important;

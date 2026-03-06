@@ -15,8 +15,10 @@ import {
   Terminal,
   Server
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Documentation = () => {
+  const navigate = useNavigate();
   const categories = [
     {
       id: "architecture",
@@ -178,7 +180,7 @@ console.log('Quiz created:', data.syncId);`}</code>
           {/* FINAL CTA */}
           <section style={{ textAlign: 'center', marginBottom: '120px' }}>
             <h2 style={{ fontSize: '32px', fontWeight: 900, marginBottom: '24px' }}>Need more help?</h2>
-            <button className="btn" onClick={() => (window.location.href = "/contact")} style={{ background: 'var(--primary)', color: 'white', fontWeight: 900, padding: '20px 48px', borderRadius: '20px', border: 'none', fontSize: '16px', boxShadow: '0 20px 40px rgba(109, 40, 217, 0.3)' }}>
+            <button className="btn" onClick={() => navigate("/contact")} style={{ background: 'var(--primary)', color: 'white', fontWeight: 900, padding: '20px 48px', borderRadius: '20px', border: 'none', fontSize: '16px', boxShadow: '0 20px 40px rgba(109, 40, 217, 0.3)' }}>
               Contact Support
             </button>
           </section>

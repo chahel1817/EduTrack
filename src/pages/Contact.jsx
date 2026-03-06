@@ -89,8 +89,8 @@ const Contact = () => {
                   </div>
                   <h3 style={{ fontSize: '26px', fontWeight: 900, marginBottom: '16px', letterSpacing: '-0.02em' }}>Email Protocol</h3>
                   <p style={{ color: 'var(--gray-500)', fontSize: '16px', lineHeight: 1.7, marginBottom: '32px' }}>Enterprise-grade communication for formal documentation, security reports, and mission-critical inquiries.</p>
-                  <a href="mailto:support@edutrack.io" style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', color: 'white', fontWeight: 800, textDecoration: 'none', fontSize: '16px', padding: '16px 32px', background: 'var(--primary)', borderRadius: '16px', boxShadow: '0 10px 20px rgba(109, 40, 217, 0.2)' }}>
-                    support@edutrack.io <Send size={18} />
+                  <a href="mailto:chahel1817@gmail.com" className="btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', color: 'white', fontWeight: 800, textDecoration: 'none', fontSize: '16px', padding: '16px 32px', background: 'var(--primary)', borderRadius: '16px', boxShadow: '0 10px 20px rgba(109, 40, 217, 0.2)' }}>
+                    chahel1817@gmail.com <Send size={18} />
                   </a>
                 </div>
 
@@ -100,14 +100,14 @@ const Contact = () => {
                   </div>
                   <h3 style={{ fontSize: '26px', fontWeight: 900, marginBottom: '16px', letterSpacing: '-0.02em' }}>Direct Voice</h3>
                   <p style={{ color: 'var(--gray-500)', fontSize: '16px', lineHeight: 1.7, marginBottom: '32px' }}>Synchronous high-bandwidth communication for strategic partnerships and urgent instructional support cases.</p>
-                  <span style={{ display: 'inline-block', color: 'var(--accent)', fontWeight: 900, fontSize: '20px', padding: '16px 32px', background: 'white', borderRadius: '16px', border: '2px solid var(--accent)' }}>
-                    +91 98765 43210
+                  <span className="btn" style={{ display: 'inline-block', color: 'var(--accent)', fontWeight: 900, fontSize: '20px', padding: '16px 32px', background: 'white', borderRadius: '16px', border: '2px solid var(--accent)' }}>
+                    +91 9328764005
                   </span>
                 </div>
               </div>
 
               {/* FEEDBACK CTA */}
-              <div className="glass-card" style={{
+              <div style={{
                 padding: '64px',
                 borderRadius: '48px',
                 background: 'var(--black)',
@@ -162,24 +162,13 @@ const Contact = () => {
                   <div style={{ color: 'var(--primary)', marginTop: '4px' }}><MapPin size={24} /></div>
                   <p style={{ fontSize: '16px', color: 'var(--gray-600)', lineHeight: 1.8, margin: 0, fontWeight: 500 }}>
                     EduTrack Technologies HQ<br />
-                    Innovation District, Level 9<br />
-                    Cyber City, Hyderabad<br />
-                    TG 500081, India
+                    Ahmedabad, Gujarat<br />
+                    380001, India
                   </p>
                 </div>
               </div>
 
-              {/* SOCIAL LINKS MOCK */}
-              <div className="glass-card" style={{ padding: '40px', borderRadius: '40px', border: '1px solid var(--border)', textAlign: 'center' }}>
-                <h3 style={{ fontSize: '13px', fontWeight: 900, textTransform: 'uppercase', color: 'var(--primary)', marginBottom: '24px', letterSpacing: '0.2em' }}>Learning Channels</h3>
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
-                  {['Twitter', 'LinkedIn', 'GitHub'].map(s => (
-                    <div key={s} style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'var(--gray-100)', color: 'var(--gray-400)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                      <Zap size={20} />
-                    </div>
-                  ))}
-                </div>
-              </div>
+
             </div>
 
           </div>

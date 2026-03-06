@@ -1,8 +1,10 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Video, PlayCircle, Clock, Star, Zap, Cpu, Globe, ArrowRight, Shield } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Tutorials = () => {
+  const navigate = useNavigate();
   const briefings = [
     {
       title: "Getting Started",
@@ -142,7 +144,7 @@ const Tutorials = () => {
           {/* FINAL CTA */}
           <section style={{ textAlign: 'center', marginBottom: '120px' }}>
             <h2 style={{ fontSize: '32px', fontWeight: 900, marginBottom: '24px' }}>Need a personalized walkthrough?</h2>
-            <button className="btn" onClick={() => (window.location.href = "/contact")} style={{ background: 'var(--primary)', color: 'white', fontWeight: 900, padding: '20px 48px', borderRadius: '20px', border: 'none', fontSize: '16px', boxShadow: '0 20px 40px rgba(109, 40, 217, 0.3)' }}>
+            <button className="btn" onClick={() => navigate("/contact")} style={{ background: 'var(--primary)', color: 'white', fontWeight: 900, padding: '20px 48px', borderRadius: '20px', border: 'none', fontSize: '16px', boxShadow: '0 20px 40px rgba(109, 40, 217, 0.3)' }}>
               Request 1-on-1 Help
             </button>
           </section>

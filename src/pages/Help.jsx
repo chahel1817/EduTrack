@@ -62,9 +62,7 @@ const Help = () => {
             marginBottom: '80px',
             position: 'relative',
             overflow: 'hidden',
-            textAlign: 'center',
-            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-            color: 'white'
+            textAlign: 'center'
           }}>
             <div style={{ position: 'absolute', top: '0', left: '0', right: '0', bottom: '0', background: 'radial-gradient(circle at 50% 50%, rgba(109, 40, 217, 0.15) 0%, transparent 80%)', zIndex: 0 }}></div>
 
@@ -173,27 +171,26 @@ const Help = () => {
           </section>
 
           {/* FINAL CTA: DIRECT SUPPORT */}
-          <section style={{
+          <section className="glass-card" style={{
             padding: '100px 60px',
             borderRadius: '48px',
-            background: 'var(--black)',
-            color: 'white',
             textAlign: 'center',
             marginBottom: '100px',
             position: 'relative',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            background: 'var(--card-bg)'
           }}>
-            <div style={{ position: 'absolute', top: '-10%', left: '-5%', opacity: 0.1 }}><MessageCircle size={300} /></div>
+            <div style={{ position: 'absolute', top: '-10%', left: '-5%', opacity: 0.05 }}><MessageCircle size={300} color="var(--primary)" /></div>
             <div style={{ position: 'relative', zIndex: 1 }}>
-              <h2 style={{ fontSize: '38px', fontWeight: 900, marginBottom: '24px' }}>Still need help?</h2>
-              <p style={{ color: 'rgba(255,255,255,0.5)', maxWidth: '600px', margin: '0 auto 48px', fontSize: '18px', lineHeight: 1.6 }}>
+              <h2 style={{ fontSize: '38px', fontWeight: 900, marginBottom: '24px', letterSpacing: '-0.02em', color: 'var(--text-color)' }}>Still need help?</h2>
+              <p style={{ color: 'var(--gray-500)', maxWidth: '600px', margin: '0 auto 48px', fontSize: '18px', lineHeight: 1.6 }}>
                 If the guides did not solve your issue, our support team is ready to help directly.
               </p>
               <div style={{ display: 'flex', gap: '24px', justifyContent: 'center' }}>
                 <button className="btn" onClick={() => navigate('/contact')} style={{ background: 'var(--primary)', color: 'white', fontWeight: 900, padding: '20px 48px', borderRadius: '20px', border: 'none', fontSize: '16px', boxShadow: '0 20px 40px rgba(109, 40, 217, 0.3)' }}>
                   Contact Support
                 </button>
-                <button className="btn btn-outline" style={{ borderColor: 'rgba(255,255,255,0.2)', color: 'white', padding: '20px 48px', borderRadius: '20px', fontSize: '16px', fontWeight: 800 }}>
+                <button className="btn" style={{ background: 'var(--gray-100)', color: 'var(--gray-900)', border: '1px solid var(--border)', padding: '20px 48px', borderRadius: '20px', fontSize: '16px', fontWeight: 800 }}>
                   Visit Community
                 </button>
               </div>
