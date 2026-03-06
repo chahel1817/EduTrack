@@ -113,7 +113,7 @@ const QuizResults = () => {
         ]);
         setQuiz(quizRes.data);
         setResults(resultsRes.data || []);
-      } catch (err) {
+      } catch {
         setError("Error loading results");
       } finally {
         setLoading(false);
@@ -144,11 +144,6 @@ const QuizResults = () => {
       </div>
     );
   }
-
-  const totalSubmissions = results.length;
-  const avgScore = totalSubmissions
-    ? (results.reduce((s, r) => s + r.score, 0) / totalSubmissions).toFixed(1)
-    : 0;
 
   return (
     <div className="dashboard-container">
@@ -189,7 +184,7 @@ const QuizResults = () => {
               </tr>
             </thead>
             <tbody>
-              {results.map((r, i) => {
+              {results.map((r) => {
                 const perc = r.percentage;
                 return (
                   <tr key={r._id}>

@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
     api
       .get("/auth/me")
       .then((res) => setUser(res.data))
-      .catch(logout)
+      .catch(() => logout())
       .finally(() => setLoading(false));
   }, []);
 
@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await api.post("/auth/logout");
-    } catch (err) {
+    } catch {
       console.warn("Server-side logout failed or already logged out");
     } finally {
       localStorage.removeItem("token");

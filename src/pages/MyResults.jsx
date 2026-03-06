@@ -13,6 +13,7 @@ import {
   Clock,
   FileText,
   Trophy,
+  Sparkles,
 } from "lucide-react";
 
 const MyResults = () => {
@@ -54,39 +55,46 @@ const MyResults = () => {
       <Navbar />
       <main className="dashboard-main">
 
-        {/* HEADER */}
-        <section className="dashboard-section hero-pro" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '40px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-            <div className="header-icon" style={{ background: 'rgba(255,255,255,0.2)', width: '64px', height: '64px' }}>
-              <Trophy size={36} color="white" />
+        {/* ACHIEVEMENT HERO */}
+        <section className="hero-pro myresults-hero" style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '100px 60px',
+          borderRadius: '40px',
+          marginBottom: '60px',
+          position: 'relative',
+          overflow: 'hidden',
+          textAlign: 'center',
+          background: 'var(--vibrant-gradient)',
+        }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 80%)', zIndex: 0 }}></div>
+
+          <div style={{ position: 'relative', zIndex: 1, maxWidth: '900px' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px', background: 'rgba(255, 255, 255, 0.1)', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '99px', marginBottom: '32px', fontSize: '13px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+              <Trophy size={16} fill="white" /> <span style={{ color: 'white' }}>The Archive of Excellence</span>
             </div>
-            <div>
-              <h1 className="hero-pro-title" style={{ margin: 0, fontSize: '32px' }}>My Results</h1>
-              <p className="hero-pro-sub" style={{ margin: 0, opacity: 0.9 }}>
-                Track your progress and review your academic performance
-              </p>
-            </div>
+            <h1 style={{ margin: '0 0 24px', fontSize: '64px', fontWeight: 900, letterSpacing: '-0.04em', lineHeight: 1, color: 'white' }}>Learning <br /><span style={{ background: 'linear-gradient(to right, #fff, rgba(255,255,255,0.7))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Performance Record.</span></h1>
+            <p style={{ margin: '0 auto', fontSize: '20px', maxWidth: '650px', lineHeight: 1.6, fontWeight: 500, color: 'white' }}>
+              A strategic history of your learning achievements. Analyze your accuracy flux, temporal synchronization, and subject-level mastery.
+            </p>
           </div>
-          <BarChart3 size={100} style={{ opacity: 0.15, color: 'white' }} />
+
+          <div style={{ position: 'absolute', bottom: '-40px', left: '-40px', opacity: 0.1 }}>
+            <Sparkles size={400} color="white" />
+          </div>
         </section>
 
-        {/* EMPTY STATE */}
         {results.length === 0 ? (
-          <section className="dashboard-section">
-            <div className="empty-state enhanced">
-              <Award size={64} color="var(--primary)" />
-              <h3>No Results Yet</h3>
-              <p>You haven’t attempted any quizzes yet. Start one to see results here.</p>
-              <button
-                className="btn btn-primary"
-                style={{ marginTop: "1rem" }}
-                onClick={() => navigate("/quizzes")}
-              >
-                <BookOpen size={18} />
-                Browse Quizzes
-              </button>
-            </div>
-          </section>
+          <div style={{ textAlign: 'center', padding: '120px 40px', background: 'var(--card-bg)', borderRadius: '48px', border: '1px dashed var(--border)' }}>
+            <Award size={64} style={{ margin: '0 auto 32px', color: 'var(--gray-300)' }} />
+            <h2 style={{ fontSize: '28px', fontWeight: 900, marginBottom: '16px' }}>No Results Yet</h2>
+            <p style={{ color: 'var(--gray-500)', maxWidth: '400px', margin: '0 auto 48px' }}>Your achievement archive is empty. Start your first assessment quiz to begin historical tracking.</p>
+            <button className="btn" onClick={() => navigate("/quizzes")} style={{ background: 'var(--vibrant-gradient)', color: 'white', padding: '20px 48px', borderRadius: '20px', fontWeight: 900, border: 'none' }}>
+              Start Your First Trial
+            </button>
+          </div>
         ) : (
           <>
             {/* RESULTS GRID */}

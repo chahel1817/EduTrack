@@ -175,7 +175,7 @@ export const verifyOTP = asyncHandler(async (req, res) => {
     createdAt: user.createdAt, updatedAt: user.updatedAt,
   };
 
-  try { await redis.set(`user:${user._id}`, JSON.stringify(safeUser), 'EX', USER_CACHE_TTL); } catch (err) { }
+  try { await redis.set(`user:${user._id}`, JSON.stringify(safeUser), 'EX', USER_CACHE_TTL); } catch { /* ignore cache errors */ }
 
   res.json({ success: true, token, user: safeUser });
 });
@@ -206,7 +206,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
   try {
     await redis.del(`user:${user._id}`);
     await redis.set(`user:${user._id}`, JSON.stringify(safeUser), 'EX', USER_CACHE_TTL);
-  } catch (err) { }
+  } catch { /* ignore cache update errors */ }
 
   res.json({ success: true, message: "Profile updated successfully", user: safeUser });
 });

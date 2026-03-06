@@ -92,7 +92,7 @@ const Feedback = () => {
         <div className="fdb2-orb fdb2-orb-1" style={{ position: 'absolute', top: '-100px', left: '10%', width: '300px', height: '300px', background: 'rgba(124, 58, 237, 0.15)', filter: 'blur(80px)', borderRadius: '50%' }} />
         <h1 className="fdb2-hero-title">Help us build EduTrack</h1>
         <p className="fdb2-hero-sub">
-          Your feedback directly shapes the future of our AI-powered learning platform.
+          Your feedback helps us improve the learning experience for everyone.
         </p>
       </header>
 
@@ -106,7 +106,7 @@ const Feedback = () => {
                 <CheckCircle size={40} />
               </div>
               <h2 style={{ fontSize: '32px', fontWeight: 900, marginBottom: '16px' }}>Message Received!</h2>
-              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '17px', marginBottom: '40px' }}>
+              <p className="fdb2-success-sub" style={{ fontSize: '17px', marginBottom: '40px' }}>
                 Thank you for your valuable feedback. Our team will review it shortly.
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center' }}>
@@ -114,7 +114,7 @@ const Feedback = () => {
                   <RefreshCw size={18} />
                   <span>Send More Feedback</span>
                 </button>
-                <Link to="/dashboard" className="fdb2-submit-btn" style={{ width: 'auto', padding: '16px 40px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <Link to="/dashboard" className="fdb2-submit-btn fdb2-btn-secondary" style={{ width: 'auto', padding: '16px 40px' }}>
                   <ArrowLeft size={18} />
                   <span>Back to Dashboard</span>
                 </Link>
@@ -229,7 +229,7 @@ const Feedback = () => {
                     <div className="auth2-btn-spinner" style={{ width: '24px', height: '24px' }} />
                   ) : (
                     <>
-                      <span style={{ fontSize: '18px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1px' }}>Push 10/10 Feedback</span>
+                      <span style={{ fontSize: '18px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1px' }}>Send Feedback</span>
                       <Send size={22} className="fdb2-btn-icon" />
                     </>
                   )}
@@ -243,7 +243,7 @@ const Feedback = () => {
         <aside className="fdb2-sidebar">
           <div className="fdb2-sidebar-card">
             <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '16px' }}>Share Your Thoughts</h3>
-            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', lineHeight: 1.6, marginBottom: '24px' }}>
+            <p className="fdb2-sidebar-text" style={{ fontSize: '14px', lineHeight: 1.6, marginBottom: '24px' }}>
               We're building EduTrack for you. Every suggestion or bug report helps us create a better learning platform for the community.
             </p>
 
@@ -257,7 +257,7 @@ const Feedback = () => {
               <div className="fdb2-faq-a">Explain how it would help you or others. We love innovative ideas!</div>
             </div>
 
-            <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+            <div className="fdb2-sidebar-footer" style={{ marginTop: '32px', paddingTop: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#7C3AED', fontWeight: 700 }}>
                 <Heart size={16} fill="#7C3AED" />
                 <span>Made for Learners</span>

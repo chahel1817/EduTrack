@@ -73,7 +73,7 @@ const StudentResults = () => {
 
       setExplanations(prev => ({ ...prev, [qIndex]: res.data.explanation }));
     } catch (err) {
-      console.error("AI Explanation error:", err);
+      console.error("Explanation error:", err);
     } finally {
       setExplainingId(null);
     }
@@ -302,7 +302,7 @@ const StudentResults = () => {
                   })}
                 </div>
 
-                {/* AI EXPLAINER */}
+                {/* ANSWER EXPLAINER */}
                 <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px dashed var(--border)' }}>
                   {!explanations[index] ? (
                     <button
@@ -312,12 +312,12 @@ const StudentResults = () => {
                       disabled={explainingId === index}
                     >
                       {explainingId === index ? <Loader2 className="animate-spin" size={18} /> : <BrainCircuit size={18} />}
-                      Explain with AI Tutor
+                      Explain Answer
                     </button>
                   ) : (
                     <div className="ai-explanation" style={{ background: 'var(--gray-50)', padding: '20px', borderRadius: '16px', borderLeft: '4px solid var(--primary)' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', color: 'var(--primary)', fontWeight: 800 }}>
-                        <Sparkles size={18} /> AI TUTOR EXPLANATION
+                        <Sparkles size={18} /> ANSWER EXPLANATION
                       </div>
                       <p style={{ fontSize: '15px', color: 'var(--gray-700)', lineHeight: 1.7 }}>{explanations[index]}</p>
                     </div>

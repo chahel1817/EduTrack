@@ -37,7 +37,7 @@ const Login = () => {
   };
 
   const features = [
-    { icon: Zap, text: "AI-Powered Quizzes" },
+    { icon: Zap, text: "Smart Quiz Practice" },
     { icon: Shield, text: "Secure Learning" },
     { icon: Star, text: "Track Progress" },
   ];
@@ -54,7 +54,7 @@ const Login = () => {
           <div className="auth2-brand-inner">
             <div className="auth2-logo"><BookOpen size={28} /></div>
             <h1 className="auth2-brand-name">EduTrack</h1>
-            <p className="auth2-brand-tagline">Your intelligent learning companion for academic excellence.</p>
+            <p className="auth2-brand-tagline">A simple way to learn, practice, and improve every day.</p>
             <div className="auth2-features">
               {features.map(({ icon: Icon, text }) => (
                 <div className="auth2-feature-item" key={text}>
@@ -78,7 +78,7 @@ const Login = () => {
 
             <div className="auth2-form-header">
               <h2 className="auth2-form-title">Welcome back</h2>
-              <p className="auth2-form-subtitle">Sign in to continue your learning journey</p>
+              <p className="auth2-form-subtitle">Sign in to continue your progress</p>
             </div>
 
             {error && <div className="auth2-error"><span>{error}</span></div>}
@@ -101,7 +101,7 @@ const Login = () => {
                 label="Password"
                 icon={Lock}
                 type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
+                placeholder="********"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
@@ -150,3 +150,4 @@ const Login = () => {
 };
 
 export default Login;
+

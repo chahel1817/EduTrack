@@ -30,7 +30,7 @@ const CreateQuiz = () => {
     if (location.state) {
       setQuiz(location.state);
     }
-  }, []);
+  }, [location.state]);
 
   /* ---------------- NEXT HANDLER ---------------- */
   const handleNext = () => {
@@ -71,11 +71,11 @@ const CreateQuiz = () => {
               </div>
 
               <h1 className="text-5xl font-black text-gray-900 dark:text-white leading-[1.1] tracking-tighter mb-6">
-                Design your <span className="gradient-text">Masterpiece</span> quiz.
+                Create your next <span className="gradient-text">great</span> quiz.
               </h1>
 
               <p className="text-gray-500 text-lg mb-12 leading-relaxed">
-                Transform your knowledge into an interactive challenge. Set the rules, define the pace, and watch your students excel.
+                Turn your lesson into an interactive challenge. Set the rules, set the pace, and help students do their best.
               </p>
 
               <div className="space-y-10">
@@ -94,8 +94,8 @@ const CreateQuiz = () => {
                     <ArrowRight size={16} />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-800 dark:text-gray-200 text-lg mb-1">AI Assistance</h4>
-                    <p className="text-sm text-gray-500 leading-relaxed">Enable modern AI to forge questions in seconds on the next step. Our neural networks can generate queries from any topic or PDF source.</p>
+                    <h4 className="font-bold text-gray-800 dark:text-gray-200 text-lg mb-1">Question Assistant</h4>
+                    <p className="text-sm text-gray-500 leading-relaxed">Generate questions quickly in the next step, or upload a PDF and build from your own notes.</p>
                   </div>
                 </div>
               </div>

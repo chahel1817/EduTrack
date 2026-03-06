@@ -126,7 +126,7 @@ router.post("/explain", authenticate, async (req, res) => {
     const { question, selectedOption, correctOption, context } = req.body;
     const explanation = await explainQuestionWithAI({ question, selectedOption, correctOption, context });
     res.json({ explanation });
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: "Explanation failed" });
   }
 });

@@ -1,19 +1,24 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { api } from "../utils/api";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import {
-    BarChart3,
     TrendingUp,
     Target,
-    Award,
-    BookOpen,
     PieChart,
     Activity,
-    Zap
+    Zap,
+    Cpu,
+    Globe,
+    Shield,
+    Sparkles,
+    MousePointer2,
+    Lightbulb
 } from "lucide-react";
 
 const Analytics = () => {
+    const navigate = useNavigate();
     const [analytics, setAnalytics] = useState({});
     const [loading, setLoading] = useState(true);
 
@@ -28,7 +33,6 @@ const Analytics = () => {
                 setLoading(false);
             }
         };
-
         fetchAnalytics();
     }, []);
 
@@ -37,121 +41,174 @@ const Analytics = () => {
     const totalCorrect = categories.reduce((sum, cat) => sum + analytics[cat].correct, 0);
     const overallAccuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
 
-    if (loading) {
-        return (
-            <div className="dashboard-container">
-                <Navbar />
-                <main className="dashboard-main">
-                    <div className="loading" style={{ textAlign: "center", padding: "100px" }}>
-                        <Activity className="animate-spin" size={48} color="var(--primary)" />
-                        <p style={{ marginTop: '20px', fontWeight: 600 }}>Analyzing your performance...</p>
-                    </div>
-                </main>
-            </div>
-        );
-    }
+    if (loading) return (
+        <div className="dashboard-container analytics-page">
+            <Navbar />
+            <main className="dashboard-main"><div className="loading">Loading your analytics...</div></main>
+        </div>
+    );
 
     return (
-        <div className="dashboard-container">
+        <div className="dashboard-container analytics-page">
             <Navbar />
             <main className="dashboard-main">
-                {/* HEADER */}
-                <section className="dashboard-section hero-pro" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '40px', marginBottom: '40px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-                        <div className="header-icon" style={{ background: 'rgba(255,255,255,0.2)', width: '64px', height: '64px' }}>
-                            <PieChart size={36} color="white" />
-                        </div>
-                        <div>
-                            <h1 className="hero-pro-title" style={{ margin: 0, fontSize: '32px' }}>Skill Breakdown</h1>
-                            <p className="hero-pro-sub" style={{ margin: 0, opacity: 0.9 }}>
-                                Deep dive into your strengths and areas for improvement
+                <div style={{ padding: '0 24px' }}>
+
+                    {/* performance HERO */}
+                    <section className="hero-pro analytics-hero" style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '100px 60px',
+                        borderRadius: '40px',
+                        marginBottom: '60px',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        textAlign: 'center',
+                        background: 'var(--vibrant-gradient)',
+                        color: 'white'
+                    }}>
+                        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 70%)', zIndex: 0 }}></div>
+
+                        <div style={{ position: 'relative', zIndex: 1, maxWidth: '900px' }}>
+                            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px', background: 'rgba(255, 255, 255, 0.1)', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '99px', marginBottom: '32px', fontSize: '13px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+                                <Cpu size={16} className="text-white" /> <span style={{ color: 'white' }}>learning Profile Analysis</span>
+                            </div>
+                            <h1 style={{ margin: '0 0 24px', fontSize: '64px', fontWeight: 900, letterSpacing: '-0.04em', lineHeight: 1, color: 'white' }}>Learning <br /><span style={{ background: 'linear-gradient(to right, #fff, rgba(255,255,255,0.7))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Knowledge Map.</span></h1>
+                            <p style={{ margin: '0 auto', fontSize: '20px', maxWidth: '650px', lineHeight: 1.6, fontWeight: 500, color: 'white' }}>
+                                High-precision mapping of your intellectual domains. Our Learning engine deciphers your performance vectors to optimize your learning trajectory.
                             </p>
                         </div>
-                    </div>
-                    <BarChart3 size={100} style={{ opacity: 0.15, color: 'white' }} />
-                </section>
 
-                {categories.length === 0 ? (
-                    <section className="dashboard-section">
-                        <div className="empty-state enhanced">
-                            <Target size={64} color="var(--primary)" />
-                            <h3>No Data for Analytics</h3>
-                            <p>Take some quizzes with category data to see your skill breakdown here.</p>
+                        <div style={{ position: 'absolute', bottom: '-40px', right: '-40px', opacity: 0.1 }}>
+                            <PieChart size={400} color="white" />
                         </div>
                     </section>
-                ) : (
-                    <div className="dashboard-section">
-                        {/* OVERALL STATS */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px', marginBottom: '40px' }}>
-                            <div className="stat-card-pro" style={{ background: 'white', padding: '30px', borderRadius: '24px', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '20px' }}>
-                                <div style={{ background: 'rgba(109, 40, 217, 0.1)', padding: '15px', borderRadius: '16px', color: 'var(--primary)' }}>
-                                    <TrendingUp size={28} />
-                                </div>
-                                <div>
-                                    <h4 style={{ margin: 0, color: 'var(--gray-500)', fontSize: '14px', fontWeight: 600 }}>Overall Accuracy</h4>
-                                    <p style={{ margin: 0, fontSize: '28px', fontWeight: 800 }}>{overallAccuracy}%</p>
-                                </div>
-                            </div>
 
-                            <div className="stat-card-pro" style={{ background: 'white', padding: '30px', borderRadius: '24px', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '20px' }}>
-                                <div style={{ background: 'rgba(6, 182, 212, 0.1)', padding: '15px', borderRadius: '16px', color: 'var(--accent)' }}>
-                                    <BookOpen size={28} />
-                                </div>
-                                <div>
-                                    <h4 style={{ margin: 0, color: 'var(--gray-500)', fontSize: '14px', fontWeight: 600 }}>Questions Answered</h4>
-                                    <p style={{ margin: 0, fontSize: '28px', fontWeight: 800 }}>{totalQuestions}</p>
-                                </div>
-                            </div>
-
-                            <div className="stat-card-pro" style={{ background: 'white', padding: '30px', borderRadius: '24px', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '20px' }}>
-                                <div style={{ background: 'rgba(234, 179, 8, 0.1)', padding: '15px', borderRadius: '16px', color: 'var(--warning)' }}>
-                                    <Award size={28} />
-                                </div>
-                                <div>
-                                    <h4 style={{ margin: 0, color: 'var(--gray-500)', fontSize: '14px', fontWeight: 600 }}>Correct Hits</h4>
-                                    <p style={{ margin: 0, fontSize: '28px', fontWeight: 800 }}>{totalCorrect}</p>
-                                </div>
-                            </div>
+                    {categories.length === 0 ? (
+                        <div style={{ textAlign: 'center', padding: '120px 40px', background: 'var(--gray-50)', borderRadius: '48px', border: '1px dashed var(--border)' }}>
+                            <Activity size={64} style={{ margin: '0 auto 32px', color: 'var(--gray-300)' }} />
+                            <h2 style={{ fontSize: '28px', fontWeight: 900, marginBottom: '16px' }}>Insufficient Data Profile</h2>
+                            <p style={{ color: 'var(--gray-500)', maxWidth: '400px', margin: '0 auto 48px' }}>Your knowledge map is currently unmapped. Complete at least one assessment trial to Start performance tracking.</p>
+                            <button className="btn btn-primary" onClick={() => navigate("/quizzes")} style={{ padding: '20px 48px', borderRadius: '20px', fontWeight: 900 }}>
+                                Start First Trial
+                            </button>
                         </div>
+                    ) : (
+                        <div style={{ marginBottom: '120px' }}>
 
-                        {/* SKILL PROGRESS BARS */}
-                        <div className="glass-card" style={{ padding: '40px' }}>
-                            <h3 style={{ fontSize: '22px', fontWeight: 800, marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <Zap size={24} color="var(--primary)" /> Mastery by Category
-                            </h3>
+                            {/* CORE PERFORMANCE VECTORS */}
+                            <div className="stats-grid" style={{ marginBottom: '80px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px' }}>
+                                <div className="glass-card" style={{ padding: '40px', borderRadius: '32px', border: '1px solid var(--border)', textAlign: 'center' }}>
+                                    <div style={{ background: 'rgba(6, 182, 212, 0.1)', color: 'var(--accent)', width: '56px', height: '56px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}><TrendingUp size={28} /></div>
+                                    <p style={{ fontSize: '12px', fontWeight: 900, textTransform: 'uppercase', color: 'var(--gray-400)', letterSpacing: '0.1em', marginBottom: '8px' }}>Global Precision</p>
+                                    <h2 style={{ fontSize: '40px', fontWeight: 900, color: 'var(--gray-900)' }}>{overallAccuracy}%</h2>
+                                </div>
+                                <div className="glass-card" style={{ padding: '40px', borderRadius: '32px', border: '1px solid var(--border)', textAlign: 'center' }}>
+                                    <div style={{ background: 'rgba(109, 40, 217, 0.1)', color: 'var(--primary)', width: '56px', height: '56px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}><MousePointer2 size={28} /></div>
+                                    <p style={{ fontSize: '12px', fontWeight: 900, textTransform: 'uppercase', color: 'var(--gray-400)', letterSpacing: '0.1em', marginBottom: '8px' }}>Queries Decrypted</p>
+                                    <h2 style={{ fontSize: '40px', fontWeight: 900, color: 'var(--gray-900)' }}>{totalQuestions}</h2>
+                                </div>
+                                <div className="glass-card" style={{ padding: '40px', borderRadius: '32px', border: '1px solid var(--border)', textAlign: 'center' }}>
+                                    <div style={{ background: 'rgba(249, 115, 22, 0.1)', color: 'var(--button)', width: '56px', height: '56px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}><Shield size={28} /></div>
+                                    <p style={{ fontSize: '12px', fontWeight: 900, textTransform: 'uppercase', color: 'var(--gray-400)', letterSpacing: '0.1em', marginBottom: '8px' }}>Learning Hits</p>
+                                    <h2 style={{ fontSize: '40px', fontWeight: 900, color: 'var(--gray-900)' }}>{totalCorrect}</h2>
+                                </div>
+                            </div>
 
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-                                {categories.map(cat => {
-                                    const accuracy = Math.round((analytics[cat].correct / analytics[cat].total) * 100);
-                                    return (
-                                        <div key={cat}>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '12px' }}>
-                                                <div>
-                                                    <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 700 }}>{cat}</h4>
-                                                    <span style={{ fontSize: '12px', color: 'var(--gray-500)' }}>{analytics[cat].correct} correct out of {analytics[cat].total} questions</span>
+                            {/* DOMAIN MASTERY MATRIX */}
+                            <section style={{ marginBottom: '100px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '40px' }}>
+                                    <div style={{ background: 'var(--primary)', padding: '16px', borderRadius: '20px', color: 'white' }}>
+                                        <Zap size={28} fill="white" />
+                                    </div>
+                                    <div>
+                                        <h2 style={{ margin: 0, fontSize: '32px', fontWeight: 900, letterSpacing: '-0.02em', color: 'var(--gray-900)' }}>Domain Mastery Matrix</h2>
+                                        <p style={{ margin: 0, color: 'var(--gray-400)', fontSize: '16px', fontWeight: 600 }}>Deciphering performance across instructional hierarchies.</p>
+                                    </div>
+                                </div>
+
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '32px' }}>
+                                    {categories.map(cat => {
+                                        const accuracy = Math.round((analytics[cat].correct / analytics[cat].total) * 100);
+                                        return (
+                                            <div key={cat} className="glass-card hover-lift" style={{ padding: '40px', borderRadius: '40px', border: '1px solid var(--border)', background: 'var(--card-bg)' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                                                    <h3 style={{ margin: 0, fontSize: '22px', fontWeight: 900, letterSpacing: '-0.01em', color: 'var(--gray-900)' }}>{cat}</h3>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 14px', background: accuracy >= 80 ? 'rgba(34, 197, 94, 0.1)' : 'rgba(109, 40, 217, 0.1)', borderRadius: '12px' }}>
+                                                        <span style={{ fontSize: '18px', fontWeight: 900, color: accuracy >= 80 ? 'var(--success)' : 'var(--primary)' }}>{accuracy}%</span>
+                                                    </div>
                                                 </div>
-                                                <span style={{ fontSize: '18px', fontWeight: 800, color: accuracy >= 80 ? 'var(--success)' : accuracy >= 50 ? 'var(--warning)' : 'var(--error)' }}>
-                                                    {accuracy}%
-                                                </span>
+
+                                                <div className="mastery-gauge" style={{ marginBottom: '24px', background: 'var(--gray-100)' }}>
+                                                    <div
+                                                        className="mastery-gauge-fill"
+                                                        style={{
+                                                            width: `${accuracy}%`,
+                                                            background: accuracy >= 80 ? 'linear-gradient(90deg, #10b981, #34d399)' : 'linear-gradient(90deg, var(--primary), var(--accent))'
+                                                        }}
+                                                    />
+                                                </div>
+
+                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                                                    <div style={{ padding: '16px', background: 'var(--gray-50)', borderRadius: '16px' }}>
+                                                        <p style={{ margin: '0 0 4px', fontSize: '11px', fontWeight: 900, color: 'var(--gray-400)', textTransform: 'uppercase' }}>Artifacts</p>
+                                                        <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: 'var(--gray-900)' }}>{analytics[cat].total} <span style={{ color: 'var(--gray-300)', fontSize: '12px' }}>Total Questions</span></p>
+                                                    </div>
+                                                    <div style={{ padding: '16px', background: 'var(--gray-50)', borderRadius: '16px' }}>
+                                                        <p style={{ margin: '0 0 4px', fontSize: '11px', fontWeight: 900, color: 'var(--gray-400)', textTransform: 'uppercase' }}>Precision</p>
+                                                        <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: 'var(--gray-900)' }}>{analytics[cat].correct} <span style={{ color: 'var(--gray-300)', fontSize: '12px' }}>Hits</span></p>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div style={{ width: '100%', height: '12px', background: 'var(--gray-100)', borderRadius: '6px', overflow: 'hidden' }}>
-                                                <div
-                                                    style={{
-                                                        width: `${accuracy}%`,
-                                                        height: '100%',
-                                                        background: accuracy >= 80 ? 'var(--success)' : accuracy >= 50 ? 'var(--warning)' : 'var(--error)',
-                                                        borderRadius: '6px',
-                                                        transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)'
-                                                    }}
-                                                />
+                                        );
+                                    })}
+                                </div>
+                            </section>
+
+                            {/* STRATEGIC RECOMMENDATIONS */}
+                            <section className="glass-card analytics-insights-card" style={{ padding: '80px 40px', borderRadius: '48px', background: 'var(--gray-950)', color: 'white', marginBottom: '100px', position: 'relative', overflow: 'hidden' }}>
+                                <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '400px', height: '400px', background: 'var(--primary)', borderRadius: '50%', filter: 'blur(150px)', opacity: 0.1 }}></div>
+                                <div style={{ position: 'relative', zIndex: 1 }}>
+                                    <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+                                        <Lightbulb size={48} className="text-primary" style={{ margin: '0 auto 24px' }} />
+                                        <h2 style={{ fontSize: '42px', fontWeight: 900, marginBottom: '16px', letterSpacing: '-0.04em', color: 'white' }}>Learning Recommendations</h2>
+                                        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '18px', maxWidth: '600px', margin: '0 auto' }}>Recommended focus quizzes based on your latest performance.</p>
+                                    </div>
+
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px' }}>
+                                        {[
+                                            { title: "Target Focus", desc: "Prioritize " + (categories[0] || "General") + " assessment trials to stabilize your global accuracy vector.", icon: <Target size={24} /> },
+                                            { title: "Engagement Flux", desc: "Your learning load is optimal. Recommended: 3 trials per 48-hour cycle for maximum retention.", icon: <Zap size={24} /> },
+                                            { title: "Peer Synchronization", desc: "You are currently in the top 15% of the " + (categories[1] || "Core") + " performance cluster.", icon: <Globe size={24} /> }
+                                        ].map((r, i) => (
+                                            <div key={i} className="analytics-insight-item" style={{ padding: '32px', background: 'rgba(255,255,255,0.03)', borderRadius: '32px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                                <div style={{ color: 'var(--primary)', marginBottom: '16px' }}>{r.icon}</div>
+                                                <h4 style={{ fontSize: '20px', fontWeight: 900, marginBottom: '12px', color: 'white' }}>{r.title}</h4>
+                                                <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '15px', lineHeight: 1.6, margin: 0 }}>{r.desc}</p>
                                             </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </section>
+
+                            {/* ENGAGEMENT CTA */}
+                            <section style={{ textAlign: 'center', marginBottom: '120px' }}>
+                                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', padding: '16px 32px', background: 'var(--gray-50)', borderRadius: '24px', border: '1px solid var(--border)' }}>
+                                    <Sparkles size={24} className="text-secondary" />
+                                    <div style={{ textAlign: 'left' }}>
+                                        <p style={{ margin: 0, fontSize: '13px', fontWeight: 900, color: 'var(--gray-400)', textTransform: 'uppercase' }}>Next Phase</p>
+                                        <p style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: 'var(--gray-900)' }}>Start Targeted Learning</p>
+                                    </div>
+                                    <button onClick={() => navigate("/quizzes")} style={{ marginLeft: '24px', padding: '12px 24px', background: 'var(--primary)', color: 'white', borderRadius: '14px', fontSize: '14px', fontWeight: 900, border: 'none', cursor: 'pointer' }}>
+                                        Explore Library
+                                    </button>
+                                </div>
+                            </section>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </main>
             <Footer />
         </div>

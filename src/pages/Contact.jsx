@@ -7,7 +7,12 @@ import {
   FileText,
   Clock,
   Users,
-  Send
+  Send,
+  Zap,
+  Shield,
+  MapPin,
+  Cpu,
+  Globe
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -19,147 +24,165 @@ const Contact = () => {
       <Navbar />
 
       <main className="dashboard-main">
-        <div className="dashboard-section">
+        <div style={{ padding: '0 24px' }}>
 
-          {/* HEADER */}
-          <div className="page-header">
-            <div className="header-content">
-              <div className="header-icon">
-                <Mail size={30} />
+          {/* HEADER HERO */}
+          <section className="hero-pro" style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '120px 60px',
+            borderRadius: '40px',
+            marginBottom: '80px',
+            position: 'relative',
+            overflow: 'hidden',
+            textAlign: 'center',
+            background: 'linear-gradient(135deg, var(--black) 0%, #1a1a1a 100%)',
+            color: 'white'
+          }}>
+            <div style={{ position: 'absolute', top: '0', left: '0', right: '0', bottom: '0', background: 'radial-gradient(circle at 70% 30%, rgba(109, 40, 217, 0.15) 0%, transparent 70%)', zIndex: 0 }}></div>
+
+            <div style={{ position: 'relative', zIndex: 1, maxWidth: '900px' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '99px', marginBottom: '32px', fontSize: '13px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+                <Cpu size={16} className="text-primary" /> <span>Learning Connection Hub</span>
               </div>
-              <div>
-                <h1 className="page-title">Contact EduTrack</h1>
-                <p className="page-subtitle">
-                  We’re here to help, collaborate, and listen.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* INTRO TEXT */}
-          <p
-            style={{
-              maxWidth: "900px",
-              lineHeight: "1.9",
-              marginBottom: "3rem",
-              color: "var(--gray-700)",
-            }}
-          >
-            EduTrack is designed to empower students and educators with meaningful
-            learning insights. Whether you’re facing a technical issue, looking to
-            collaborate, or want to share ideas — our team is always ready to assist.
-          </p>
-
-          {/* CONTACT OPTIONS */}
-          <div
-            className="help-grid"
-            style={{
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            }}
-          >
-
-            {/* EMAIL */}
-            <div className="help-card hover-lift">
-              <div className="help-card-icon">
-                <Mail size={26} />
-              </div>
-              <h3>Email Support</h3>
-              <p>
-                Reach out for account issues, technical assistance, partnerships,
-                or general questions.
+              <h1 style={{ margin: '0 0 24px', fontSize: '64px', fontWeight: 900, letterSpacing: '-0.04em', lineHeight: 1 }}>Contact the <span style={{ background: 'linear-gradient(to right, var(--primary), var(--accent))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Core Architect</span></h1>
+              <p style={{ margin: '0 auto', opacity: 0.7, fontSize: '20px', maxWidth: '650px', lineHeight: 1.6, fontWeight: 500 }}>
+                Whether you're scaling an institution or refining individual learning paths, our strategic response team is integrated and ready.
               </p>
-              <a
-                href="mailto:support@edutrack.com"
-                className="help-link"
-              >
-                support@edutrack.com
-              </a>
             </div>
 
-            {/* PHONE */}
-            <div className="help-card hover-lift">
-              <div className="help-card-icon">
-                <Phone size={26} />
+            <div style={{ position: 'absolute', bottom: '-40px', right: '-40px', opacity: 0.05 }}>
+              <Globe size={400} color="white" />
+            </div>
+          </section>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '48px', marginBottom: '100px' }}>
+
+            {/* LEFT: CONTACT CHANNELS & WORKFLOW */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>
+
+              {/* SUPPORT SYSTEM WORKFLOW */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontWeight: 900 }}>1</div>
+                  <h4 style={{ fontSize: '14px', fontWeight: 900, textTransform: 'uppercase', marginBottom: '8px' }}>Identify</h4>
+                  <p style={{ fontSize: '12px', color: 'var(--gray-500)', margin: 0 }}>Define your architectural or pedagogical query.</p>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--gray-200)', color: 'var(--gray-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontWeight: 900 }}>2</div>
+                  <h4 style={{ fontSize: '14px', fontWeight: 900, textTransform: 'uppercase', marginBottom: '8px' }}>Connect</h4>
+                  <p style={{ fontSize: '12px', color: 'var(--gray-500)', margin: 0 }}>Reach our team by email or direct call.</p>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--gray-200)', color: 'var(--gray-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontWeight: 900 }}>3</div>
+                  <h4 style={{ fontSize: '14px', fontWeight: 900, textTransform: 'uppercase', marginBottom: '8px' }}>Optimize</h4>
+                  <p style={{ fontSize: '12px', color: 'var(--gray-500)', margin: 0 }}>Receive high-precision strategic resolution.</p>
+                </div>
               </div>
-              <h3>Phone Support</h3>
-              <p>
-                Prefer speaking directly? Call us during business hours for
-                faster assistance.
-              </p>
-              <span className="help-link">+91 98765 43210</span>
-            </div>
 
-            {/* LIVE CHAT */}
-            <div className="help-card hover-lift">
-              <div className="help-card-icon">
-                <MessageCircle size={26} />
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px' }}>
+                <div className="glass-card hover-lift" style={{ padding: '48px', borderRadius: '40px', border: '1px solid var(--border)', background: 'var(--gray-50)' }}>
+                  <div style={{ background: 'var(--primary)', color: 'white', width: '64px', height: '64px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '32px', boxShadow: '0 12px 24px rgba(109, 40, 217, 0.2)' }}>
+                    <Mail size={32} />
+                  </div>
+                  <h3 style={{ fontSize: '26px', fontWeight: 900, marginBottom: '16px', letterSpacing: '-0.02em' }}>Email Protocol</h3>
+                  <p style={{ color: 'var(--gray-500)', fontSize: '16px', lineHeight: 1.7, marginBottom: '32px' }}>Enterprise-grade communication for formal documentation, security reports, and mission-critical inquiries.</p>
+                  <a href="mailto:support@edutrack.io" style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', color: 'white', fontWeight: 800, textDecoration: 'none', fontSize: '16px', padding: '16px 32px', background: 'var(--primary)', borderRadius: '16px', boxShadow: '0 10px 20px rgba(109, 40, 217, 0.2)' }}>
+                    support@edutrack.io <Send size={18} />
+                  </a>
+                </div>
+
+                <div className="glass-card hover-lift" style={{ padding: '48px', borderRadius: '40px', border: '1px solid var(--border)', background: 'var(--gray-50)' }}>
+                  <div style={{ background: 'var(--accent)', color: 'white', width: '64px', height: '64px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '32px', boxShadow: '0 12px 24px rgba(6, 182, 212, 0.2)' }}>
+                    <Phone size={32} />
+                  </div>
+                  <h3 style={{ fontSize: '26px', fontWeight: 900, marginBottom: '16px', letterSpacing: '-0.02em' }}>Direct Voice</h3>
+                  <p style={{ color: 'var(--gray-500)', fontSize: '16px', lineHeight: 1.7, marginBottom: '32px' }}>Synchronous high-bandwidth communication for strategic partnerships and urgent instructional support cases.</p>
+                  <span style={{ display: 'inline-block', color: 'var(--accent)', fontWeight: 900, fontSize: '20px', padding: '16px 32px', background: 'white', borderRadius: '16px', border: '2px solid var(--accent)' }}>
+                    +91 98765 43210
+                  </span>
+                </div>
               </div>
-              <h3>Live Chat</h3>
-              <p>
-                Chat with our support team in real time for quick questions
-                and troubleshooting.
-              </p>
-              <span className="contact-status">
-                🟢 Available (Mon–Fri, 9 AM – 6 PM)
-              </span>
+
+              {/* FEEDBACK CTA */}
+              <div className="glass-card" style={{
+                padding: '64px',
+                borderRadius: '48px',
+                background: 'var(--black)',
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '40px',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                <div style={{ position: 'absolute', top: '-10%', right: '-5%', opacity: 0.1 }}><Users size={200} /></div>
+                <div style={{ flex: 1, minWidth: '350px', position: 'relative', zIndex: 1 }}>
+                  <div style={{ color: 'var(--primary)', marginBottom: '24px' }}><Zap size={48} fill="var(--primary)" /></div>
+                  <h2 style={{ fontSize: '36px', fontWeight: 900, marginBottom: '20px', letterSpacing: '-0.04em' }}>Learning Contributions</h2>
+                  <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '18px', lineHeight: 1.6, margin: 0, fontWeight: 500 }}>
+                    Our ecosystem thrives on user entropy. Report anomalies or suggest complex feature sets to drive our next development cycle.
+                  </p>
+                </div>
+                <button className="btn" onClick={() => navigate('/feedback')} style={{ background: 'white', color: 'var(--black)', fontWeight: 900, padding: '24px 56px', borderRadius: '24px', border: 'none', fontSize: '18px', zIndex: 1, cursor: 'pointer', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
+                  Pulse Feedback Loop
+                </button>
+              </div>
+            </div>
+
+            {/* RIGHT: DETAILS & STATUS */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+              <div className="glass-card" style={{ padding: '40px', borderRadius: '40px', border: '1px solid var(--border)', background: 'var(--white)' }}>
+                <h3 style={{ fontSize: '13px', fontWeight: 900, textTransform: 'uppercase', color: 'var(--primary)', marginBottom: '32px', letterSpacing: '0.2em' }}>Live Station Status</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'var(--gray-50)', color: 'var(--gray-400)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Clock size={24} /></div>
+                    <div>
+                      <p style={{ margin: 0, fontWeight: 900, fontSize: '16px' }}>Strategic Window</p>
+                      <p style={{ margin: 0, color: 'var(--gray-500)', fontSize: '13px' }}>Mon - Fri, 09:00 - 18:00 IST</p>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(34, 197, 94, 0.1)', color: 'var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Shield size={24} /></div>
+                    <div>
+                      <p style={{ margin: 0, fontWeight: 900, fontSize: '16px' }}>Network Security</p>
+                      <p style={{ margin: 0, color: 'var(--success)', fontSize: '13px', fontWeight: 800 }}>Fully Encrypted & Online</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="glass-card" style={{ padding: '40px', borderRadius: '40px', border: '1px solid var(--border)' }}>
+                <h3 style={{ fontSize: '13px', fontWeight: 900, textTransform: 'uppercase', color: 'var(--primary)', marginBottom: '32px', letterSpacing: '0.2em' }}>Physical Vector</h3>
+                <div style={{ display: 'flex', alignItems: 'start', gap: '20px' }}>
+                  <div style={{ color: 'var(--primary)', marginTop: '4px' }}><MapPin size={24} /></div>
+                  <p style={{ fontSize: '16px', color: 'var(--gray-600)', lineHeight: 1.8, margin: 0, fontWeight: 500 }}>
+                    EduTrack Technologies HQ<br />
+                    Innovation District, Level 9<br />
+                    Cyber City, Hyderabad<br />
+                    TG 500081, India
+                  </p>
+                </div>
+              </div>
+
+              {/* SOCIAL LINKS MOCK */}
+              <div className="glass-card" style={{ padding: '40px', borderRadius: '40px', border: '1px solid var(--border)', textAlign: 'center' }}>
+                <h3 style={{ fontSize: '13px', fontWeight: 900, textTransform: 'uppercase', color: 'var(--primary)', marginBottom: '24px', letterSpacing: '0.2em' }}>Learning Channels</h3>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
+                  {['Twitter', 'LinkedIn', 'GitHub'].map(s => (
+                    <div key={s} style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'var(--gray-100)', color: 'var(--gray-400)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                      <Zap size={20} />
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
           </div>
-
-          {/* BUSINESS HOURS */}
-          <div
-            className="card"
-            style={{
-              marginTop: "3rem",
-              display: "flex",
-              alignItems: "center",
-              gap: "16px",
-            }}
-          >
-            <Clock size={28} />
-            <div>
-              <h3>Business Hours</h3>
-              <p>Monday – Friday</p>
-              <p>9:00 AM – 6:00 PM (IST)</p>
-            </div>
-          </div>
-
-          {/* FEEDBACK CTA */}
-          <div
-            className="card hover-lift"
-            style={{
-              marginTop: "3rem",
-              textAlign: "center",
-              background:
-                "linear-gradient(135deg, var(--primary), var(--secondary))",
-              color: "white",
-            }}
-          >
-            <Users size={40} style={{ marginBottom: "1rem" }} />
-            <h2 style={{ marginBottom: "0.5rem" }}>
-              Help Us Improve EduTrack
-            </h2>
-            <p
-              style={{
-                maxWidth: "750px",
-                margin: "0 auto 1.5rem",
-                opacity: 0.95,
-              }}
-            >
-              Your feedback plays a huge role in shaping better learning
-              experiences for students and teachers.
-            </p>
-
-            <button
-              className="btn btn-light"
-              onClick={() => navigate("/feedback")}
-              style={{ display: "inline-flex", gap: "8px", alignItems: "center" }}
-            >
-              <FileText size={18} />
-              Go to Feedback
-            </button>
-          </div>
-
         </div>
       </main>
 
@@ -169,3 +192,4 @@ const Contact = () => {
 };
 
 export default Contact;
+

@@ -59,10 +59,10 @@ const Signup = () => {
           <div className="auth2-brand-inner">
             <div className="auth2-logo"><BookOpen size={28} /></div>
             <h1 className="auth2-brand-name">EduTrack</h1>
-            <p className="auth2-brand-tagline">Join thousands of students and teachers accelerating their education with AI.</p>
+            <p className="auth2-brand-tagline">Join students and teachers building better learning habits together.</p>
             <div className="auth2-features">
               {[
-                { icon: Zap, text: "AI-Powered Learning" },
+                { icon: Zap, text: "Smart Learning Tools" },
                 { icon: Shield, text: "100% Secure Platform" },
                 { icon: Star, text: "Real-time Analytics" },
               ].map(({ icon: Icon, text }) => (
@@ -87,7 +87,7 @@ const Signup = () => {
 
             <div className="auth2-form-header">
               <h2 className="auth2-form-title">Create your account</h2>
-              <p className="auth2-form-subtitle">Start learning smarter today — it's free</p>
+              <p className="auth2-form-subtitle">Start learning smarter today - it's free</p>
             </div>
 
             <div className="auth2-role-toggle">
@@ -174,3 +174,4 @@ const Signup = () => {
 };
 
 export default Signup;
+

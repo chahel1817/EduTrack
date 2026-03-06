@@ -7,17 +7,16 @@
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
 
 /* ======================================================
-   GLOBAL ENHANCEMENTS — Micro-animations & Tech Effects
+   GLOBAL RESET — ULTRA CLEAN
 ====================================================== */
 * {
-  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
   box-sizing: border-box;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 html,
 body,
-#root,
-.dashboard-container {
+#root {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -26,14 +25,18 @@ body,
   flex-direction: column;
 }
 
-main {
-  flex: 1 0 auto;
-}
-
-html,
 body {
   overflow-x: hidden;
-  /* Prevent horizontal scroll globally */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+main {
+  flex: 1 0 auto;
+  padding-top: 90px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 html {
@@ -58,10 +61,8 @@ body {
 body.dark {
   background-image:
     radial-gradient(at 0% 0%, hsla(263, 67%, 51%, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, hsla(189, 94%, 43%, 0.15) 0px, transparent 50%),
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+    radial-gradient(at 100% 0%, hsla(189, 94%, 43%, 0.15) 0px, transparent 50%);
+  background-size: 100% 100%, 100% 100%;
 }
 
 @keyframes pulse-glow {
@@ -111,28 +112,33 @@ body.dark {
 
   /* Layout Colors */
   --card-bg: #FFFFFF;
-  --navbar-bg: rgba(255, 255, 255, 0.8);
+  --navbar-bg: rgba(255, 255, 255, 0.95);
   --surface-bg: #FFFFFF;
-  --border: #E2E8F0;
+  --border: #F1F5F9;
 
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-neon: 0 0 15px rgba(109, 40, 217, 0.3);
+  --shadow-md: 0 4px 12px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-neon: 0 0 15px rgba(109, 40, 217, 0.15);
 
   /* Radius */
   --radius-sm: 8px;
   --radius-md: 12px;
-  --radius-lg: 20px;
+  --radius-lg: 24px;
   --radius-full: 9999px;
+
+  /* Vibrancy */
+  --vibrant-pink: #6D28D9;
+  --vibrant-blue: #06B6D4;
+  --vibrant-gradient: linear-gradient(135deg, #6D28D9 0%, #06B6D4 100%);
 }
 
 /* ======================================================
    THEME VARIABLES — DARK MODE
 ====================================================== */
 body.dark {
-  --white: #f8fafc;
+  --white: #F8FAFC;
   --black: #020617;
   --gray-50: #0F172A;
   --gray-100: #1E293B;
@@ -145,12 +151,12 @@ body.dark {
   --gray-800: #F1F5F9;
   --gray-900: #F8FAFC;
 
-  --card-bg: #1E293B;
-  --navbar-bg: rgba(15, 23, 42, 0.8);
-  --surface-bg: #0F172A;
-  --border: #334155;
+  --card-bg: #0F172A;
+  --navbar-bg: rgba(2, 6, 23, 0.9);
+  --surface-bg: #020617;
+  --border: rgba(255, 255, 255, 0.05);
 
-  --shadow-neon: 0 0 20px rgba(109, 40, 217, 0.5), 0 0 10px rgba(6, 182, 212, 0.3);
+  --shadow-neon: 0 0 30px rgba(109, 40, 217, 0.3), 0 0 10px rgba(6, 182, 212, 0.1);
 }
 
 /* ======================================================
@@ -196,7 +202,7 @@ pre {
    UTILITIES
 ====================================================== */
 .gradient-text {
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  background: var(--vibrant-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1033,7 +1039,7 @@ body.dark .checklist-item.met {
 }
 
 /* ======================================================
-   RESET + BASE
+   RESET + BASE — FIXED SCROLLING
 ====================================================== */
 * {
   margin: 0;
@@ -1044,27 +1050,24 @@ body.dark .checklist-item.met {
 html,
 body,
 #root {
-  height: 100%;
+  min-height: 100vh;
   width: 100%;
-  margin: 0;
-  padding: 0;
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.6;
   color: var(--black);
   background: var(--surface-bg);
-  margin: 0;
-  padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
 }
 
 body.dark {
   background: var(--surface-bg);
-  color: white;
+  color: var(--white);
 }
 
 
@@ -2237,6 +2240,24 @@ body.dark {
   box-shadow: 0 8px 24px rgba(249, 115, 22, 0.4);
 }
 
+/* NEW VIBRANT BUTTONS FOR LIGHT & DARK MODE */
+.btn-vibrant {
+  background: var(--vibrant-gradient) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 10px 30px rgba(255, 51, 153, 0.4) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-vibrant:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(255, 51, 153, 0.5) !important;
+}
+
+.btn-vibrant * {
+  color: white !important;
+}
+
 .btn-outline {
   background: transparent;
   border: 2px solid var(--primary);
@@ -2246,6 +2267,19 @@ body.dark {
 .btn-outline:hover {
   background: var(--primary);
   color: white;
+}
+
+.btn-outline-vibrant {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 2px solid rgba(255, 255, 255, 0.4) !important;
+  color: white !important;
+  backdrop-filter: blur(8px);
+}
+
+.btn-outline-vibrant:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  transform: translateY(-2px);
 }
 
 .btn-success {
@@ -2301,29 +2335,7 @@ body.dark .btn-secondary:hover {
   color: white;
 }
 
-body.dark .dashboard-container,
 body.dark .futuristic-card,
-body.dark .hero-pro,
-body.dark .hero-pro-left,
-body.dark .hero-pro-title,
-body.dark .hero-pro-sub,
-body.dark .hero-pro-badges,
-body.dark .hero-pro-buttons,
-body.dark .section-heading,
-body.dark .stat-value,
-body.dark .stat-label,
-body.dark .empty-state h3,
-body.dark .empty-state p,
-body.dark .table-container,
-body.dark th,
-body.dark td,
-body.dark .btn,
-body.dark .btn-outline,
-body.dark .dashboard-main,
-body.dark .dashboard-section,
-body.dark .stats-grid,
-body.dark .stat-card,
-body.dark .stat-icon-wrapper svg,
 body.dark .hp-badge,
 body.dark .profile-main,
 body.dark .profile-hero,
@@ -2971,6 +2983,22 @@ body.dark .stat-value {
   padding: 40px 24px;
 }
 
+.glass-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  border: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 48px 0 rgba(31, 38, 135, 0.12);
+}
+
 .dashboard-section {
   background: var(--card-bg);
   border-radius: var(--radius-lg);
@@ -2988,8 +3016,8 @@ body.dark .stat-value {
 
 /* HERO PRO SECTION */
 .hero-pro {
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  color: white;
+  background: var(--vibrant-gradient) !important;
+  color: white !important;
   border-radius: var(--radius-lg);
   padding: 48px;
   margin-bottom: 40px;
@@ -3005,7 +3033,65 @@ body.dark .stat-value {
   font-size: 42px;
   font-weight: 800;
   margin-bottom: 16px;
-  color: white;
+  color: white !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* FORCED DARK UTILITY — Use for sections that are ALWAYS dark like heros */
+.forced-dark,
+.hero-pro,
+.profile-hero,
+.quizzes-hero,
+.analytics-hero,
+.myresults-hero,
+.leaderboard-hero,
+.faqs-hero {
+  color: white !important;
+  background: var(--vibrant-gradient) !important;
+}
+
+.forced-dark p,
+.hero-pro p,
+.profile-hero p,
+.quizzes-hero p,
+.analytics-hero p,
+.myresults-hero p,
+.leaderboard-hero p,
+.faqs-hero p {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.forced-dark h1,
+.hero-pro h1,
+.profile-hero h1,
+.quizzes-hero h1,
+.analytics-hero h1,
+.myresults-hero h1,
+.leaderboard-hero h1,
+.faqs-hero h1,
+.forced-dark h2,
+.hero-pro h2,
+.profile-hero h2,
+.quizzes-hero h2,
+.analytics-hero h2,
+.myresults-hero h2,
+.leaderboard-hero h2,
+.faqs-hero h2,
+.forced-dark h3,
+.hero-pro h3 {
+  color: white !important;
+}
+
+.forced-dark span,
+.hero-pro span {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.forced-dark .glass-card,
+.hero-pro .glass-card {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
 }
 
 .hero-pro-sub {
@@ -3238,8 +3324,7 @@ body.dark .empty-state.enhanced {
   background: var(--navbar-bg);
   backdrop-filter: blur(12px);
   border-top: 1px solid var(--border);
-  padding: 12px 0 0 0;
-  /* Ultra-tight top padding */
+  padding: 28px 0 0 0;
   margin-top: auto;
   width: 100%;
 }
@@ -3255,8 +3340,7 @@ body.dark .dashboard-footer {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 30px;
-  /* Further reduced gap */
+  gap: 48px;
 }
 
 .footer-brand-section {
@@ -3267,15 +3351,13 @@ body.dark .dashboard-footer {
 .footer-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   color: var(--primary);
-  margin-bottom: 4px;
-  /* Tiny margin */
+  margin-bottom: 10px;
 }
 
 .footer-logo-text {
-  font-size: 18px;
-  /* Slightly smaller logo text */
+  font-size: 24px;
   font-weight: 800;
   background: var(--primary);
   -webkit-background-clip: text;
@@ -3284,29 +3366,26 @@ body.dark .dashboard-footer {
 }
 
 .footer-brief {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--gray-500);
-  line-height: 1.4;
-  /* Even tighter line height */
-  margin-bottom: 8px;
-  /* Tiny margin */
+  line-height: 1.65;
+  margin-bottom: 16px;
   max-width: 450px;
 }
 
 .footer-social-strip {
   display: flex;
-  gap: 10px;
+  gap: 12px;
 }
 
 .social-icon-mini {
-  width: 28px;
-  /* Tiny icons */
-  height: 28px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--gray-100);
-  border-radius: 6px;
+  border-radius: 10px;
   color: var(--gray-600);
   transition: all 0.2s;
   text-decoration: none;
@@ -3325,8 +3404,7 @@ body.dark .social-icon-mini {
 
 .footer-columns {
   display: flex;
-  gap: 30px;
-  /* Reduced column gap */
+  gap: 52px;
   flex: 1;
   justify-content: flex-end;
 }
@@ -3334,16 +3412,14 @@ body.dark .social-icon-mini {
 .footer-col {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  /* Minimal gap */
+  gap: 10px;
 }
 
 .footer-col-title {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--gray-800);
-  margin-bottom: 0;
-  /* Zero margin */
+  margin-bottom: 2px;
 }
 
 body.dark .footer-col-title {
@@ -3351,7 +3427,7 @@ body.dark .footer-col-title {
 }
 
 .footer-col-link {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--gray-500);
   text-decoration: none;
   transition: color 0.2s;
@@ -3362,11 +3438,9 @@ body.dark .footer-col-title {
 }
 
 .footer-bottom-bar {
-  margin-top: 12px;
-  /* Tight top margin */
+  margin-top: 24px;
   border-top: 1px solid var(--border);
-  padding: 8px 0;
-  /* Tight vertical padding */
+  padding: 14px 0;
   background: rgba(0, 0, 0, 0.02);
 }
 
@@ -3381,7 +3455,7 @@ body.dark .footer-bottom-bar {
 }
 
 .footer-bottom-bar p {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--gray-400);
   margin: 0;
 }
@@ -3392,7 +3466,7 @@ body.dark .footer-bottom-bar {
 }
 
 .footer-bottom-extra a {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--gray-400);
   text-decoration: none;
 }
@@ -3404,14 +3478,14 @@ body.dark .footer-bottom-bar {
 @media (max-width: 992px) {
   .footer-container {
     flex-direction: column;
-    gap: 40px;
+    gap: 28px;
     padding: 0 20px;
   }
 
   .footer-columns {
     width: 100%;
     justify-content: flex-start;
-    gap: 40px;
+    gap: 28px;
   }
 }
 
@@ -8138,31 +8212,41 @@ input[type="number"]::-webkit-outer-spin-button {
 ──────────────────────────────────────────────────────── */
 .fdb2-page {
   min-height: 100vh;
+  background: var(--surface-bg);
+  color: var(--gray-900);
+  padding-bottom: 80px;
+}
+
+body.dark .fdb2-page {
   background: #0d0d1a;
   color: #fff;
-  padding-bottom: 80px;
+}
+
+body:not(.dark) .fdb2-page {
+  background: var(--white);
+  color: var(--gray-900);
 }
 
 .fdb2-hero {
   position: relative;
-  padding: 80px 24px 60px;
+  padding: 100px 24px 140px;
   text-align: center;
   overflow: hidden;
-  background: linear-gradient(180deg, rgba(109, 40, 217, 0.1) 0%, transparent 100%);
+  background: var(--vibrant-gradient);
 }
 
 .fdb2-hero-title {
   font-size: clamp(32px, 5vw, 48px);
   font-weight: 900;
-  background: linear-gradient(135deg, #fff 30%, rgba(255, 255, 255, 0.6) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: white;
+  -webkit-text-fill-color: white;
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   margin-bottom: 16px;
   letter-spacing: -0.02em;
 }
 
 .fdb2-hero-sub {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.95);
   font-size: 18px;
   max-width: 600px;
   margin: 0 auto;
@@ -8268,9 +8352,13 @@ input[type="number"]::-webkit-outer-spin-button {
   display: block;
   font-size: 14px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--gray-500);
   margin-bottom: 8px;
   margin-left: 4px;
+}
+
+body.dark .fdb2-label {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .fdb2-input-wrap {
@@ -8288,13 +8376,19 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .fdb2-input {
   width: 100%;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
   border-radius: 16px;
   padding: 14px 16px 14px 48px;
-  color: #fff;
+  color: var(--gray-900);
   font-size: 15px;
   transition: all 0.3s;
+}
+
+body.dark .fdb2-input {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
 }
 
 .fdb2-textarea {
@@ -8380,21 +8474,27 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 /* ── Refining Feedback 2.0 colors and contrast ── */
-.fdb2-page {
-  background: #0b0b18 !important;
-  /* Force darker background */
+body.dark .fdb2-page {
+  background: #0b0b18;
+  /* Force darker background in dark mode */
   overflow-x: hidden;
 }
 
 .fdb2-sidebar-card h3 {
-  color: #fff !important;
   font-weight: 800;
 }
 
-.fdb2-sidebar-card p,
+body.dark .fdb2-sidebar-card h3 {
+  color: #fff !important;
+}
+
 .fdb2-faq-a {
+  font-weight: 500;
+}
+
+body.dark .fdb2-sidebar-card p,
+body.dark .fdb2-faq-a {
   color: rgba(255, 255, 255, 0.75) !important;
-  /* Brighter sidebar text */
 }
 
 .fdb2-faq-q {
@@ -8442,10 +8542,10 @@ input[type="number"]::-webkit-outer-spin-button {
   text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
-/* ── Ensuring full-page dark coverage ── */
-html,
-body {
-  background-color: #0b0b18 !important;
+/* ── Ensuring full-page dark coverage only in dark mode ── */
+body.dark html,
+body.dark {
+  background-color: #0b0b18;
 }
 
 .fdb2-page {
@@ -8605,7 +8705,7 @@ body {
   box-sizing: border-box;
 }
 
-Footer {
+.fdb2-page footer {
   background-color: #0b0b18 !important;
   flex-shrink: 0;
 }
@@ -8648,4 +8748,619 @@ Footer {
 
 .fdb2-submit-btn:hover .fdb2-btn-icon {
   transform: translateX(6px) rotate(-15deg);
+}
+
+/* ======================================================
+   LIGHT MODE — GLOBAL OVERRIDES
+   These rules fire when body.dark is NOT present.
+   They reset all hardcoded dark colors across every page.
+====================================================== */
+body:not(.dark) {
+  background-color: var(--surface-bg);
+  color: var(--gray-800);
+}
+
+/* ── Body & root backgrounds ── */
+body:not(.dark) #root,
+body:not(.dark) main {
+  background: var(--surface-bg);
+}
+
+/* ── Dashboard ── */
+body:not(.dark) .dashboard-container,
+body:not(.dark) .dashboard-main,
+body:not(.dark) .dashboard-section {
+  background: var(--surface-bg) !important;
+}
+
+body:not(.dark) .glass-card {
+  background: #ffffff !important;
+  border-color: var(--border) !important;
+  color: var(--gray-800) !important;
+}
+
+body:not(.dark) .stat-card {
+  background: #ffffff !important;
+  border-color: var(--border) !important;
+}
+
+body:not(.dark) .stat-value {
+  color: var(--gray-900) !important;
+}
+
+body:not(.dark) .stat-label {
+  color: var(--gray-500) !important;
+}
+
+/* ── Navbar buttons ── */
+body:not(.dark) .btn-outline {
+  border-color: var(--border) !important;
+  color: var(--gray-700) !important;
+  background: transparent !important;
+}
+
+/* ── Inputs ── */
+body:not(.dark) input:not([class*="auth2"]),
+body:not(.dark) textarea:not([class*="auth2"]),
+body:not(.dark) select {
+  background: #ffffff !important;
+  border-color: var(--border) !important;
+  color: var(--gray-900) !important;
+}
+
+body:not(.dark) input::placeholder,
+body:not(.dark) textarea::placeholder {
+  color: var(--gray-400) !important;
+}
+
+/* ── Feedback page (fdb2) ── */
+body:not(.dark) .fdb2-hero-title {
+  background: linear-gradient(135deg, var(--primary) 30%, var(--accent) 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+body:not(.dark) .fdb2-hero-sub {
+  color: var(--gray-600) !important;
+}
+
+body:not(.dark) .fdb2-hero {
+  border-bottom: 1px solid var(--border) !important;
+}
+
+body:not(.dark) .fdb2-card,
+body:not(.dark) .fdb2-sidebar-card {
+  background: #ffffff !important;
+  border-color: var(--border) !important;
+  color: var(--gray-800) !important;
+}
+
+body:not(.dark) .fdb2-sidebar-card h3 {
+  color: var(--gray-900) !important;
+}
+
+body:not(.dark) .fdb2-sidebar-card p,
+body:not(.dark) .fdb2-faq-a {
+  color: var(--gray-600) !important;
+}
+
+body:not(.dark) .fdb2-faq-q {
+  color: var(--primary) !important;
+}
+
+body:not(.dark) .fdb2-label {
+  color: var(--gray-700) !important;
+}
+
+body:not(.dark) .fdb2-input,
+body:not(.dark) .fdb2-textarea {
+  background: #f8fafc !important;
+  border-color: var(--border) !important;
+  color: var(--gray-900) !important;
+}
+
+body:not(.dark) .fdb2-input::placeholder,
+body:not(.dark) .fdb2-textarea::placeholder {
+  color: var(--gray-400) !important;
+}
+
+body:not(.dark) .fdb2-input--readonly {
+  background: #f1f5f9 !important;
+  color: var(--gray-600) !important;
+}
+
+body:not(.dark) .fdb2-cat-btn {
+  background: #f8fafc !important;
+  border-color: var(--border) !important;
+  color: var(--gray-700) !important;
+}
+
+body:not(.dark) .fdb2-faq-item:not(:last-child) {
+  border-bottom-color: var(--border) !important;
+}
+
+body:not(.dark) .fdb2-card h2 {
+  color: var(--gray-900) !important;
+  text-shadow: none !important;
+}
+
+/* ── General dark text/heading resets ── */
+body:not(.dark) h1,
+body:not(.dark) h2,
+body:not(.dark) h3,
+body:not(.dark) h4,
+body:not(.dark) h5,
+body:not(.dark) p:not([class*="hero"]):not([class*="auth2"]) {
+  color: inherit;
+}
+
+/* ── Page-level containers that need light background ── */
+body:not(.dark) .quizzes-container,
+body:not(.dark) .results-container,
+body:not(.dark) .analytics-container,
+body:not(.dark) .leaderboard-container,
+body:not(.dark) .profile-container {
+  background: var(--surface-bg) !important;
+}
+
+/* ── Dropdown menus ── */
+body:not(.dark) .dropdown-menu {
+  background: #ffffff !important;
+  border-color: var(--border) !important;
+  color: var(--gray-800) !important;
+}
+
+body:not(.dark) .dropdown-item {
+  color: var(--gray-700) !important;
+}
+
+body:not(.dark) .dropdown-item:hover {
+  background: var(--gray-50) !important;
+}
+
+
+/* ── New Dashboard Sections ── */
+body:not(.dark) .tips-section .glass-card {
+  background: var(--primary) !important;
+  /* Keep the accent color for the tip card */
+  color: #ffffff !important;
+}
+
+body:not(.dark) .milestones-section .glass-card {
+  background: #ffffff !important;
+  border-color: var(--border) !important;
+}
+
+body:not(.dark) .stat-icon-wrapper {
+  background: var(--gray-100) !important;
+  color: var(--primary) !important;
+}
+
+/* ── Enhancement for cards in light mode ── */
+body:not(.dark) .glass-card,
+body:not(.dark) .quiz-card,
+body:not(.dark) .stat-card {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
+}
+
+body:not(.dark) .hover-lift:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ======================================================
+   ADVANCED UI INDICATORS
+====================================================== */
+.mastery-gauge {
+  background: var(--gray-100);
+  height: 12px;
+  border-radius: 99px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--border);
+}
+
+.dark .mastery-gauge {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.mastery-gauge-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pulse-sync {
+  animation: pulse-sync 2s infinite ease-in-out;
+}
+
+@keyframes pulse-sync {
+  0% {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  100% {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+}
+
+.glass-dropdown {
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(25px) saturate(200%) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 24px !important;
+}
+
+.dark .glass-dropdown {
+  background: rgba(18, 18, 18, 0.9) !important;
+}
+
+/* ======================================================
+   GLOBAL LAYOUT + RESPONSIVE STABILIZATION
+   Final overrides to keep all pages aligned and theme-safe
+====================================================== */
+#root {
+  min-height: 100vh;
+}
+
+.dashboard-container {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-bg);
+}
+
+.dashboard-main {
+  width: min(1280px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding-top: 96px;
+  padding-bottom: 40px;
+  flex: 1 1 auto;
+}
+
+.dashboard-main>div {
+  width: 100%;
+  max-width: 100%;
+}
+
+.navbar-container {
+  width: min(1280px, calc(100% - 2rem));
+  max-width: none !important;
+}
+
+.footer-container {
+  width: min(1280px, calc(100% - 2rem));
+  max-width: none !important;
+  padding: 0 !important;
+}
+
+.hero-pro,
+.glass-card,
+.card-premium {
+  max-width: 100%;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 1024px) {
+  .dashboard-main {
+    width: min(100%, calc(100% - 1.5rem));
+    padding-top: 88px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-main {
+    width: min(100%, calc(100% - 1rem));
+    padding-top: 84px;
+    padding-bottom: 24px;
+  }
+
+  .hero-pro {
+    padding: 32px 20px !important;
+    border-radius: 24px !important;
+  }
+
+  .footer-columns {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+}
+
+/* Final content-width tuning to avoid stretched layouts on wide screens */
+:root {
+  --content-max-width: 1040px;
+}
+
+.dashboard-main {
+  width: min(var(--content-max-width), calc(100% - 2.5rem)) !important;
+}
+
+.navbar-container,
+.footer-container {
+  width: min(var(--content-max-width), calc(100% - 2.5rem)) !important;
+}
+
+@media (max-width: 768px) {
+
+  .dashboard-main,
+  .navbar-container,
+  .footer-container {
+    width: min(100%, calc(100% - 1rem)) !important;
+  }
+}
+
+/* ======================================================
+   LIGHT MODE POLISH - QUIZZES / RESULTS / ANALYTICS / FEEDBACK
+====================================================== */
+body:not(.dark) #root {
+  background-color: var(--surface-bg) !important;
+}
+
+body:not(.dark) .dashboard-main {
+  background: transparent !important;
+}
+
+/* Force standard heroes to ALWAYS be vibrant pink-blue */
+.hero-pro,
+.forced-vibrant {
+  background: var(--vibrant-gradient) !important;
+  color: white !important;
+}
+
+
+
+.hero-pro p,
+.forced-vibrant p {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Feedback page should not force dark in light theme */
+body:not(.dark) .fdb2-page {
+  background: var(--surface-bg) !important;
+  color: var(--gray-900) !important;
+}
+
+
+
+body:not(.dark) .fdb2-card,
+body:not(.dark) .fdb2-sidebar-card {
+  background: #ffffff !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05) !important;
+}
+
+body:not(.dark) .fdb2-label,
+body:not(.dark) .fdb2-faq-q,
+body:not(.dark) .fdb2-sidebar-card h3 {
+  color: var(--gray-900) !important;
+}
+
+/* Sidebar specifically needs darker titles in light mode */
+body:not(.dark) .fdb2-sidebar-card h3 {
+  background: var(--vibrant-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent !important;
+  font-weight: 900 !important;
+}
+
+body:not(.dark) .fdb2-sidebar-text,
+body:not(.dark) .fdb2-faq-a,
+body:not(.dark) .fdb2-success-sub {
+  color: var(--gray-600) !important;
+}
+
+body:not(.dark) .fdb2-input,
+body:not(.dark) .fdb2-textarea {
+  background: #ffffff !important;
+  border: 1.5px solid var(--gray-200) !important;
+  color: var(--gray-900) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02) !important;
+}
+
+body:not(.dark) .fdb2-input:focus,
+body:not(.dark) .fdb2-textarea:focus {
+  border-color: var(--primary) !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 4px rgba(109, 40, 217, 0.1) !important;
+}
+
+body:not(.dark) .fdb2-cat-btn {
+  background: #ffffff !important;
+  border: 1px solid var(--gray-200) !important;
+  color: var(--gray-700) !important;
+}
+
+body:not(.dark) .fdb2-cat-btn--active {
+  background: var(--vibrant-gradient) !important;
+  border: none !important;
+  box-shadow: 0 8px 20px rgba(255, 51, 153, 0.3) !important;
+}
+
+body:not(.dark) .fdb2-cat-btn--active,
+body:not(.dark) .fdb2-cat-btn--active * {
+  color: white !important;
+  fill: white !important;
+}
+
+body:not(.dark) .fdb2-btn-secondary {
+  background: var(--gray-50) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--gray-700) !important;
+}
+
+/* Keep highlight sections premium but light-friendly */
+body:not(.dark) .quizzes-roadmap-card,
+body:not(.dark) .myresults-velocity-card,
+body:not(.dark) .analytics-insights-card,
+body:not(.dark) .resultslist-predictive-card {
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%) !important;
+  color: var(--gray-900) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+body:not(.dark) .quizzes-roadmap-card h2,
+body:not(.dark) .myresults-velocity-card h2,
+body:not(.dark) .analytics-insights-card h2,
+body:not(.dark) .resultslist-predictive-card h2,
+body:not(.dark) .analytics-insights-card h4,
+body:not(.dark) .resultslist-predictive-card h3 {
+  color: var(--gray-900) !important;
+}
+
+body:not(.dark) .quizzes-roadmap-card p,
+body:not(.dark) .myresults-velocity-card p,
+body:not(.dark) .analytics-insights-card p,
+body:not(.dark) .resultslist-predictive-card p {
+  color: var(--gray-600) !important;
+}
+
+body:not(.dark) .quizzes-roadmap-item,
+body:not(.dark) .analytics-insight-item {
+  background: #ffffff !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* Better white-mode readability on table and badges */
+body:not(.dark) .resultslist-page table th {
+  background: #f8fafc !important;
+  color: var(--gray-600) !important;
+}
+
+body:not(.dark) .resultslist-page table tr:hover {
+  background: #f8fafc !important;
+}
+
+/* ======================================================
+   LIGHT MODE FOOTER FIXES (GLOBAL + FEEDBACK PAGE)
+====================================================== */
+body:not(.dark) .dashboard-footer {
+  background: #ffffff !important;
+  border-top: 1px solid #e2e8f0 !important;
+  box-shadow: 0 -6px 20px rgba(15, 23, 42, 0.04);
+}
+
+body:not(.dark) .footer-brief {
+  color: var(--gray-700) !important;
+}
+
+body:not(.dark) .footer-col-title {
+  color: var(--gray-900) !important;
+}
+
+body:not(.dark) .footer-col-link {
+  color: var(--gray-700) !important;
+}
+
+body:not(.dark) .footer-col-link:hover {
+  color: var(--primary) !important;
+}
+
+body:not(.dark) .social-icon-mini {
+  background: #eef2f7 !important;
+  color: var(--gray-700) !important;
+  border: 1px solid #dbe4ef !important;
+}
+
+body:not(.dark) .footer-bottom-bar {
+  background: #f8fafc !important;
+  border-top: 1px solid #e2e8f0 !important;
+}
+
+body:not(.dark) .footer-bottom-bar p,
+body:not(.dark) .footer-bottom-extra a {
+  color: var(--gray-700) !important;
+}
+
+body:not(.dark) .footer-bottom-extra a:hover {
+  color: var(--primary) !important;
+}
+
+/* Feedback page had a dark forced footer; restore light mode visibility */
+body:not(.dark) .fdb2-page footer.dashboard-footer {
+  background: #ffffff !important;
+  border-top: 1px solid #e2e8f0 !important;
+}
+
+/* ======================================================
+   FEEDBACK LIGHT-MODE POLISH (HELP US BUILD SECTION)
+====================================================== */
+body:not(.dark) .fdb2-hero {
+  background: linear-gradient(135deg, #eef2ff 0%, #f0f9ff 100%) !important;
+  border-bottom: 1px solid #dbeafe !important;
+}
+
+body:not(.dark) .fdb2-hero-title {
+  background: var(--vibrant-gradient) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  text-shadow: none !important;
+}
+
+body:not(.dark) .fdb2-hero-sub {
+  color: var(--gray-700) !important;
+}
+
+body:not(.dark) .fdb2-sidebar-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%) !important;
+  border: 1px solid #dbeafe !important;
+}
+
+body:not(.dark) .fdb2-sidebar-card h3 {
+  background: none !important;
+  -webkit-text-fill-color: var(--primary) !important;
+  color: var(--primary) !important;
+}
+
+body:not(.dark) .fdb2-faq-q {
+  color: var(--primary) !important;
+}
+
+body:not(.dark) .fdb2-faq-a,
+body:not(.dark) .fdb2-sidebar-text {
+  color: var(--gray-700) !important;
+}
+
+body:not(.dark) .fdb2-sidebar-footer {
+  border-top: 1px solid #e2e8f0 !important;
+}
+
+body:not(.dark) .fdb2-sidebar-footer > div {
+  color: var(--primary) !important;
+  background: rgba(109, 40, 217, 0.08) !important;
+  border: 1px solid rgba(109, 40, 217, 0.18) !important;
+  border-radius: 999px !important;
+  padding: 8px 12px !important;
+  width: fit-content;
+}
+
+body:not(.dark) .fdb2-sidebar-footer svg {
+  color: var(--primary) !important;
+  fill: var(--primary) !important;
 }

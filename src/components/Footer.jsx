@@ -9,18 +9,18 @@ const Footer = () => {
         {/* Brand Section */}
         <div className="footer-brand-section">
           <div className="footer-logo">
-            <GraduationCap size={32} />
+            <GraduationCap size={36} />
             <span className="footer-logo-text">EduTrack</span>
           </div>
           <p className="footer-brief">
-            EduTrack is your comprehensive AI-powered learning companion, designed to bridge the gap between assessment and understanding.
-            Empowering students with real-time analytics, high-quality quiz experiences, and an intelligent roadmap to academic excellence.
-            Join thousands of learners transforming their future today.
+            EduTrack helps students and teachers learn better with clear quizzes,
+            instant results, and easy progress tracking. Build confidence, improve
+            skills, and stay motivated every day.
           </p>
           <div className="footer-social-strip">
-            <a href="mailto:chahel1817@gmail.com" className="social-icon-mini"><Mail size={16} /></a>
-            <a href="https://github.com/chahel1817" target="_blank" className="social-icon-mini"><Github size={16} /></a>
-            <a href="https://instagram.com/chahel_1817" target="_blank" className="social-icon-mini"><Instagram size={16} /></a>
+            <a href="mailto:chahel1817@gmail.com" className="social-icon-mini"><Mail size={18} /></a>
+            <a href="https://github.com/chahel1817" target="_blank" rel="noreferrer" className="social-icon-mini"><Github size={18} /></a>
+            <a href="https://instagram.com/chahel_1817" target="_blank" rel="noreferrer" className="social-icon-mini"><Instagram size={18} /></a>
           </div>
         </div>
 
@@ -47,7 +47,7 @@ const Footer = () => {
 
       <div className="footer-bottom-bar">
         <div className="footer-container">
-          <p>© 2025 EduTrack. All rights reserved.</p>
+          <p>&copy; 2025 EduTrack. All rights reserved.</p>
           <div className="footer-bottom-extra">
             <Link to="/about">About Us</Link>
             <Link to="/faqs">FAQs</Link>
@@ -59,3 +59,5 @@ const Footer = () => {
 };
 
 export default Footer;
+
+

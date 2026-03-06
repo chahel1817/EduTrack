@@ -49,7 +49,7 @@ const CreateQuizQuestions = () => {
   const [totalQuestions, setTotalQuestions] = useState(5);
   const [isGenerating, setIsGenerating] = useState(false);
   const [pdfFile, setPdfFile] = useState(null);
-  const [activeTab, setActiveTab] = useState("manual"); // manual, ai-forge, pdf-scan
+  const [activeTab, setActiveTab] = useState("manual"); // manual, smart-generate, pdf-builder
   const [mergeAI, setMergeAI] = useState(false);
 
   /* ---------------- QUESTION HANDLERS ---------------- */
@@ -108,7 +108,7 @@ const CreateQuizQuestions = () => {
       });
 
       if (!res.data?.questions?.length) {
-        alert("AI returned no questions");
+        alert("No questions were generated");
         return;
       }
 
@@ -124,8 +124,8 @@ const CreateQuizQuestions = () => {
       setErrors({});
       setActiveTab("manual");
     } catch (err) {
-      console.error("AI generation failed:", err);
-      alert("AI service unavailable. Try again later.");
+      console.error("Question generation failed:", err);
+      alert("Question generator is unavailable. Try again later.");
     } finally {
       setIsGenerating(false);
     }
@@ -149,7 +149,7 @@ const CreateQuizQuestions = () => {
       const res = await api.post("/ai/generate-from-pdf", formData);
 
       if (!res.data?.questions?.length) {
-        alert("AI could not generate questions from this PDF");
+        alert("Could not generate questions from this PDF");
         return;
       }
 
@@ -169,7 +169,7 @@ const CreateQuizQuestions = () => {
       setPdfFile(null); // Clear after success
       setActiveTab("manual");
     } catch (err) {
-      console.error("PDF AI generation failed details:", err.response?.data || err.message);
+      console.error("PDF generation failed details:", err.response?.data || err.message);
       const msg = err.response?.data?.message || err.response?.data?.error || "Failed to process PDF. Make sure it's a valid PDF with text.";
       const details = err.response?.data?.details ? ` (${err.response.data.details})` : "";
       alert(`Error: ${msg}${details}`);
@@ -236,32 +236,64 @@ const CreateQuizQuestions = () => {
       <main className="dashboard-main pt-28 pb-20 px-4 md:px-10">
         <div className="max-w-[1600px] mx-auto">
 
+          {/* MISSION CONTROL SUMMARY */}
+          <div className="glass-card" style={{ marginBottom: '40px', padding: '24px 40px', background: 'var(--primary)', color: 'white', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', borderRadius: '32px', boxShadow: '0 20px 40px rgba(109, 40, 217, 0.3)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Zap size={24} />
+              </div>
+              <div>
+                <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{quizDetails?.title || "New Assessment"}</h2>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', color: 'rgba(255,255,255,0.7)', fontSize: '12px', fontWeight: 700 }}>
+                  <span>{quizDetails?.subject}</span>
+                  <span style={{ width: '4px', height: '4px', background: 'rgba(255,255,255,0.3)', borderRadius: '50%' }}></span>
+                  <span>{quizDetails?.timeLimit} Min Duration</span>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '32px' }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '24px', fontWeight: 900 }}>{questions.length}</div>
+                <div style={{ fontSize: '10px', fontWeight: 800, opacity: 0.7, textTransform: 'uppercase' }}>Questions</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '24px', fontWeight: 900 }}>{questions.reduce((acc, q) => acc + (q.question ? 1 : 0), 0)}</div>
+                <div style={{ fontSize: '10px', fontWeight: 800, opacity: 0.7, textTransform: 'uppercase' }}>Drafted</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '24px', fontWeight: 900, color: 'var(--accent)' }}>{activeTab.toUpperCase()}</div>
+                <div style={{ fontSize: '10px', fontWeight: 800, opacity: 0.7, textTransform: 'uppercase' }}>Current Mode</div>
+              </div>
+            </div>
+          </div>
+
           {/* NAVIGATION TABS / MODE SELECTOR */}
           <div className="flex flex-wrap items-center gap-4 mb-10">
             <button
               onClick={() => setActiveTab("manual")}
               className={`px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center gap-3 ${activeTab === "manual" ? 'bg-primary text-white shadow-xl shadow-primary/20 scale-105' : 'bg-white dark:bg-white/5 text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'}`}
             >
-              <File size={22} /> Manual Workspace
+              <File size={20} /> Manual Mode
             </button>
             <button
               onClick={() => setActiveTab("ai-forge")}
               className={`px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center gap-3 ${activeTab === "ai-forge" ? 'bg-primary text-white shadow-xl shadow-primary/20 scale-105' : 'bg-white dark:bg-white/5 text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'}`}
             >
-              <Sparkles size={22} /> AI Forge
+              <Sparkles size={20} /> Smart Generate
             </button>
             <button
               onClick={() => setActiveTab("pdf-scan")}
               className={`px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center gap-3 ${activeTab === "pdf-scan" ? 'bg-primary text-white shadow-xl shadow-primary/20 scale-105' : 'bg-white dark:bg-white/5 text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'}`}
             >
-              <Upload size={22} /> PDF Intelligence
+              <Upload size={20} /> Build From PDF
             </button>
             <div className="flex-1"></div>
             <button
-              onClick={() => setQuestions([{ question: "", options: ["", "", "", ""], correctAnswer: null }])}
+              onClick={() => { if (window.confirm("Reset all questions?")) setQuestions([{ question: "", options: ["", "", "", ""], correctAnswer: null }]) }}
               className="px-6 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest text-red-500 hover:bg-red-500/5 transition-all"
             >
-              Reset All
+              Reset Questions
             </button>
           </div>
 
@@ -365,13 +397,13 @@ const CreateQuizQuestions = () => {
                     <Sparkles size={48} />
                   </div>
                   <div>
-                    <h2 className="text-4xl font-black tracking-tighter mb-4">AI Intelligence Forge</h2>
-                    <p className="text-gray-400 font-bold max-w-md mx-auto">Leverage our neural networks to synthesize high-quality questions based on your subject: <span className="text-primary">{quizDetails.subject}</span></p>
+                    <h2 className="text-4xl font-black tracking-tighter mb-4">Smart Question Builder</h2>
+                    <p className="text-gray-400 font-bold max-w-md mx-auto">Generate high-quality questions based on your subject: <span className="text-primary">{quizDetails.subject}</span></p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto text-left">
                     <div className="space-y-4">
-                      <label className="text-xxs font-black uppercase tracking-widest text-primary ml-2">Intelligence Level</label>
+                      <label className="text-xxs font-black uppercase tracking-widest text-primary ml-2">Difficulty Level</label>
                       <div className="flex gap-2 bg-gray-50 dark:bg-white/5 p-2 rounded-3xl">
                         {['Easy', 'Medium', 'Hard'].map(lvl => (
                           <button
@@ -385,7 +417,7 @@ const CreateQuizQuestions = () => {
                       </div>
                     </div>
                     <div className="space-y-4">
-                      <label className="text-xxs font-black uppercase tracking-widest text-primary ml-2">Extraction Count ({totalQuestions})</label>
+                      <label className="text-xxs font-black uppercase tracking-widest text-primary ml-2">Question Count ({totalQuestions})</label>
                       <div className="bg-gray-50 dark:bg-white/5 p-2 rounded-3xl flex items-center gap-4 px-6">
                         <input
                           type="range"
@@ -404,7 +436,7 @@ const CreateQuizQuestions = () => {
                       <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${mergeAI ? 'bg-primary border-primary' : 'border-gray-200'}`} onClick={() => setMergeAI(!mergeAI)}>
                         {mergeAI && <Plus size={14} className="text-white" />}
                       </div>
-                      <span className="text-xs font-black uppercase text-gray-500 group-hover:text-primary transition-colors">Append to existing questions (instead of replacing)</span>
+                      <span className="text-xs font-black uppercase text-gray-500 group-hover:text-primary transition-colors">Add to existing questions (instead of replacing)</span>
                     </label>
 
                     <button
@@ -413,7 +445,7 @@ const CreateQuizQuestions = () => {
                       className="w-full max-w-md btn btn-primary py-8 rounded-[35px] text-xl font-black italic tracking-tighter group relative overflow-hidden"
                     >
                       <span className="relative z-10 flex items-center justify-center gap-4">
-                        {isGenerating ? <Loader2 className="animate-spin" /> : <><Zap size={24} /> Initialize Neural Forge</>}
+                        {isGenerating ? <Loader2 className="animate-spin" /> : <><Zap size={24} /> Generate Questions</>}
                       </span>
                       <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </button>
@@ -425,8 +457,8 @@ const CreateQuizQuestions = () => {
                     <Upload size={48} />
                   </div>
                   <div>
-                    <h2 className="text-4xl font-black tracking-tighter mb-4">Deep PDF Intel</h2>
-                    <p className="text-gray-400 font-bold max-w-md mx-auto">Upload a research paper, textbook chapter, or PDF notes. Our AI will scan every line to extract the most critical insights.</p>
+                    <h2 className="text-4xl font-black tracking-tighter mb-4">Build From PDF</h2>
+                    <p className="text-gray-400 font-bold max-w-md mx-auto">Upload notes or a textbook PDF and generate questions from the content.</p>
                   </div>
 
                   <div className="max-w-md mx-auto">
@@ -444,7 +476,7 @@ const CreateQuizQuestions = () => {
                           <div className="w-16 h-16 bg-gray-50 dark:bg-white/5 text-gray-400 rounded-2xl flex items-center justify-center">
                             <Plus size={32} />
                           </div>
-                          <span className="font-black text-xs uppercase tracking-widest text-gray-400">Select Source Artifact</span>
+                          <span className="font-black text-xs uppercase tracking-widest text-gray-400">Select PDF File</span>
                         </>
                       )}
                       <input type="file" accept="application/pdf" className="hidden" onChange={(e) => setPdfFile(e.target.files[0])} />
@@ -456,7 +488,7 @@ const CreateQuizQuestions = () => {
                       <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${mergeAI ? 'bg-accent border-accent' : 'border-gray-200'}`} onClick={() => setMergeAI(!mergeAI)}>
                         {mergeAI && <Plus size={14} className="text-white" />}
                       </div>
-                      <span className="text-xs font-black uppercase text-gray-500 group-hover:text-accent transition-colors">Merge intelligence with manual cards</span>
+                      <span className="text-xs font-black uppercase text-gray-500 group-hover:text-accent transition-colors">Merge generated questions with manual ones</span>
                     </label>
 
                     <button
@@ -464,7 +496,7 @@ const CreateQuizQuestions = () => {
                       disabled={isGenerating || !pdfFile}
                       className={`w-full max-w-md py-8 rounded-[35px] text-xl font-black italic tracking-tighter transition-all flex items-center justify-center gap-4 ${pdfFile ? 'bg-accent text-white shadow-2xl shadow-accent/40 hover:scale-[1.02] active:scale-[0.98]' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
                     >
-                      {isGenerating ? <Loader2 className="animate-spin" /> : <><Sparkles size={24} /> Execute Deep Scan</>}
+                      {isGenerating ? <Loader2 className="animate-spin" /> : <><Sparkles size={24} /> Generate From PDF</>}
                     </button>
                   </div>
                 </div>
@@ -475,8 +507,8 @@ const CreateQuizQuestions = () => {
             <div className="xl:col-span-4 space-y-8 sticky top-32">
               <div className="card-premium p-8 shadow-2xl bg-white/70 backdrop-blur-3xl">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-black tracking-tighter">Mission Stats</h3>
-                  <div className="px-2 py-0.5 bg-primary/10 text-primary rounded-lg text-xxs font-black uppercase tracking-widest">Live Sync</div>
+                  <h3 className="text-lg font-black tracking-tighter">Quiz Summary</h3>
+                  <div className="px-2 py-0.5 bg-primary/10 text-primary rounded-lg text-xxs font-black uppercase tracking-widest">Live</div>
                 </div>
 
                 <div className="space-y-4 mb-8">
@@ -485,7 +517,7 @@ const CreateQuizQuestions = () => {
                     <span className="text-xl font-black italic text-primary">{questions.length}</span>
                   </div>
                   <div className="flex items-center justify-between p-3.5 bg-gray-50 dark:bg-white/5 rounded-2xl">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Difficulty Bias</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Difficulty</span>
                     <span className="text-xs font-black uppercase text-gray-800 dark:text-gray-200">{difficulty}</span>
                   </div>
                 </div>
@@ -497,11 +529,11 @@ const CreateQuizQuestions = () => {
                     className="w-full btn btn-primary py-6 rounded-[30px] text-lg font-black italic tracking-tighter shadow-2xl shadow-primary/40 relative overflow-hidden group"
                   >
                     <span className="relative z-10 flex items-center justify-center gap-3">
-                      {isSubmitting ? <Loader2 className="animate-spin" /> : <><Save size={24} /> Deploy Mission</>}
+                      {isSubmitting ? <Loader2 className="animate-spin" /> : <><Save size={24} /> Publish Quiz</>}
                     </span>
                     <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   </button>
-                  <p className="text-center font-black uppercase text-[10px] tracking-mega text-gray-400">Locked & Loaded</p>
+                  <p className="text-center font-black uppercase text-[10px] tracking-mega text-gray-400">Ready to publish</p>
                 </div>
               </div>
 

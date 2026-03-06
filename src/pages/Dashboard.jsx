@@ -272,7 +272,7 @@ export default function Dashboard() {
   return (
     <div className="dashboard-container">
       <Navbar />
-      <main className="animate-fade-in">
+      <main className="dashboard-main animate-fade-in">
 
         {/* HERO SECTION */}
         <section className="hero-pro" style={{ marginBottom: '50px' }}>
@@ -345,6 +345,149 @@ export default function Dashboard() {
         {/* MAIN CONTENT GRID */}
         <div className="dashboard-main-grid" style={{ display: 'flex', flexDirection: 'column', gap: '60px' }}>
 
+          {/* SKILL OVERVIEW (Expanded Content) */}
+          <section className="neuro-map-section">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '32px' }}>
+              <div style={{ background: 'var(--accent)', padding: '12px', borderRadius: '16px', color: 'white', boxShadow: '0 8px 16px rgba(6, 182, 212, 0.25)' }}>
+                <Activity size={24} />
+              </div>
+              <div>
+                <h2 className="dashboard-section-title" style={{ margin: 0, fontSize: '24px', fontWeight: 800 }}>Skill Overview</h2>
+                <p style={{ margin: 0, color: 'var(--gray-500)', fontSize: '14px' }}>A quick view of how you are improving across key areas</p>
+              </div>
+            </div>
+
+            <div className="glass-card" style={{ padding: '40px', border: '1px solid var(--border)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '40px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <h4 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Learning Balance</h4>
+                <div style={{ position: 'relative', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {/* Mock Radar Chart with CSS/SVG */}
+                  <svg width="180" height="180" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="var(--gray-100)" strokeWidth="0.5" />
+                    <circle cx="50" cy="50" r="30" fill="none" stroke="var(--gray-100)" strokeWidth="0.5" />
+                    <circle cx="50" cy="50" r="15" fill="none" stroke="var(--gray-100)" strokeWidth="0.5" />
+                    <path d="M 50 5 L 50 95 M 5 50 L 95 50" stroke="var(--gray-100)" strokeWidth="0.5" />
+                    <polygon
+                      points="50,20 80,50 50,80 20,50"
+                      fill="rgba(109, 40, 217, 0.2)"
+                      stroke="var(--primary)"
+                      strokeWidth="1"
+                      className="tech-glow"
+                    />
+                  </svg>
+                  <div style={{ position: 'absolute', top: '0', left: '50%', transform: 'translateX(-50%)', fontSize: '10px', fontWeight: 800, color: 'var(--gray-500)' }}>LOGIC</div>
+                  <div style={{ position: 'absolute', bottom: '0', left: '50%', transform: 'translateX(-50%)', fontSize: '10px', fontWeight: 800, color: 'var(--gray-500)' }}>MEMORY</div>
+                  <div style={{ position: 'absolute', left: '0', top: '50%', transform: 'translateY(-50%)', fontSize: '10px', fontWeight: 800, color: 'var(--gray-500)' }}>CREATIVITY</div>
+                  <div style={{ position: 'absolute', right: '0', top: '50%', transform: 'translateY(-50%)', fontSize: '10px', fontWeight: 800, color: 'var(--gray-500)' }}>SPEED</div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <h4 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Key Stats</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                  {[
+                    { label: 'Retention', value: '84%', color: 'var(--primary)' },
+                    { label: 'Focus Consistency', value: '92%', color: 'var(--accent)' },
+                    { label: 'Concept Adaptability', value: '76%', color: 'var(--success)' }
+                  ].map(stat => (
+                    <div key={stat.label}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '6px' }}>
+                        <span style={{ fontWeight: 600, color: 'var(--gray-600)' }}>{stat.label}</span>
+                        <span style={{ fontWeight: 800, color: stat.color }}>{stat.value}</span>
+                      </div>
+                      <div style={{ height: '6px', background: 'var(--gray-100)', borderRadius: '3px', overflow: 'hidden' }}>
+                        <div style={{ width: stat.value, height: '100%', background: stat.color }}></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ background: 'var(--gray-50)', borderRadius: '20px', padding: '24px', border: '1px solid var(--border)' }}>
+                <h4 style={{ fontSize: '14px', fontWeight: 800, color: 'var(--gray-700)', marginBottom: '12px' }}>Suggested Next Step</h4>
+                <p style={{ fontSize: '14px', color: 'var(--gray-500)', lineHeight: '1.6', margin: 0 }}>
+                  Based on your recent performance in <span style={{ color: 'var(--primary)', fontWeight: 700 }}>{quizzes[0]?.subject || 'Science'}</span>, try more logic-focused quizzes to build a stronger overall score.
+                </p>
+                <button
+                  className="btn"
+                  style={{ marginTop: '16px', width: '100%', background: 'var(--primary)', color: 'white', fontSize: '12px', fontWeight: 700, borderRadius: '10px' }}
+                  onClick={() => navigate('/quizzes')}
+                >
+                  View Targeted Quizzes
+                </button>
+              </div>
+            </div>
+          </section>
+
+          {/* MILSTONE TRACKER (NEW) */}
+          <section className="milestones-section">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '32px' }}>
+              <div style={{ background: 'var(--success)', padding: '12px', borderRadius: '16px', color: 'white', boxShadow: '0 8px 16px rgba(16, 185, 129, 0.25)' }}>
+                <Trophy size={24} />
+              </div>
+              <div>
+                <h2 className="dashboard-section-title" style={{ margin: 0, fontSize: '24px', fontWeight: 800 }}>Your Learning Path</h2>
+                <p style={{ margin: 0, color: 'var(--gray-500)', fontSize: '14px' }}>Complete quizzes to unlock master level badges</p>
+              </div>
+            </div>
+
+            <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+              <div className="glass-card" style={{ padding: '24px', border: '1px solid var(--border)', position: 'relative' }}>
+                <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                  <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: 'rgba(109, 40, 217, 0.1)', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
+                    <BookOpen size={24} />
+                  </div>
+                  <div>
+                    <h4 style={{ margin: 0, fontWeight: 800 }}>Beginner</h4>
+                    <p style={{ margin: 0, color: 'var(--gray-500)', fontSize: '13px' }}>5 Quizzes Completed</p>
+                  </div>
+                </div>
+                <div style={{ marginTop: '20px', height: '8px', background: 'var(--gray-100)', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{ width: `${Math.min(100, (results.length / 5) * 100)}%`, height: '100%', background: 'var(--primary)', transition: 'width 1s ease' }}></div>
+                </div>
+                <p style={{ textAlign: 'right', fontSize: '12px', marginTop: '8px', fontWeight: 700, color: 'var(--primary)' }}>
+                  {results.length >= 5 ? 'CLAIMED' : `${results.length}/5`}
+                </p>
+              </div>
+
+              <div className="glass-card" style={{ padding: '24px', border: '1px solid var(--border)', opacity: results.length < 5 ? 0.6 : 1 }}>
+                <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                  <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: results.length < 5 ? 'var(--gray-100)' : 'rgba(6, 182, 212, 0.1)', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', color: results.length < 5 ? 'var(--gray-400)' : 'var(--accent)' }}>
+                    <Zap size={24} />
+                  </div>
+                  <div>
+                    <h4 style={{ margin: 0, fontWeight: 800 }}>Intermediate</h4>
+                    <p style={{ margin: 0, color: 'var(--gray-500)', fontSize: '13px' }}>15 Quizzes Completed</p>
+                  </div>
+                </div>
+                <div style={{ marginTop: '20px', height: '8px', background: 'var(--gray-100)', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{ width: `${Math.min(100, (results.length / 15) * 100)}%`, height: '100%', background: 'var(--accent)' }}></div>
+                </div>
+                <p style={{ textAlign: 'right', fontSize: '12px', marginTop: '8px', fontWeight: 700, color: 'var(--accent)' }}>
+                  {results.length >= 15 ? 'CLAIMED' : `${results.length}/15`}
+                </p>
+              </div>
+
+              <div className="glass-card" style={{ padding: '24px', border: '1px solid var(--border)', opacity: results.length < 15 ? 0.6 : 1 }}>
+                <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                  <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: results.length < 15 ? 'var(--gray-100)' : 'rgba(249, 115, 22, 0.1)', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', color: results.length < 15 ? 'var(--gray-400)' : 'var(--button)' }}>
+                    <Trophy size={24} />
+                  </div>
+                  <div>
+                    <h4 style={{ margin: 0, fontWeight: 800 }}>Master</h4>
+                    <p style={{ margin: 0, color: 'var(--gray-500)', fontSize: '13px' }}>50 Quizzes Completed</p>
+                  </div>
+                </div>
+                <div style={{ marginTop: '20px', height: '8px', background: 'var(--gray-100)', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{ width: `${Math.min(100, (results.length / 50) * 100)}%`, height: '100%', background: 'var(--button)' }}></div>
+                </div>
+                <p style={{ textAlign: 'right', fontSize: '12px', marginTop: '8px', fontWeight: 700, color: 'var(--button)' }}>
+                  {results.length >= 50 ? 'CLAIMED' : `${results.length}/50`}
+                </p>
+              </div>
+            </div>
+          </section>
+
           {/* LEFT COLUMN: QUIZZES */}
           <section className="quizzes-section">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
@@ -381,6 +524,28 @@ export default function Dashboard() {
             </div>
           </section>
 
+          {/* QUICK TIPS (NEW) */}
+          <section className="tips-section">
+            <div className="glass-card" style={{ background: 'var(--primary)', color: 'white', padding: '40px', borderRadius: '24px', position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: '-10%', right: '-5%', opacity: 0.1 }}>
+                <Sparkles size={250} />
+              </div>
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+                  <Zap size={20} />
+                </div>
+                <h2 style={{ fontSize: '28px', fontWeight: 900, marginBottom: '16px' }}>Pro Tip for Mastery</h2>
+                <p style={{ fontSize: '18px', maxWidth: '700px', lineHeight: 1.6, marginBottom: '32px' }}>
+                  Regular testing is scientifically proven to enhance long-term retention. Try taking a quiz on the same subject twice with a 2-day gap for maximum memory performance!
+                </p>
+                <div style={{ display: 'flex', gap: '20px' }}>
+                  <div style={{ padding: '4px 12px', background: 'rgba(255,255,255,0.15)', borderRadius: '99px', fontSize: '13px', fontWeight: 700 }}>#ScientificMethod</div>
+                  <div style={{ padding: '4px 12px', background: 'rgba(255,255,255,0.15)', borderRadius: '99px', fontSize: '13px', fontWeight: 700 }}>#DeepLearning</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
           {/* RECENT ACTIVITY SECTION BELOW */}
           <section className="activity-section">
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '32px' }}>
@@ -408,8 +573,8 @@ export default function Dashboard() {
                         alignItems: 'center',
                         gap: '20px',
                         padding: '24px',
-                        borderBottom: idx === results.slice(0, 5).length - 1 ? 'none' : '1px solid var(--border)',
-                        background: idx % 2 === 0 ? 'transparent' : 'rgba(0,0,0,0.01)'
+                        borderBottom: 'none',
+                        background: idx % 2 === 0 ? 'transparent' : 'rgba(0,0,0,0.005)'
                       }}
                     >
                       <div style={{
@@ -486,7 +651,7 @@ export default function Dashboard() {
           </section>
 
           {/* EXTRA SPACING FOR FOOTER ALIGNMENT */}
-          <div style={{ height: '80px' }}></div>
+          <div style={{ height: '120px' }}></div>
 
         </div>
 
