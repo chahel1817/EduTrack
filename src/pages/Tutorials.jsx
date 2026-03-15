@@ -49,7 +49,7 @@ const Tutorials = () => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '120px 60px',
+            padding: '60px 60px',
             borderRadius: '40px',
             marginBottom: '80px',
             position: 'relative',
@@ -109,7 +109,7 @@ const Tutorials = () => {
           </div>
 
           {/* ADVANCED TRACK SECTION */}
-          <section className="glass-card" style={{ padding: '80px', borderRadius: '48px', background: 'var(--gray-950)', color: 'white', marginBottom: '120px', position: 'relative', overflow: 'hidden' }}>
+          <section className="glass-card" style={{ padding: '80px', borderRadius: '48px', background: 'var(--gray-950)', color: 'white', marginBottom: '60px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '400px', height: '400px', background: 'var(--primary)', borderRadius: '50%', filter: 'blur(150px)', opacity: 0.1 }}></div>
             <div style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
               <div>
@@ -142,7 +142,7 @@ const Tutorials = () => {
           </section>
 
           {/* FINAL CTA */}
-          <section style={{ textAlign: 'center', marginBottom: '120px' }}>
+          <section style={{ textAlign: 'center', marginBottom: '60px' }}>
             <h2 style={{ fontSize: '32px', fontWeight: 900, marginBottom: '24px' }}>Need a personalized walkthrough?</h2>
             <button className="btn" onClick={() => navigate("/contact")} style={{ background: 'var(--primary)', color: 'white', fontWeight: 900, padding: '20px 48px', borderRadius: '20px', border: 'none', fontSize: '16px', boxShadow: '0 20px 40px rgba(109, 40, 217, 0.3)' }}>
               Request 1-on-1 Help

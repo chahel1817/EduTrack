@@ -205,7 +205,7 @@ const Leaderboard = () => {
           </section>
 
           {/* GLOBAL PERFORMANCE CARD */}
-          <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px', marginBottom: '120px' }}>
+          <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px', marginBottom: '60px' }}>
             <div className="glass-card" style={{ padding: '48px', borderRadius: '40px', border: '1px solid var(--border)', textAlign: 'center' }}>
               <Globe size={48} className="text-primary" style={{ margin: '0 auto 24px' }} />
               <h3 style={{ fontSize: '22px', fontWeight: 900, marginBottom: '12px' }}>Global Percentile</h3>

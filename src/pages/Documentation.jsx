@@ -95,7 +95,7 @@ const Documentation = () => {
           </section>
 
           {/* DOCS NAVIGATION (MOCK) */}
-          <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: '60px', marginBottom: '120px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: '60px', marginBottom: '60px' }}>
 
             {/* SIDEBAR */}
             <aside style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
@@ -178,7 +178,7 @@ console.log('Quiz created:', data.syncId);`}</code>
           </div>
 
           {/* FINAL CTA */}
-          <section style={{ textAlign: 'center', marginBottom: '120px' }}>
+          <section style={{ textAlign: 'center', marginBottom: '60px' }}>
             <h2 style={{ fontSize: '32px', fontWeight: 900, marginBottom: '24px' }}>Need more help?</h2>
             <button className="btn" onClick={() => navigate("/contact")} style={{ background: 'var(--primary)', color: 'white', fontWeight: 900, padding: '20px 48px', borderRadius: '20px', border: 'none', fontSize: '16px', boxShadow: '0 20px 40px rgba(109, 40, 217, 0.3)' }}>
               Contact Support

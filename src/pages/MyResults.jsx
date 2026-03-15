@@ -63,7 +63,7 @@ const MyResults = () => {
           justifyContent: 'center',
           padding: '100px 60px',
           borderRadius: '40px',
-          marginBottom: '60px',
+          marginBottom: '40px',
           position: 'relative',
           overflow: 'hidden',
           textAlign: 'center',
@@ -87,7 +87,7 @@ const MyResults = () => {
         </section>
 
         {results.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '120px 40px', background: 'var(--card-bg)', borderRadius: '48px', border: '1px dashed var(--border)' }}>
+          <div style={{ textAlign: 'center', padding: '60px 40px', background: 'var(--card-bg)', borderRadius: '48px', border: '1px dashed var(--border)' }}>
             <Award size={64} style={{ margin: '0 auto 32px', color: 'var(--gray-300)' }} />
             <h2 style={{ fontSize: '28px', fontWeight: 900, marginBottom: '16px' }}>No Results Yet</h2>
             <p style={{ color: 'var(--gray-500)', maxWidth: '400px', margin: '0 auto 48px' }}>Your achievement archive is empty. Start your first assessment quiz to begin historical tracking.</p>

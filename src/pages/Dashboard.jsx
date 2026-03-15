@@ -241,14 +241,14 @@ export default function Dashboard() {
     return (
       <div className="dashboard-container">
         <Navbar />
-        <main className="animate-fade-in" style={{ padding: '40px 20px' }}>
+        <main className="animate-fade-in" style={{ padding: '32px 20px' }}>
           {/* Skeleton Hero */}
-          <div className="hero-pro" style={{ marginBottom: '50px', background: 'var(--gray-100)', color: 'transparent', height: '250px', position: 'relative', overflow: 'hidden' }}>
+          <div className="hero-pro" style={{ marginBottom: '32px', background: 'var(--gray-100)', color: 'transparent', height: '250px', position: 'relative', overflow: 'hidden' }}>
             <div className="shimmer-sweep"></div>
           </div>
 
           {/* Skeleton Grid */}
-          <div className="stats-grid" style={{ marginBottom: '60px' }}>
+          <div className="stats-grid" style={{ marginBottom: '40px' }}>
             {[1, 2, 3, 4].map(i => (
               <div key={i} className="stat-card" style={{ background: 'var(--gray-50)', height: '120px', position: 'relative', overflow: 'hidden' }}>
                 <div className="shimmer-sweep"></div>
@@ -261,7 +261,7 @@ export default function Dashboard() {
             <p style={{ marginTop: '20px', color: 'var(--gray-500)', fontWeight: 600 }}>Syncing your latest progress...</p>
           </div>
         </main>
-      </div>
+      </div >
     );
   }
 
@@ -275,13 +275,13 @@ export default function Dashboard() {
       <main className="dashboard-main animate-fade-in">
 
         {/* HERO SECTION */}
-        <section className="hero-pro" style={{ marginBottom: '50px' }}>
+        <section className="hero-pro" style={{ marginBottom: '40px' }}>
           <div style={{ maxWidth: '650px' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '99px', marginBottom: '24px', fontSize: '14px', fontWeight: 600 }}>
               <Sparkles size={16} /> <span>Level Up Your Learning</span>
             </div>
             <h1 className="hero-pro-title">
-              Welcome back, <span style={{ textDecoration: 'underline', textDecorationColor: 'var(--accent)' }}>{user.name.split(' ')[0]}</span>!
+              Welcome back, <span className="hero-name-highlight">{user.name.split(' ')[0]}</span>!
             </h1>
             <p className="hero-pro-sub" style={{ opacity: 0.95, fontSize: '19px' }}>
               {user.role === "teacher"
@@ -314,7 +314,7 @@ export default function Dashboard() {
         </section>
 
         {/* TOP STATS */}
-        <div className="stats-grid" style={{ marginBottom: '60px' }}>
+        <div className="stats-grid" style={{ marginBottom: '40px' }}>
           <StatCard
             icon={BookOpen}
             value={quizzes.length}
@@ -343,7 +343,7 @@ export default function Dashboard() {
         </div>
 
         {/* MAIN CONTENT GRID */}
-        <div className="dashboard-main-grid" style={{ display: 'flex', flexDirection: 'column', gap: '60px' }}>
+        <div className="dashboard-main-grid" style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
 
           {/* SKILL OVERVIEW (Expanded Content) */}
           <section className="neuro-map-section">
@@ -649,9 +649,6 @@ export default function Dashboard() {
               )}
             </div>
           </section>
-
-          {/* EXTRA SPACING FOR FOOTER ALIGNMENT */}
-          <div style={{ height: '120px' }}></div>
 
         </div>
 

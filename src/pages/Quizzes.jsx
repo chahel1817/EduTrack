@@ -198,7 +198,7 @@ const Quizzes = () => {
               <p style={{ color: 'var(--gray-500)', maxWidth: '400px', margin: '0 auto' }}>We couldn't find any quizzes matching your current search or filter. Try a different term!</p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '32px', marginBottom: '80px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '32px', marginBottom: '40px' }}>
               {filteredQuizzes.map((quiz) => {
                 const hasTaken = results.some(r => String(r.quiz?._id || r.quiz) === String(quiz._id));
                 return (
@@ -289,7 +289,7 @@ const Quizzes = () => {
           )}
 
           {/* MASTERY ROADMAP */}
-          <section style={{ marginBottom: '100px' }}>
+          <section style={{ marginBottom: '40px' }}>
             <div className="glass-card quizzes-roadmap-card" style={{ padding: '60px', borderRadius: '48px', background: 'var(--gray-900)', color: 'white', overflow: 'hidden', position: 'relative' }}>
               <div style={{ position: 'absolute', top: '-10%', right: '-5%', opacity: 0.1 }}><Award size={300} /></div>
               <div style={{ position: 'relative', zIndex: 1 }}>

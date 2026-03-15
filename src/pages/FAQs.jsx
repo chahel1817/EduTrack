@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -80,9 +81,9 @@ const FAQs = () => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '100px 60px',
+            padding: '80px 60px',
             borderRadius: '40px',
-            marginBottom: '80px',
+            marginBottom: '40px',
             position: 'relative',
             overflow: 'hidden',
             textAlign: 'center',
@@ -92,10 +93,10 @@ const FAQs = () => {
             <div style={{ position: 'absolute', top: '0', left: '0', right: '0', bottom: '0', background: 'radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 70%)', zIndex: 0 }}></div>
 
             <div style={{ position: 'relative', zIndex: 1, maxWidth: '900px' }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '99px', marginBottom: '32px', fontSize: '13px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '99px', marginBottom: '24px', fontSize: '13px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
                 <HelpCircle size={16} className="text-white" /> <span>Support Hub</span>
               </div>
-              <h1 style={{ margin: '0 0 24px', fontSize: '64px', fontWeight: 900, letterSpacing: '-0.04em', lineHeight: 1 }}>Frequently <br /><span style={{ color: 'rgba(255,255,255,0.7)' }}>Asked Questions</span></h1>
+              <h1 style={{ margin: '0 0 16px', fontSize: '64px', fontWeight: 900, letterSpacing: '-0.04em', lineHeight: 1 }}>Frequently <br /><span style={{ color: 'rgba(255,255,255,0.7)' }}>Asked Questions</span></h1>
               <p style={{ margin: '0 auto', opacity: 0.9, fontSize: '20px', maxWidth: '650px', lineHeight: 1.6, fontWeight: 500 }}>
                 Everything you need to get started and use EduTrack with confidence.
               </p>
@@ -107,7 +108,7 @@ const FAQs = () => {
           </section>
 
           {/* SEARCH BAR */}
-          <div style={{ maxWidth: '800px', margin: '0 auto 80px', position: 'relative' }}>
+          <div style={{ maxWidth: '800px', margin: '0 auto 60px', position: 'relative' }}>
             <Search size={24} style={{ position: 'absolute', left: '24px', top: '50%', transform: 'translateY(-50%)', color: 'var(--gray-400)' }} />
             <input
               type="text"
@@ -116,7 +117,7 @@ const FAQs = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
                 width: '100%',
-                padding: '28px 28px 28px 72px',
+                padding: '24px 28px 24px 72px',
                 borderRadius: '32px',
                 border: '1px solid var(--border)',
                 background: 'var(--white)',
@@ -128,9 +129,9 @@ const FAQs = () => {
           </div>
 
           {/* FAQ ACCORDION */}
-          <div style={{ maxWidth: '900px', margin: '0 auto 120px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div style={{ maxWidth: '900px', margin: '0 auto 60px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {filteredFaqs.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '100px 40px', background: 'var(--gray-50)', borderRadius: '32px', border: '1px dashed var(--border)' }}>
+              <div style={{ textAlign: 'center', padding: '80px 40px', background: 'var(--gray-50)', borderRadius: '32px', border: '1px dashed var(--border)' }}>
                 <Globe size={48} style={{ margin: '0 auto 24px', color: 'var(--gray-300)' }} />
                 <h3 style={{ fontSize: '24px', fontWeight: 900, color: 'var(--gray-700)' }}>No matching result found</h3>
                 <p style={{ color: 'var(--gray-400)' }}>Try a different search term or browse our categories.</p>
@@ -197,10 +198,10 @@ const FAQs = () => {
 
           {/* CONTACT CTA */}
           <section className="glass-card" style={{
-            padding: '80px 60px',
+            padding: '60px 60px',
             borderRadius: '48px',
             textAlign: 'center',
-            marginBottom: '100px',
+            marginBottom: '60px',
             position: 'relative',
             overflow: 'hidden',
             background: 'var(--card-bg)'

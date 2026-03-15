@@ -22,6 +22,7 @@ import {
   X,
   Briefcase,
   Code2,
+  Zap
 } from "lucide-react";
 
 const StudentProfile = () => {
@@ -140,7 +141,7 @@ const StudentProfile = () => {
             justifyContent: 'space-between',
             padding: '60px',
             borderRadius: '32px',
-            marginBottom: '40px',
+            marginBottom: '32px',
             position: 'relative',
             overflow: 'hidden',
             flexWrap: 'wrap',
@@ -203,7 +204,7 @@ const StudentProfile = () => {
           </section>
 
           {isEditing ? (
-            <div className="glass-card" style={{ padding: '60px', borderRadius: '32px', marginBottom: '60px', border: '1px solid var(--border)' }}>
+            <div className="glass-card" style={{ padding: '60px', borderRadius: '32px', marginBottom: '32px', border: '1px solid var(--border)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '48px' }}>
                 <div>
                   <h2 style={{ fontSize: '32px', fontWeight: 900, marginBottom: '8px' }}>Account Settings</h2>
@@ -266,7 +267,7 @@ const StudentProfile = () => {
               </form>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: '350px 1fr', gap: '40px', marginBottom: '60px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '400px 1fr', gap: '40px', marginBottom: '32px' }}>
 
               {/* LEFT: INFO COL */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
@@ -307,13 +308,47 @@ const StudentProfile = () => {
                     )) : <p style={{ color: 'var(--gray-400)', fontSize: '14px', margin: 0 }}>No skills indexed</p>}
                   </div>
                 </div>
+
+                {/* ACHIEVEMENTS MOVED TO LEFT FOR BALANCE */}
+                <div className="glass-card" style={{ padding: '32px', borderRadius: '24px', border: '1px solid var(--border)' }}>
+                  <h3 style={{ fontSize: '14px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--primary)', marginBottom: '24px', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Award size={16} /> Academic Distinctions
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <div style={{ background: 'var(--gray-50)', padding: '20px', borderRadius: '20px', textAlign: 'center', border: '1px solid var(--border)' }}>
+                      <div style={{ width: '48px', height: '48px', background: 'rgba(234, 179, 8, 0.1)', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                        <Award size={24} color="var(--warning)" />
+                      </div>
+                      <h4 style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: 800 }}>Early Adopter</h4>
+                      <p style={{ margin: 0, fontSize: '11px', color: 'var(--gray-500)' }}>Elite Pioneer Class</p>
+                    </div>
+                    {totalCompleted >= 5 && (
+                      <div style={{ background: 'var(--gray-50)', padding: '20px', borderRadius: '20px', textAlign: 'center', border: '1px solid var(--border)' }}>
+                        <div style={{ width: '48px', height: '48px', background: 'rgba(6, 182, 212, 0.1)', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                          <Zap size={24} color="var(--accent)" />
+                        </div>
+                        <h4 style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: 800 }}>Steady Pulse</h4>
+                        <p style={{ margin: 0, fontSize: '11px', color: 'var(--gray-500)' }}>5+ Active Goals</p>
+                      </div>
+                    )}
+                    {avgPercentage >= 90 && (
+                      <div style={{ background: 'var(--gray-50)', padding: '20px', borderRadius: '20px', textAlign: 'center', border: '1px solid var(--border)' }}>
+                        <div style={{ width: '48px', height: '48px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                          <CheckCircle2 size={24} color="var(--success)" />
+                        </div>
+                        <h4 style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: 800 }}>Perfect Score</h4>
+                        <p style={{ margin: 0, fontSize: '11px', color: 'var(--gray-500)' }}>Precision Master</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* RIGHT: PROGRESS COL */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
 
                 {/* STATS OVERVIEW */}
-                <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+                <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
                   <div className="stat-card" style={{ padding: '32px' }}>
                     <div className="stat-icon-wrapper" style={{ background: 'rgba(109, 40, 217, 0.1)', color: 'var(--primary)' }}><CheckCircle2 size={24} /></div>
                     <h3 className="stat-value">{totalCompleted}</h3>
@@ -331,39 +366,6 @@ const StudentProfile = () => {
                   </div>
                 </div>
 
-                {/* ACHIEVEMENTS */}
-                <div className="glass-card" style={{ padding: '40px', borderRadius: '32px', border: '1px solid var(--border)' }}>
-                  <h3 style={{ fontSize: '20px', fontWeight: 900, marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <Award size={24} color="var(--primary)" /> Academic Distinctions
-                  </h3>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px' }}>
-                    <div style={{ background: 'var(--gray-50)', padding: '24px', borderRadius: '24px', textAlign: 'center', border: '1px solid var(--border)' }}>
-                      <div style={{ width: '64px', height: '64px', background: 'rgba(234, 179, 8, 0.1)', borderRadius: '20px', display: 'flex', alignItems: 'center', justify: 'center', margin: '0 auto 16px' }}>
-                        <Award size={32} color="var(--warning)" />
-                      </div>
-                      <h4 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 800 }}>Early Adopter</h4>
-                      <p style={{ margin: 0, fontSize: '12px', color: 'var(--gray-500)' }}>Elite Pioneer Class</p>
-                    </div>
-                    {totalCompleted >= 5 && (
-                      <div style={{ background: 'var(--gray-50)', padding: '24px', borderRadius: '24px', textAlign: 'center', border: '1px solid var(--border)' }}>
-                        <div style={{ width: '64px', height: '64px', background: 'rgba(6, 182, 212, 0.1)', borderRadius: '20px', display: 'flex', alignItems: 'center', justify: 'center', margin: '0 auto 16px' }}>
-                          <Zap size={32} color="var(--accent)" />
-                        </div>
-                        <h4 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 800 }}>Steady Pulse</h4>
-                        <p style={{ margin: 0, fontSize: '12px', color: 'var(--gray-500)' }}>5+ Active Goals</p>
-                      </div>
-                    )}
-                    {avgPercentage >= 90 && (
-                      <div style={{ background: 'var(--gray-50)', padding: '24px', borderRadius: '24px', textAlign: 'center', border: '1px solid var(--border)' }}>
-                        <div style={{ width: '64px', height: '64px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '20px', display: 'flex', alignItems: 'center', justify: 'center', margin: '0 auto 16px' }}>
-                          <CheckCircle2 size={32} color="var(--success)" />
-                        </div>
-                        <h4 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 800 }}>Perfect Score</h4>
-                        <p style={{ margin: 0, fontSize: '12px', color: 'var(--gray-500)' }}>Precision Master</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
 
                 {/* ACTIVITY HISTORY */}
                 <div className="glass-card" style={{ padding: '0', borderRadius: '32px', overflow: 'hidden', border: '1px solid var(--border)' }}>
@@ -419,4 +421,3 @@ const StudentProfile = () => {
 };
 
 export default StudentProfile;
-

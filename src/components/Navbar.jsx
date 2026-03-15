@@ -89,7 +89,7 @@ const Navbar = () => {
 
         {/* LOGO */}
         <div className="navbar-logo hover-bounce" onClick={() => navigate("/dashboard")}>
-          <GraduationCap size={34} className="logo-icon" />
+          <GraduationCap size={42} className="logo-icon" />
           <span className="logo-text gradient-text">EduTrack</span>
         </div>
 
@@ -198,7 +198,7 @@ const Navbar = () => {
         </div>
 
         {/* RIGHT SIDE: THEME + USER */}
-        <div className="navbar-user" style={{ position: "relative", gap: '15px' }}>
+        <div className="navbar-user">
 
           {/* NOTIFICATION BELL */}
           <div style={{ position: 'relative' }}>

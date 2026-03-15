@@ -64,7 +64,7 @@ const Terms = () => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '120px 60px',
+            padding: '60px 60px',
             borderRadius: '40px',
             marginBottom: '80px',
             position: 'relative',
