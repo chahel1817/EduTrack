@@ -77,8 +77,10 @@ const Login = () => {
             </div>
 
             <div className="auth2-form-header">
-              <h2 className="auth2-form-title">Welcome back</h2>
-              <p className="auth2-form-subtitle">Sign in to continue your progress</p>
+              <h2 className="auth2-form-title">
+                <span className="text-premium-gradient">Welcome back!</span>
+              </h2>
+              <p className="auth2-form-subtitle">Sign in to continue your learning journey</p>
             </div>
 
             {error && <div className="auth2-error"><span>{error}</span></div>}
@@ -150,4 +152,3 @@ const Login = () => {
 };
 
 export default Login;
-

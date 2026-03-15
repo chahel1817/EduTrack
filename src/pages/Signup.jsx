@@ -86,8 +86,10 @@ const Signup = () => {
             </div>
 
             <div className="auth2-form-header">
-              <h2 className="auth2-form-title">Create your account</h2>
-              <p className="auth2-form-subtitle">Start learning smarter today - it's free</p>
+              <h2 className="auth2-form-title">
+                <span className="text-premium-gradient">Join EduTrack 🚀</span>
+              </h2>
+              <p className="auth2-form-subtitle">Create your account to start learning smarter</p>
             </div>
 
             <div className="auth2-role-toggle">

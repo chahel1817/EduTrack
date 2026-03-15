@@ -87,12 +87,14 @@ const VerifyOTP = () => {
             </div>
 
             <div className="auth2-form-header">
-              <h2 className="auth2-form-title">Verify OTP</h2>
+              <h2 className="auth2-form-title">
+                <span className="text-premium-gradient">Account Security 🛡️</span>
+              </h2>
               <p className="auth2-form-subtitle">
                 {email ? (
-                  <>Code sent to <strong style={{ color: '#a78bfa' }}>{email}</strong></>
+                  <>We've sent a 6-digit code to <strong style={{ color: '#a78bfa' }}>{email}</strong></>
                 ) : (
-                  "Enter the 6-digit code sent to your email"
+                  "Enter the verify code sent to your email"
                 )}
               </p>
             </div>

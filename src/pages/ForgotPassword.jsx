@@ -80,8 +80,10 @@ const ForgotPassword = () => {
             </div>
 
             <div className="auth2-form-header">
-              <h2 className="auth2-form-title">Reset Password</h2>
-              <p className="auth2-form-subtitle">Enter your email and we'll send you a 6-digit OTP</p>
+              <h2 className="auth2-form-title">
+                <span className="text-premium-gradient">Forgot Password? 🔑</span>
+              </h2>
+              <p className="auth2-form-subtitle">No worries, we'll help you get back in safely</p>
             </div>
 
             {error && <div className="auth2-error"><span>{error}</span></div>}
